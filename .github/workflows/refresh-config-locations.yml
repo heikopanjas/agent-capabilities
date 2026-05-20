@@ -1,0 +1,82 @@
+name: Refresh coding-agent config locations
+
+# Runs daily: re-researches the agents documented in
+# coding-agent-config-locations.md and commits a dated snapshot
+# coding-agent-config-locations-YYYYMMDD.md straight to main.
+#
+# Requires repo secret ANTHROPIC_API_KEY (Settings -> Secrets and variables
+# -> Actions -> New repository secret).
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # daily at 06:00 UTC
+  workflow_dispatch: # allow manual runs from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-config-locations
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute snapshot date
+        id: vars
+        run: echo "date=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
+
+      - name: Research and write dated snapshot
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: >-
+            --model claude-opus-4-7
+            --allowedTools WebSearch,WebFetch,Read,Write,Edit,Glob,Grep
+          prompt: |
+            You are refreshing a reference document about coding-agent
+            configuration locations.
+
+            1. Read `coding-agent-config-locations.md` in the repository root.
+               It is the canonical source document, using confidence markers
+               (star = spec/stable, diamond = documented current, circle = observed).
+            2. For every agent in that document (Claude Code, Codex CLI,
+               GitHub Copilot, Cursor, Mistral Vibe, OpenCode) and the
+               cross-agent standards section, use WebSearch and WebFetch to
+               verify the current state of each config path, file convention,
+               skill/subagent location, and CLI behavior against the official
+               documentation linked in each "Sources" block.
+            3. Write the verified result to a NEW file named exactly
+               `coding-agent-config-locations-${{ steps.vars.outputs.date }}.md`.
+               Preserve the document's structure, tables, confidence markers,
+               and "Sources" lists. Update any path, flag, or behavior that has
+               changed. Add a "What changed since the previous snapshot" section
+               near the top listing concrete diffs. Set the trailing line to
+               today's date (${{ steps.vars.outputs.date }}).
+            4. Do NOT modify `coding-agent-config-locations.md` itself.
+            5. Do NOT run git, and do NOT create commits, branches, or pull
+               requests. Only write the new file — a later workflow step
+               handles committing.
+
+      - name: Commit dated snapshot
+        env:
+          DATE: ${{ steps.vars.outputs.date }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          FILE="coding-agent-config-locations-${DATE}.md"
+          if [ ! -f "$FILE" ]; then
+            echo "Expected $FILE was not produced — failing."
+            exit 1
+          fi
+          git add "$FILE"
+          if git diff --cached --quiet; then
+            echo "No changes to $FILE — nothing to commit."
+          else
+            git commit -m "Daily snapshot: ${FILE}"
+            git push
+          fi
