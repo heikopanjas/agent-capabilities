@@ -80,7 +80,7 @@ Home: `~/.copilot/` · `~/.github/`
 | **Instructions** ★ | `$HOME/.copilot/copilot-instructions.md` (CLI). VS Code: `~/.copilot/instructions/*.instructions.md`. `$COPILOT_CUSTOM_INSTRUCTIONS_DIRS` | `.github/copilot-instructions.md` — repository-wide. Also reads `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` at root. VS Code additionally reads `.claude/CLAUDE.md` and `CLAUDE.local.md` (workspace) and `~/.claude/CLAUDE.md` (user home) via `chat.useClaudeMdFile` |
 | **Path-specific** ★ | — | `.github/instructions/*.instructions.md` — YAML frontmatter `applyTo:` glob; searched recursively |
 | **Prompt files** ★ | — | `.github/prompts/*.prompt.md` — invoke via `#prompt:` or `/` |
-| **Custom agents** ◆ | `~/.github/agents/*.agent.md` — user-level agents (April 2026, VS / VS Code). `~/.copilot/agents/` — VS Code user profile agents | `.github/agents/*.agent.md` — YAML: name, description, tools, model, mcp-servers, handoffs. `.claude/agents/` — VS Code workspace agents (Claude format). Org: `.github-private` repo `agents/` dir |
+| **Custom agents** ◆ | `~/.github/agents/*.agent.md` — user-level agents (April 2026, VS 2026 only). `~/.copilot/agents/` — VS Code user-level agents | `.github/agents/*.agent.md` — YAML: name, description, tools, model, mcp-servers, handoffs. `.claude/agents/` — VS Code workspace agents (Claude format). Org: `.github-private` repo `agents/` dir |
 | **Skills** ★ | `~/.copilot/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md` (VS Code only ¹) | `.github/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** — all three discovered ¹; `gh skill` CLI (GitHub CLI ≥ 2.90.0, public preview) |
 | **MCP** ◆ | — | `.vscode/mcp.json` — VS Code project-level MCP (`.github/copilot/mcp.json` not confirmed in current docs) |
 
@@ -107,7 +107,7 @@ Home: `.cursor/` (project-centric)
 | **Rules** ★ | — | `.cursor/rules/*.mdc` (also `.md`) — YAML frontmatter: `alwaysApply`, `description`, `globs`. 4 modes: Always Apply, Apply Intelligently, Apply to Specific Files, Apply Manually. Subdirectory grouping supported |
 | **Commands** ◆ | `~/.cursor/commands/*.md` — user-global, all projects | `.cursor/commands/*.md` — invoke via `/`; filename becomes command name (Cursor 1.6+) |
 | **Skills** ◆ | `~/.cursor/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md` ², `~/.codex/skills/*/SKILL.md` (compat) | `.cursor/skills/*/SKILL.md`, `.agents/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md` ², `.codex/skills/*/SKILL.md` (compat) — agentskills.io; loaded on demand |
-| **Subagents** ◆ | — | Parallel subagents (v2.4+); up to 8 background agents with own context windows. Built-in: `explore`, `bash`, `browser`. `.cursor/worktrees.json` — setup commands for each worktree |
+| **Subagents** ◆ | — | Parallel subagents (v2.4+); multiple background agents each with own context window. `.cursor/worktrees.json` — setup commands for each worktree |
 | **Hooks** ◆ | `~/.cursor/hooks.json` | `.cursor/hooks.json` — camelCase event names (`preToolUse`/`postToolUse`); `loop_limit` defaults to 5; NOT identical to Claude Code hooks format (PascalCase, unlimited) |
 | **MCP** ◆ | `~/.cursor/mcp.json` | `.cursor/mcp.json` — `mcpServers` key; supports local, remote, remote+OAuth |
 | **Team Rules** ◆ | Managed from Cursor dashboard (Team/Enterprise); pushed to members. Precedence: Team → Project → User | *(same)* |
@@ -132,7 +132,7 @@ Home: `~/.vibe/` (`$VIBE_HOME`)
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
-| **Instructions** ◆ | `~/.vibe/AGENTS.md` — user-level instruction file | `<repo>/AGENTS.md` — workspace root only (no recursive walk) |
+| **Instructions** ◆ | `~/.vibe/AGENTS.md` — user-level instruction file | `<repo>/AGENTS.md` — walks cwd up to trust root; closer files override more distant ones |
 | **Config** ◆ | `~/.vibe/config.toml` — fallback | `.vibe/config.toml` — project-local, checked first |
 | **System prompts** ◆ | `~/.vibe/prompts/*.md` — set `system_prompt_id` in config.toml | — |
 | **Skills** ◆ | `~/.vibe/skills/*/SKILL.md` — agentskills.io; invoke via `/`. Custom paths via `skill_paths` in config.toml | `.vibe/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** (trusted folders only) |
@@ -156,11 +156,11 @@ Home: `~/.config/opencode/`
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
-| **Instructions** ★ | `~/.config/opencode/AGENTS.md` — personal rules, all sessions. Compat fallback: `~/.claude/CLAUDE.md` ³ | `<repo>/AGENTS.md`, `CLAUDE.md`, `CONTEXT.md` — walks cwd up to git root; first non-empty wins. Extra via `opencode.json` `instructions: […]`; supports remote URLs + globs |
-| **Config** ★ | `~/.config/opencode/opencode.json` (or `.jsonc`). TUI settings: `tui.json` (split from `opencode.json`) | `<repo>/opencode.json`, `.opencode/opencode.jsonc`. Remote/org config: `.well-known/opencode` (lowest precedence) |
+| **Instructions** ★ | `~/.config/opencode/AGENTS.md` — personal rules, all sessions. Compat fallback: `~/.claude/CLAUDE.md` ³ | `<repo>/AGENTS.md`, `CLAUDE.md` — walks cwd up to git root; first non-empty wins. Extra via `opencode.json` `instructions: […]`; supports remote URLs + globs |
+| **Config** ★ | `~/.config/opencode/opencode.json` (or `.jsonc`). TUI settings: `tui.json` (or `.jsonc`, split from `opencode.json`; legacy `tui` key in `opencode.json` deprecated) | `<repo>/opencode.json`. Remote/org config: `.well-known/opencode` (lowest precedence; fetched on provider auth) |
 | **Commands** ★ | `~/.config/opencode/commands/*.md` — invoke via `/` in the TUI | `.opencode/commands/*.md` — filename becomes command name |
-| **Skills** ★ | `~/.config/opencode/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` | `.opencode/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** — walks cwd→git root. External discovery gated by `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS` / `OPENCODE_DISABLE_EXTERNAL_SKILLS` |
-| **Agents** ★ | `~/.config/opencode/agents/*.md` — YAML: description, model, temperature, tools, mode | `.opencode/agents/*.md` — primary (Tab) or subagent (@ invoke) |
+| **Skills** ★ | `~/.config/opencode/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` | `.opencode/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** — walks cwd→git root. Claude compat discovery gated by `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS` / `OPENCODE_DISABLE_CLAUDE_CODE` |
+| **Agents** ★ | `~/.config/opencode/agents/*.md` — YAML: description, model, temperature, top_p, mode, permission | `.opencode/agents/*.md` — primary (Tab) or subagent (@ invoke) |
 
 **Sources:**
 [Rules (AGENTS.md)](https://opencode.ai/docs/rules/) ·
@@ -181,7 +181,7 @@ Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 | **Instructions** ◆ | `~/.pi/agent/AGENTS.md` — also reads `CLAUDE.md`; all discovered files concatenated | `<repo>/AGENTS.md` — loaded from parent dirs + cwd at startup |
 | **System prompt** ◆ | `~/.pi/agent/SYSTEM.md` (replace), `~/.pi/agent/APPEND_SYSTEM.md` (append) | `.pi/SYSTEM.md` — per-project |
 | **Settings** ◆ | `~/.pi/agent/settings.json` | `.pi/settings.json` — project overrides global |
-| **Skills** ◆ | `~/.pi/agent/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — bare root `.md` files also count as skills; `settings.json` `skills: []` can add other paths (e.g. `~/.claude/skills`) | `.pi/skills/`, **`.agents/skills/*/SKILL.md`** — walks cwd→git root; `/skill:<name>` to invoke. Skill name need not match directory |
+| **Skills** ◆ | `~/.pi/agent/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — bare root `.md` files count as skills in `~/.pi/agent/skills/` only (not in `~/.agents/skills/`); `settings.json` `skills: []` can add other paths (e.g. `~/.claude/skills`) | `.pi/skills/`, **`.agents/skills/*/SKILL.md`** — walks cwd→git root; `/skill:<name>` to invoke. Skill name need not match directory |
 | **Prompt templates** ◆ | `~/.pi/agent/prompts/*.md` → `/<name>` | `.pi/prompts/*.md` |
 | **Models** ◆ | `~/.pi/agent/models.json` — custom providers (Ollama, vLLM, LM Studio, proxies) | — |
 | **Extensions** ◆ | `~/.pi/agent/extensions/*.ts` — TypeScript modules; how MCP, subagents, hooks, plan mode etc. are added | `.pi/extensions/` — auto-discovered |
@@ -203,7 +203,7 @@ Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 
 ² Cursor imports Claude and Codex skills as agent-decided rules; toggleable but not always-apply. Codex compatibility paths (`.codex/skills/`, `~/.codex/skills/`) were added alongside the existing Claude paths. See [Cursor agent skills docs](https://cursor.com/docs/context/skills).
 
-³ OpenCode Claude compat can be disabled granularly: `OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1` (disables `~/.claude/CLAUDE.md` fallback), `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1` (disables `.claude/skills/` discovery), `OPENCODE_DISABLE_CLAUDE_CODE=1` (all `.claude/` support), or `OPENCODE_DISABLE_EXTERNAL_SKILLS=1` (all external skill discovery). The previously documented `OPENCODE_DISABLE_CLAUDE_COMPAT=1` is **not a valid variable**. See [OpenCode rules docs](https://opencode.ai/docs/rules/).
+³ OpenCode Claude compat can be disabled granularly: `OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1` (disables `~/.claude/CLAUDE.md` fallback), `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1` (disables `.claude/skills/` discovery), `OPENCODE_DISABLE_CLAUDE_CODE=1` (all `.claude/` support). The previously documented `OPENCODE_DISABLE_CLAUDE_COMPAT=1` and `OPENCODE_DISABLE_EXTERNAL_SKILLS=1` are **not valid variables**. See [OpenCode rules docs](https://opencode.ai/docs/rules/).
 
 ⁴ In Claude Code, slash commands and skills have converged — a skill `deploy` and a command file `deploy.md` both produce `/deploy`. Existing `.claude/commands/` files keep working unchanged.
 
@@ -211,9 +211,9 @@ Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 
 - **`.agents/skills/`** — The cross-agent convention from the [agentskills.io client implementation guide](https://agentskills.io/client-implementation/adding-skills-support). The spec instructs all compliant clients to scan both their own native directory and `.agents/skills/`. Scanned by Codex, Copilot, OpenCode, Gemini CLI, Cursor, Vibe, and Pi among others. Symlink-friendly for a single canonical skill tree.
 
-- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), now stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation (founded December 2025; 170+ member organizations as of May 2026). Tools listed on agents.md as of May 2026 (24): Codex (OpenAI), Jules (Google), Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin (Cognition), UiPath, Junie (JetBrains), Amp, Cursor, RooCode, Gemini CLI, Kilo Code, Phoenix, Semgrep, GitHub Copilot, Ona, Windsurf (Cognition), and Augment Code. Over 60,000 open-source projects use AGENTS.md. (Note: Pi and Mistral Vibe support AGENTS.md but are not listed on agents.md.)
+- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), now stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation (founded December 2025; 180+ member organizations as of May 2026). Tools listed on agents.md as of May 2026 (24): Codex (OpenAI), Jules (Google), Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin (Cognition), UiPath, Junie (JetBrains), Amp, Cursor, RooCode, Gemini CLI, Kilo Code, Phoenix, Semgrep, GitHub Copilot, Ona, Windsurf (Cognition), and Augment Code. Over 60,000 open-source projects use AGENTS.md. (Note: Pi and Mistral Vibe support AGENTS.md but are not listed on agents.md.)
 
-- **`SKILL.md`** — [Agent Skills spec](https://agentskills.io/specification). No explicit version number in the spec itself — `version:` in SKILL.md frontmatter is a user-defined skill package version, not a spec revision. Originally developed by Anthropic (released 2025-12-18); now maintained by the independent `agentskills` org at [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills). Structure: `skill-name/{SKILL.md, scripts/, references/, assets/}`. Adopted by **38 tools** on the live showcase.
+- **`SKILL.md`** — [Agent Skills spec](https://agentskills.io/specification). No explicit version number in the spec itself — `version:` in SKILL.md frontmatter is a user-defined skill package version, not a spec revision. Originally developed by Anthropic (released 2025-12-18); now maintained by the independent `agentskills` org at [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills). Structure: `skill-name/{SKILL.md, scripts/, references/, assets/}`. Adopted by **41 tools** on the live showcase.
 
 - **Subagent format split:** Claude Code, Copilot (`.agent.md`, added Feb 2026), OpenCode, and Cursor define agents as Markdown + YAML frontmatter. Codex uses Markdown+YAML for Agent Skills; TOML is used only for Codex's own internal subagent profile definitions (`.codex/agents/*.toml`). Vibe uses TOML for its internal subagent config profiles and Markdown+YAML for SKILL.md skills.
 
