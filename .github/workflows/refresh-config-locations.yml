@@ -31,7 +31,11 @@ jobs:
         id: vars
         run: echo "date=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
 
+      # Attempt 1 — soft-fails so a transient API 529 ("Overloaded") does
+      # not lose the day's run; the retry below picks it up.
       - name: Research and write dated snapshot
+        id: attempt1
+        continue-on-error: true
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -46,7 +50,47 @@ jobs:
                It is the canonical source document, using confidence markers
                (star = spec/stable, diamond = documented current, circle = observed).
             2. For every agent in that document (Claude Code, Codex CLI,
-               GitHub Copilot, Cursor, Mistral Vibe, OpenCode) and the
+               GitHub Copilot, Cursor, Mistral Vibe, OpenCode, Pi) and the
+               cross-agent standards section, use WebSearch and WebFetch to
+               verify the current state of each config path, file convention,
+               skill/subagent location, and CLI behavior against the official
+               documentation linked in each "Sources" block.
+            3. Write the verified result to a NEW file named exactly
+               `coding-agent-config-locations-${{ steps.vars.outputs.date }}.md`.
+               Preserve the document's structure, tables, confidence markers,
+               and "Sources" lists. Update any path, flag, or behavior that has
+               changed. Add a "What changed since the previous snapshot" section
+               near the top listing concrete diffs. Set the trailing line to
+               today's date (${{ steps.vars.outputs.date }}).
+            4. Do NOT modify `coding-agent-config-locations.md` itself.
+            5. Do NOT run git, and do NOT create commits, branches, or pull
+               requests. Only write the new file — a later workflow step
+               handles committing.
+
+      # Wait out a brief capacity blip before retrying.
+      - name: Cool-down before retry
+        if: steps.attempt1.outcome == 'failure'
+        run: sleep 120
+
+      # Attempt 2 — only runs if attempt 1 failed; this one fails the job
+      # for real if it also errors out.
+      - name: Research and write dated snapshot (retry)
+        if: steps.attempt1.outcome == 'failure'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: >-
+            --model claude-opus-4-7
+            --allowedTools WebSearch,WebFetch,Read,Write,Edit,Glob,Grep
+          prompt: |
+            You are refreshing a reference document about coding-agent
+            configuration locations.
+
+            1. Read `coding-agent-config-locations.md` in the repository root.
+               It is the canonical source document, using confidence markers
+               (star = spec/stable, diamond = documented current, circle = observed).
+            2. For every agent in that document (Claude Code, Codex CLI,
+               GitHub Copilot, Cursor, Mistral Vibe, OpenCode, Pi) and the
                cross-agent standards section, use WebSearch and WebFetch to
                verify the current state of each config path, file convention,
                skill/subagent location, and CLI behavior against the official
