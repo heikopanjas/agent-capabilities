@@ -163,6 +163,32 @@ Home: `~/.config/opencode/`
 
 ---
 
+## Pi — earendil-works (open source)
+
+Home: `~/.pi/` (agent config under `~/.pi/agent/`)
+
+> **Philosophy:** Pi is a minimal terminal harness — "primitives, not features." It deliberately ships **no built-in MCP, subagents, or plan mode**; those are added as TypeScript extensions. Distributed on npm as `@mariozechner/pi-coding-agent`.
+
+| Feature | Global (user) | Project (repo) |
+|---|---|---|
+| **Instructions** ◆ | `~/.pi/agent/AGENTS.md` — also reads `CLAUDE.md`; all discovered files concatenated | `<repo>/AGENTS.md` — loaded from parent dirs + cwd at startup |
+| **System prompt** ◆ | `~/.pi/agent/SYSTEM.md` (replace), `~/.pi/agent/APPEND_SYSTEM.md` (append) | `.pi/SYSTEM.md` — per-project |
+| **Settings** ◆ | `~/.pi/agent/settings.json` | `.pi/settings.json` — project overrides global |
+| **Skills** ◆ | `~/.pi/agent/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — bare root `.md` files also count as skills; `settings.json` `skills: []` can add other paths (e.g. `~/.claude/skills`) | `.pi/skills/`, **`.agents/skills/*/SKILL.md`** — walks cwd→git root; `/skill:<name>` to invoke. Skill name need not match directory |
+| **Prompt templates** ◆ | `~/.pi/agent/prompts/*.md` → `/<name>` | auto-discovered `prompts/` |
+| **Models** ◆ | `~/.pi/agent/models.json` — custom providers; `presets.json` for mode presets | — |
+| **Extensions** ◆ | `~/.pi/agent/extensions/*.ts` — TypeScript modules; how MCP, subagents, hooks, plan mode etc. are added | auto-discovered `extensions/` |
+| **MCP / Subagents** ○ | Not built in — provided via extensions (`~/.pi/agent/mcp.json` observed in community setup guides) | *(same)* |
+| **Packages** ◆ | npm/git bundles declared via a `pi` key in `package.json` (`extensions`, `skills`, `prompts`, `themes`) | *(same)* |
+
+**Sources:**
+[Pi home](https://pi.dev/) ·
+[Skills doc](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/skills.md) ·
+[README](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/README.md) ·
+[npm: @mariozechner/pi-coding-agent](https://www.npmjs.com/package/@mariozechner/pi-coding-agent)
+
+---
+
 ## Notes
 
 ¹ VS 2026, VS Code, and Copilot CLI all discover `.github/skills/`, `.claude/skills/`, and `.agents/skills/`. See [VS 2026 April update](https://github.blog/changelog/2026-04-30-github-copilot-in-visual-studio-april-update/).
@@ -173,9 +199,9 @@ Home: `~/.config/opencode/`
 
 ### Cross-agent standards
 
-- **`.agents/skills/`** — The cross-agent convention from the [agentskills.io client implementation guide](https://agentskills.io/client-implementation/adding-skills-support). Scanned by Codex, Copilot, OpenCode, Gemini CLI, and Cursor. Symlink-friendly for a single canonical skill tree.
+- **`.agents/skills/`** — The cross-agent convention from the [agentskills.io client implementation guide](https://agentskills.io/client-implementation/adding-skills-support). Scanned by Codex, Copilot, OpenCode, Gemini CLI, Cursor, and Pi. Symlink-friendly for a single canonical skill tree.
 
-- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)). Fully or partially supported by a growing number of coding agents including Codex, Copilot, Cursor, OpenCode, Vibe, Zed, Warp, Jules, Factory, and Devin. Depth of support varies (native first-class to fallback-if-present).
+- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)). Fully or partially supported by a growing number of coding agents including Codex, Copilot, Cursor, OpenCode, Vibe, Pi, Zed, Warp, Jules, Factory, and Devin. Depth of support varies (native first-class to fallback-if-present).
 
 - **`SKILL.md`** — [Agent Skills spec v1.0](https://agentskills.io/specification), maintained by Anthropic at [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills). Structure: `skill-name/{SKILL.md, scripts/, references/, assets/}`. Adopted by 26+ tools.
 
