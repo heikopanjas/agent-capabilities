@@ -110,6 +110,7 @@ jobs:
       - name: Commit dated snapshot
         env:
           DATE: ${{ steps.vars.outputs.date }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -123,5 +124,8 @@ jobs:
             echo "No changes to $FILE — nothing to commit."
           else
             git commit -m "Daily snapshot: ${FILE}"
-            git push
+            # claude-code-action rewrites the origin remote with its own
+            # short-lived token, so a bare `git push` fails auth. Push via an
+            # explicit GITHUB_TOKEN URL instead (contents: write covers this).
+            git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
           fi
