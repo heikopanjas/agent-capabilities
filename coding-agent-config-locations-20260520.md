@@ -225,10 +225,6 @@ Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 
 All paths use Unix notation; `~` = `%USERPROFILE%` on Windows. `$CODEX_HOME`, `$VIBE_HOME` override their respective defaults.
 
-### slopctl agent defaults
-
-slopctl keeps the agent filesystem conventions from this document in `agent-defaults.yml`, stored next to `templates.yml` in the global template cache. Use `slopctl agents --update` to refresh agent prompt, skill, marker, and cross-client-skill defaults independently from templates. `slopctl templates --update` bootstraps this file only when it is missing. Agent markers are workspace-relative directories that `slopctl init --agent` can safely create for detection; slopctl does not create agent config files such as `opencode.json`.
-
 ---
 
 *Research snapshot: 2026-05-20 — generated from `coding-agent-config-locations.md` (last manually verified 2026-05-14).*
