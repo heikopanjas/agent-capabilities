@@ -1,8 +1,8 @@
 name: Refresh coding-agent config locations
 
 # Runs daily: re-researches the agents documented in
-# coding-agent-config-locations.md and commits a dated snapshot
-# coding-agent-config-locations-YYYYMMDD.md straight to main.
+# coding-agent-config-locations.md and commits any verified updates
+# back into that same file on main. The git history is the changelog.
 #
 # Requires repo secret ANTHROPIC_API_KEY (Settings -> Secrets and variables
 # -> Actions -> New repository secret).
@@ -13,7 +13,7 @@ on:
   workflow_dispatch: # allow manual runs from the Actions tab
 
 permissions:
-  contents: write # commit the dated snapshot to main
+  contents: write # commit the refreshed document to main
   id-token: write # required by claude-code-action to mint an OIDC token
 
 concurrency:
@@ -27,13 +27,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Compute snapshot date
+      - name: Compute date
         id: vars
         run: echo "date=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
 
       # Attempt 1 — soft-fails so a transient API 529 ("Overloaded") does
       # not lose the day's run; the retry below picks it up.
-      - name: Research and write dated snapshot
+      - name: Research and refresh document
         id: attempt1
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
@@ -47,24 +47,22 @@ jobs:
             configuration locations.
 
             1. Read `coding-agent-config-locations.md` in the repository root.
-               It is the canonical source document, using confidence markers
-               (star = spec/stable, diamond = documented current, circle = observed).
+               It uses confidence markers (star = spec/stable, diamond =
+               documented current, circle = observed).
             2. For every agent in that document (Claude Code, Codex CLI,
                GitHub Copilot, Cursor, Mistral Vibe, OpenCode, Pi) and the
                cross-agent standards section, use WebSearch and WebFetch to
                verify the current state of each config path, file convention,
                skill/subagent location, and CLI behavior against the official
                documentation linked in each "Sources" block.
-            3. Write the verified result to a NEW file named exactly
-               `coding-agent-config-locations-${{ steps.vars.outputs.date }}.md`.
-               Preserve the document's structure, tables, confidence markers,
-               and "Sources" lists. Update any path, flag, or behavior that has
-               changed. Add a "What changed since the previous snapshot" section
-               near the top listing concrete diffs. Set the trailing line to
-               today's date (${{ steps.vars.outputs.date }}).
-            4. Do NOT modify `coding-agent-config-locations.md` itself.
+            3. Update `coding-agent-config-locations.md` IN PLACE with any
+               path, flag, or behavior that has changed. Preserve the
+               document's structure, tables, confidence markers, and
+               "Sources" lists. Do NOT create any new files.
+            4. Set the trailing "Last verified" line to today's date
+               (${{ steps.vars.outputs.date }}).
             5. Do NOT run git, and do NOT create commits, branches, or pull
-               requests. Only write the new file — a later workflow step
+               requests. Only edit the file in place — a later workflow step
                handles committing.
 
       # Wait out a brief capacity blip before retrying.
@@ -74,7 +72,7 @@ jobs:
 
       # Attempt 2 — only runs if attempt 1 failed; this one fails the job
       # for real if it also errors out.
-      - name: Research and write dated snapshot (retry)
+      - name: Research and refresh document (retry)
         if: steps.attempt1.outcome == 'failure'
         uses: anthropics/claude-code-action@v1
         with:
@@ -87,43 +85,36 @@ jobs:
             configuration locations.
 
             1. Read `coding-agent-config-locations.md` in the repository root.
-               It is the canonical source document, using confidence markers
-               (star = spec/stable, diamond = documented current, circle = observed).
+               It uses confidence markers (star = spec/stable, diamond =
+               documented current, circle = observed).
             2. For every agent in that document (Claude Code, Codex CLI,
                GitHub Copilot, Cursor, Mistral Vibe, OpenCode, Pi) and the
                cross-agent standards section, use WebSearch and WebFetch to
                verify the current state of each config path, file convention,
                skill/subagent location, and CLI behavior against the official
                documentation linked in each "Sources" block.
-            3. Write the verified result to a NEW file named exactly
-               `coding-agent-config-locations-${{ steps.vars.outputs.date }}.md`.
-               Preserve the document's structure, tables, confidence markers,
-               and "Sources" lists. Update any path, flag, or behavior that has
-               changed. Add a "What changed since the previous snapshot" section
-               near the top listing concrete diffs. Set the trailing line to
-               today's date (${{ steps.vars.outputs.date }}).
-            4. Do NOT modify `coding-agent-config-locations.md` itself.
+            3. Update `coding-agent-config-locations.md` IN PLACE with any
+               path, flag, or behavior that has changed. Preserve the
+               document's structure, tables, confidence markers, and
+               "Sources" lists. Do NOT create any new files.
+            4. Set the trailing "Last verified" line to today's date
+               (${{ steps.vars.outputs.date }}).
             5. Do NOT run git, and do NOT create commits, branches, or pull
-               requests. Only write the new file — a later workflow step
+               requests. Only edit the file in place — a later workflow step
                handles committing.
 
-      - name: Commit dated snapshot
+      - name: Commit refreshed document
         env:
-          DATE: ${{ steps.vars.outputs.date }}
           GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          FILE="coding-agent-config-locations-${DATE}.md"
-          if [ ! -f "$FILE" ]; then
-            echo "Expected $FILE was not produced — failing."
-            exit 1
-          fi
+          FILE="coding-agent-config-locations.md"
           git add "$FILE"
           if git diff --cached --quiet; then
             echo "No changes to $FILE — nothing to commit."
           else
-            git commit -m "Daily snapshot: ${FILE}"
+            git commit -m "Daily refresh: re-verify coding-agent config locations"
             # claude-code-action rewrites the origin remote with its own
             # short-lived token, so a bare `git push` fails auth. Push via an
             # explicit GITHUB_TOKEN URL instead (contents: write covers this).
