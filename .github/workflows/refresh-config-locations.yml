@@ -13,7 +13,8 @@ on:
   workflow_dispatch: # allow manual runs from the Actions tab
 
 permissions:
-  contents: write
+  contents: write # commit the dated snapshot to main
+  id-token: write # required by claude-code-action to mint an OIDC token
 
 concurrency:
   group: refresh-config-locations
