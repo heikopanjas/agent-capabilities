@@ -28,9 +28,6 @@ web search to re-research each agent's published docs, updates
 The git history of that file is the changelog — each daily commit shows exactly
 what changed.
 
-The workflow requires a repository secret **`ANTHROPIC_API_KEY`**
-(Settings → Secrets and variables → Actions).
-
 ## License
 
 [MIT](LICENSE) © 2026 Heiko Panjas
