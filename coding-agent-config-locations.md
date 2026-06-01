@@ -1,6 +1,6 @@
 # Coding Agent Configuration Locations
 
-Instruction files, custom prompts, skills & subagents for CLI / agentic coding tools — May 2026
+Instruction files, custom prompts, skills & subagents for CLI / agentic coding tools — June 2026
 
 Skills follow the [agentskills.io](https://agentskills.io/specification) open standard.
 `.agents/` is the cross-agent convention path.
@@ -80,7 +80,7 @@ Home: `~/.copilot/` · `~/.github/`
 | **Instructions** ★ | `$HOME/.copilot/copilot-instructions.md` (CLI). VS Code: `~/.copilot/instructions/*.instructions.md`. `$COPILOT_CUSTOM_INSTRUCTIONS_DIRS` | `.github/copilot-instructions.md` — repository-wide. Also reads `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` (CLI-confirmed; not listed in VS Code docs) at root. VS Code additionally reads `.claude/CLAUDE.md` and `CLAUDE.local.md` (workspace) and `~/.claude/CLAUDE.md` (user home) via `chat.useClaudeMdFile` |
 | **Path-specific** ★ | — | `.github/instructions/*.instructions.md` — YAML frontmatter `applyTo:` glob; searched recursively |
 | **Prompt files** ★ | — | `.github/prompts/*.prompt.md` — invoke via `#prompt:` or `/` |
-| **Custom agents** ◆ | `~/.copilot/agents/` — user-level agents | `.github/agents/*.agent.md` — YAML: name, description, tools, model, mcp-servers, handoffs. `.claude/agents/` — VS Code workspace agents (Claude format). Org: `.github-private` repo `agents/` dir |
+| **Custom agents** ◆ | `~/.copilot/agents/` — user-level agents | `.github/agents/*.agent.md` — YAML: name, description, tools, model, mcp-servers, target (`vscode`\|`github-copilot`). (`handoffs` is a VS Code-only field; it is explicitly not supported for cloud agents on GitHub.com and is ignored.) `.claude/agents/` — VS Code workspace agents (Claude format). Org: `.github-private` repo `agents/` dir |
 | **Skills** ★ | `~/.copilot/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` ¹ | `.github/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** — all three discovered ¹; `gh skill` CLI (GitHub CLI ≥ 2.90.0, public preview) |
 | **MCP** ◆ | — | `.vscode/mcp.json` — VS Code project-level MCP (`.github/copilot/mcp.json` not confirmed in current docs) |
 
@@ -107,7 +107,7 @@ Home: `.cursor/` (project-centric)
 | **Rules** ★ | — | `.cursor/rules/*.mdc` (also `.md`) — YAML frontmatter: `alwaysApply`, `description`, `globs`. 4 modes: Always Apply, Apply Intelligently, Apply to Specific Files, Apply Manually. Subdirectory grouping supported. Remote rules imported from GitHub live at `.cursor/rules/imported/<repoName>/path/to/rule.mdc` |
 | **Commands** ◆ | `~/.cursor/commands/*.md` — user-global, all projects | `.cursor/commands/*.md` — invoke via `/`; filename becomes command name (Cursor 1.6+) |
 | **Skills** ◆ | `~/.cursor/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — primary; `~/.claude/skills/*/SKILL.md`, `~/.codex/skills/*/SKILL.md` — legacy compat ² | `.cursor/skills/*/SKILL.md`, `.agents/skills/*/SKILL.md` — primary; `.claude/skills/*/SKILL.md`, `.codex/skills/*/SKILL.md` — legacy compat ² — agentskills.io; loaded on demand. SKILL.md: `paths` field (current) scopes activation by glob; `globs` is now the legacy alias |
-| **Subagents** ◆ | — | Parallel subagents (v2.4+); nested tree subagents (v2.5+); multiple background agents each with own context window. `.cursor/worktrees.json` — setup commands; searched in worktree path first, then project root |
+| **Subagents** ◆ | `~/.cursor/agents/*.md` — user-level; compat: `~/.claude/agents/`, `~/.codex/agents/` | Markdown+YAML files in `.cursor/agents/` (project primary); compat: `.claude/agents/`, `.codex/agents/`; `.cursor/` takes precedence on name conflict. Fields: `name`, `description`, `model` (default `inherit`), `readonly`, `is_background`. Background agents write output to `~/.cursor/subagents/`. Parallel (v2.4+); nested tree (v2.5+). `.cursor/worktrees.json` — setup commands; searched in worktree path first, then project root |
 | **Hooks** ◆ | `~/.cursor/hooks.json`; hook scripts in `~/.cursor/hooks/`; Enterprise: `/Library/Application Support/Cursor/hooks.json` (macOS) · `/etc/cursor/hooks.json` (Linux) · `C:\ProgramData\Cursor\hooks.json` (Windows) | `.cursor/hooks.json`; hook scripts in `.cursor/hooks/` — camelCase event names (`preToolUse`/`postToolUse`); `loop_limit` defaults to 5; supports `type: "prompt"` (LLM-evaluated condition); NOT identical to Claude Code hooks format (PascalCase, unlimited). Priority: Enterprise → Team → Project → User |
 | **MCP** ◆ | `~/.cursor/mcp.json` | `.cursor/mcp.json` — `mcpServers` key; supports local, remote, remote+OAuth |
 | **Team Rules** ◆ | Managed from Cursor dashboard (Team/Enterprise); pushed to members. Precedence: Team → Project → User | *(same)* |
@@ -133,7 +133,7 @@ Home: `~/.vibe/` (`$VIBE_HOME`)
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
-| **Instructions** ○ | `~/.vibe/AGENTS.md` — user-level instruction file (GitHub repo only; not in official docs) | `<repo>/AGENTS.md` — workspace root only (official docs state this feature is only functional when AGENTS.md is at workspace root) |
+| **Instructions** ○ | `~/.vibe/AGENTS.md` — user-level instruction file (GitHub repo only; not in official docs) | `<repo>/AGENTS.md` — walks cwd upward within trusted folders (official docs confirm path traversal within trusted project directories; single-root workspace recommended) |
 | **Config** ◆ | `~/.vibe/config.toml` — fallback | `.vibe/config.toml` — project-local, checked first |
 | **System prompts** ◆ | `~/.vibe/prompts/*.md` — set `system_prompt_id` in config.toml | — |
 | **Skills** ◆ | `~/.vibe/skills/*/SKILL.md` — agentskills.io; invoke via `/`. Custom paths via `skill_paths` in config.toml | `.vibe/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** (trusted folders only) |
@@ -214,7 +214,7 @@ Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 
 - **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), originally created by OpenAI (August 2025) and now stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation (founded December 2025). Tools listed on agents.md as of May 2026 (~23 on main page; additional tools via 'View all supported agents' link): Codex (OpenAI), Jules (Google), Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin (Cognition), UiPath, Junie (JetBrains), Amp, Cursor, RooCode, Gemini CLI, Kilo Code, Phoenix, Semgrep, GitHub Copilot, Ona, Windsurf (Cognition), Augment Code, and others. Over 60,000 open-source projects use AGENTS.md. (Note: Pi and Mistral Vibe support AGENTS.md but are not listed on agents.md.)
 
-- **`SKILL.md`** — [Agent Skills spec](https://agentskills.io/specification). No explicit version number in the spec itself — there is no top-level `version:` frontmatter field; skill package versioning goes under the `metadata:` map (e.g., `metadata:\n  version: "1.0"`). Originally developed by Anthropic (released 2025-12-18); now maintained by the independent `agentskills` org at [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills) (Apache 2.0 code / CC-BY-4.0 docs). Structure: `skill-name/{SKILL.md, scripts/, references/, assets/}`. `allowed-tools` frontmatter field is Experimental. Adopted by **~37 tools** on the live showcase (list has evolved significantly from prior verification).
+- **`SKILL.md`** — [Agent Skills spec](https://agentskills.io/specification). No explicit version number in the spec itself — there is no top-level `version:` frontmatter field; skill package versioning goes under the `metadata:` map (e.g., `metadata:\n  version: "1.0"`). Originally developed by Anthropic (released 2025-12-18); now maintained by the independent `agentskills` org at [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills) (Apache 2.0 code / CC-BY-4.0 docs). Structure: `skill-name/{SKILL.md, scripts/, references/, assets/}`. `allowed-tools` frontmatter field is Experimental. Adopted by **~41 tools** on the live showcase (list has evolved significantly from prior verification).
 
 - **Subagent format split:** Claude Code, Copilot (`.agent.md`, added Feb 2026), OpenCode, and Cursor define agents as Markdown + YAML frontmatter. Codex uses Markdown+YAML for Agent Skills; TOML is used only for Codex's own internal subagent profile definitions (`.codex/agents/*.toml`). Vibe uses TOML for its internal subagent config profiles and Markdown+YAML for SKILL.md skills.
 
@@ -222,4 +222,4 @@ All paths use Unix notation; `~` = `%USERPROFILE%` on Windows. `$CODEX_HOME`, `$
 
 ---
 
-*Last verified: 2026-05-24*
+*Last verified: 2026-06-01*
