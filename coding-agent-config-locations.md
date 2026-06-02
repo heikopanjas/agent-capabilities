@@ -50,7 +50,7 @@ Home: `~/.codex/` (`$CODEX_HOME`)
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
 | **Instructions** ◆ | `~/.codex/AGENTS.md` — global user-level instructions | `<repo>/AGENTS.override.md`, `<repo>/AGENTS.md` — walks root→cwd; override file wins; first non-empty used; 1 file/dir; 32 KiB default cap (`project_doc_max_bytes`). Fallbacks via `project_doc_fallback_filenames` |
-| **Config** ◆ | `~/.codex/config.toml` | `.codex/config.toml` — walks root→cwd; closest wins (trusted projects only). System: `/etc/codex/config.toml`. Enterprise: `requirements.toml` (enforced constraints, cannot be overridden by user/project config) |
+| **Config** ◆ | `~/.codex/config.toml`; `~/.codex/<profile>.config.toml` — named profile selected via `--profile` flag | `.codex/config.toml` — walks root→cwd; closest wins (trusted projects only). System: `/etc/codex/config.toml`. Enterprise: `requirements.toml` (enforced constraints, cannot be overridden by user/project config) |
 | **Skills** ◆ | `~/.agents/skills/*/SKILL.md` — user-level; no `~/.codex/skills/` path in official docs | `.agents/skills/*/SKILL.md` — walks CWD → parent → repo root; `/skills` to invoke. Toggle via `[[skills.config]]` (`path`, `enabled`) in config.toml. Admin: `/etc/codex/skills/`; System: bundled |
 | **Subagents** ◆ | `~/.codex/agents/*.toml` | `.codex/agents/*.toml`; also `[agents.*]` in `config.toml`. Global settings under `[agents]` (`max_depth` default `1`) |
 | **Rules** ◆ | `~/.codex/rules/default.rules` — Starlark syntax; written by TUI allow-command | `.codex/rules/` |
@@ -80,7 +80,7 @@ Home: `~/.copilot/` · `~/.github/`
 | **Instructions** ★ | `$HOME/.copilot/copilot-instructions.md` (CLI). VS Code: `~/.copilot/instructions/*.instructions.md`. `$COPILOT_CUSTOM_INSTRUCTIONS_DIRS` | `.github/copilot-instructions.md` — repository-wide. Also reads `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` (CLI-confirmed; not listed in VS Code docs) at root. VS Code additionally reads `.claude/CLAUDE.md` and `CLAUDE.local.md` (workspace) and `~/.claude/CLAUDE.md` (user home) via `chat.useClaudeMdFile` |
 | **Path-specific** ★ | — | `.github/instructions/*.instructions.md` — YAML frontmatter `applyTo:` glob; searched recursively |
 | **Prompt files** ★ | — | `.github/prompts/*.prompt.md` — invoke via `#prompt:` or `/` |
-| **Custom agents** ◆ | `~/.copilot/agents/` — user-level agents | `.github/agents/*.agent.md` — YAML: name, description, tools, model, mcp-servers, target (`vscode`\|`github-copilot`). (`handoffs` is a VS Code-only field; it is explicitly not supported for cloud agents on GitHub.com and is ignored.) `.claude/agents/` — VS Code workspace agents (Claude format). Org: `.github-private` repo `agents/` dir |
+| **Custom agents** ◆ | `~/.copilot/agents/` — user-level agents | `.github/agents/*.agent.md` — YAML: name, description, tools, model, mcp-servers, target (`vscode`\|`github-copilot`). (`handoffs` and `argument-hint` are VS Code-only fields; both are explicitly not supported for cloud agents on GitHub.com and are ignored.) `.claude/agents/` — VS Code workspace agents (Claude format). Org: `.github-private` repo `agents/` dir |
 | **Skills** ★ | `~/.copilot/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` ¹ | `.github/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** — all three discovered ¹; `gh skill` CLI (GitHub CLI ≥ 2.90.0, public preview) |
 | **MCP** ◆ | — | `.vscode/mcp.json` — VS Code project-level MCP (`.github/copilot/mcp.json` not confirmed in current docs) |
 
@@ -133,7 +133,7 @@ Home: `~/.vibe/` (`$VIBE_HOME`)
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
-| **Instructions** ○ | `~/.vibe/AGENTS.md` — user-level instruction file (GitHub repo only; not in official docs) | `<repo>/AGENTS.md` — walks cwd upward within trusted folders (official docs confirm path traversal within trusted project directories; single-root workspace recommended) |
+| **Instructions** ◆ | `~/.vibe/AGENTS.md` (or `$VIBE_HOME/AGENTS.md`) — user-level instruction file; official docs confirm this path | `<repo>/AGENTS.md` — walks cwd upward within trusted folders (official docs confirm path traversal within trusted project directories; single-root workspace recommended) |
 | **Config** ◆ | `~/.vibe/config.toml` — fallback | `.vibe/config.toml` — project-local, checked first |
 | **System prompts** ◆ | `~/.vibe/prompts/*.md` — set `system_prompt_id` in config.toml | — |
 | **Skills** ◆ | `~/.vibe/skills/*/SKILL.md` — agentskills.io; invoke via `/`. Custom paths via `skill_paths` in config.toml | `.vibe/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** (trusted folders only) |
@@ -161,7 +161,7 @@ Home: `~/.config/opencode/`
 | **Config** ★ | `~/.config/opencode/opencode.json` (or `.jsonc`). TUI settings: `tui.json` (or `.jsonc`; legacy `tui` key in `opencode.json` deprecated). System/managed: `/etc/opencode/` (Linux) · `/Library/Application Support/opencode/` (macOS) · `%ProgramData%\opencode` (Windows). Env overrides: `OPENCODE_CONFIG` (custom file path), `OPENCODE_CONFIG_DIR` (replaces `~/.config/opencode/`), `OPENCODE_CONFIG_CONTENT` (inline JSON), `OPENCODE_TUI_CONFIG`. Config values support `{env:VAR}` and `{file:path}` interpolation | `<repo>/opencode.json`. Remote/org config: `.well-known/opencode` (lowest precedence; fetched on provider auth) |
 | **Commands** ★ | `~/.config/opencode/commands/*.md` — invoke via `/` in the TUI | `.opencode/commands/*.md` — filename becomes command name |
 | **Skills** ★ | `~/.config/opencode/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` | `.opencode/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** — walks cwd→git root. Claude compat discovery gated by `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS` / `OPENCODE_DISABLE_CLAUDE_CODE` |
-| **Agents** ★ | `~/.config/opencode/agents/*.md` — YAML: description, model, temperature, top_p, mode, permission | `.opencode/agents/*.md` — primary (Tab) or subagent (@ invoke) |
+| **Agents** ★ | `~/.config/opencode/agents/*.md` — YAML: description, model, temperature, top_p, mode (`primary`\|`subagent`\|`all`), permission | `.opencode/agents/*.md` — primary (Tab) or subagent (@ invoke) |
 
 **Sources:**
 [Rules (AGENTS.md)](https://opencode.ai/docs/rules/) ·
@@ -222,4 +222,4 @@ All paths use Unix notation; `~` = `%USERPROFILE%` on Windows. `$CODEX_HOME`, `$
 
 ---
 
-*Last verified: 2026-06-01*
+*Last verified: 2026-06-02*
