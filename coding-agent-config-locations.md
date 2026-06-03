@@ -80,7 +80,7 @@ Home: `~/.copilot/` · `~/.github/`
 | **Instructions** ★ | `$HOME/.copilot/copilot-instructions.md` (CLI). VS Code: `~/.copilot/instructions/*.instructions.md`. `$COPILOT_CUSTOM_INSTRUCTIONS_DIRS` | `.github/copilot-instructions.md` — repository-wide. Also reads `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` (CLI-confirmed; not listed in VS Code docs) at root. VS Code additionally reads `.claude/CLAUDE.md` and `CLAUDE.local.md` (workspace) and `~/.claude/CLAUDE.md` (user home) via `chat.useClaudeMdFile` |
 | **Path-specific** ★ | — | `.github/instructions/*.instructions.md` — YAML frontmatter `applyTo:` glob; searched recursively |
 | **Prompt files** ★ | — | `.github/prompts/*.prompt.md` — invoke via `#prompt:` or `/` |
-| **Custom agents** ◆ | `~/.copilot/agents/` — user-level agents | `.github/agents/*.agent.md` — YAML: name, description, tools, model, mcp-servers, target (`vscode`\|`github-copilot`). (`handoffs` and `argument-hint` are VS Code-only fields; both are explicitly not supported for cloud agents on GitHub.com and are ignored.) `.claude/agents/` — VS Code workspace agents (Claude format). Org: `.github-private` repo `agents/` dir |
+| **Custom agents** ◆ | `~/.copilot/agents/` — user-level agents | `.github/agents/*.agent.md` — YAML: name, description, tools, model, mcp-servers, target (`vscode`\|`github-copilot`), disable-model-invocation, user-invocable. (`handoffs`, `agents`, and `hooks` are VS Code-only fields; not supported for cloud agents on GitHub.com.) `infer` field is **retired**; use `disable-model-invocation` + `user-invocable` instead. `.claude/agents/` — VS Code workspace agents (Claude format). Org: `.github-private` repo `agents/` dir |
 | **Skills** ★ | `~/.copilot/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` ¹ | `.github/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** — all three discovered ¹; `gh skill` CLI (GitHub CLI ≥ 2.90.0, public preview) |
 | **MCP** ◆ | — | `.vscode/mcp.json` — VS Code project-level MCP (`.github/copilot/mcp.json` not confirmed in current docs) |
 
@@ -129,13 +129,13 @@ Home: `.cursor/` (project-centric)
 
 Home: `~/.vibe/` (`$VIBE_HOME`)
 
-> **Note:** Current version: 2.10.1 (May 20, 2026). Config surface has been stable since Vibe 2.0.
+> **Note:** Current version: 2.13.0 (May 29, 2026). Config surface has been stable since Vibe 2.0.
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
 | **Instructions** ◆ | `~/.vibe/AGENTS.md` (or `$VIBE_HOME/AGENTS.md`) — user-level instruction file; official docs confirm this path | `<repo>/AGENTS.md` — walks cwd upward within trusted folders (official docs confirm path traversal within trusted project directories; single-root workspace recommended) |
 | **Config** ◆ | `~/.vibe/config.toml` — fallback | `.vibe/config.toml` — project-local, checked first |
-| **System prompts** ◆ | `~/.vibe/prompts/*.md` — set `system_prompt_id` in config.toml | — |
+| **System prompts** ◆ | `~/.vibe/prompts/*.md` — set `system_prompt_id` or `compaction_prompt_id` in config.toml | `.vibe/prompts/*.md` |
 | **Skills** ◆ | `~/.vibe/skills/*/SKILL.md` — agentskills.io; invoke via `/`. Custom paths via `skill_paths` in config.toml | `.vibe/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** (trusted folders only) |
 | **Agents** ◆ | `~/.vibe/agents/*.toml` — `display_name`, `safety`, `enabled_tools` | `.vibe/agents/*.toml` — subagents: `agent_type = "subagent"` (GitHub repo; not confirmed in official docs) |
 | **API keys** ◆ | `~/.vibe/.env` — auto-loaded; env vars take precedence | — |
@@ -222,4 +222,4 @@ All paths use Unix notation; `~` = `%USERPROFILE%` on Windows. `$CODEX_HOME`, `$
 
 ---
 
-*Last verified: 2026-06-02*
+*Last verified: 2026-06-03*
