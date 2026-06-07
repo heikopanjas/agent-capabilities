@@ -139,7 +139,7 @@ Home: `~/.vibe/` (`$VIBE_HOME`)
 | **Config** ◆ | `~/.vibe/config.toml` — fallback | `.vibe/config.toml` — project-local, checked first |
 | **System prompts** ◆ | `~/.vibe/prompts/*.md` — set `system_prompt_id` or `compaction_prompt_id` in config.toml | `.vibe/prompts/*.md` |
 | **Skills** ◆ | `~/.vibe/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — agentskills.io; invoke via `/`. Custom paths via `skill_paths` in config.toml | `.vibe/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** (trusted folders only) |
-| **Agents** ◆ | `~/.vibe/agents/*.toml` — `display_name`, `safety`, `enabled_tools` | `.vibe/agents/*.toml` — subagents: `agent_type = "subagent"` (GitHub repo; not confirmed in official docs) |
+| **Agents** ◆ | `~/.vibe/agents/*.toml` — `display_name`, `safety`, `enabled_tools` | `.vibe/agents/*.toml` — subagents: `agent_type = "subagent"`; user-facing selectable agents: `agent_type = "agent"` |
 | **API keys** ◆ | `~/.vibe/.env` — auto-loaded; env vars take precedence | — |
 | **Trust / misc** ◆ | `~/.vibe/trusted_folders.toml` — trust management. `~/.vibe/tools/` — custom tools. `~/.vibe/logs/` — session logs | — |
 
@@ -224,4 +224,4 @@ All paths use Unix notation; `~` = `%USERPROFILE%` on Windows. `$CODEX_HOME`, `$
 
 ---
 
-*Last verified: 2026-06-06*
+*Last verified: 2026-06-07*
