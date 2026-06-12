@@ -52,13 +52,13 @@ Home: `~/.codex/` (`$CODEX_HOME`)
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
 | **Instructions** ◆ | `~/.codex/AGENTS.override.md` (takes precedence), `~/.codex/AGENTS.md` — global user-level instructions | `<repo>/AGENTS.override.md`, `<repo>/AGENTS.md` — walks root→cwd; override file wins; first non-empty used; 1 file/dir; 32 KiB default cap (`project_doc_max_bytes`). Fallbacks via `project_doc_fallback_filenames` |
-| **Config** ◆ | `~/.codex/config.toml`; `~/.codex/<profile>.config.toml` — named profile selected via `--profile` flag | `.codex/config.toml` — walks root→cwd; closest wins (trusted projects only). System: `/etc/codex/config.toml`. Enterprise: `requirements.toml` (enforced constraints, cannot be overridden by user/project config) |
+| **Config** ◆ | `~/.codex/config.toml`; `~/.codex/<profile>.config.toml` — named profile selected via `--profile` flag | `.codex/config.toml` — walks root→cwd; closest wins (trusted projects only). System: `/etc/codex/config.toml`. Enterprise: `/etc/codex/requirements.toml` (Unix) · `%ProgramData%\OpenAI\Codex\requirements.toml` (Windows) — enforced constraints, cannot be overridden by user/project config |
 | **Skills** ◆ | `~/.agents/skills/*/SKILL.md` — user-level; no `~/.codex/skills/` path in official docs | `.agents/skills/*/SKILL.md` — walks CWD → parent → repo root; `/skills` to invoke. Toggle via `[[skills.config]]` (`path`, `enabled`) in config.toml. Admin: `/etc/codex/skills/`; System: bundled |
 | **Subagents** ◆ | `~/.codex/agents/*.toml` | `.codex/agents/*.toml`; also `[agents.*]` in `config.toml`. Global settings under `[agents]` (`max_depth` default `1`) |
 | **Rules** ◆ | `~/.codex/rules/default.rules` — Starlark syntax; written by TUI allow-command | `.codex/rules/` |
-| **Hooks** ◆ | `~/.codex/hooks.json` — or inline `[hooks]` table in `config.toml` (Rust-era addition; warns if both present) | `.codex/hooks.json`; or inline `[hooks]` in `.codex/config.toml` |
+| **Hooks** ◆ | `~/.codex/hooks.json` — or inline `[hooks]` table in `config.toml` (Rust-era addition; merges both if present in same layer) | `.codex/hooks.json`; or inline `[hooks]` in `.codex/config.toml` |
 | **MCP** ◆ | `[mcp_servers]` in `~/.codex/config.toml` | `[mcp_servers]` in `.codex/config.toml` |
-| **Plugins** ○ | — | `.codex-plugin/plugin.json` — bundles skills, MCP configs, and hooks |
+| **Plugins** ◆ | — | `.codex-plugin/plugin.json` — bundles skills, MCP configs, and hooks |
 
 **Sources:**
 [AGENTS.md discovery](https://developers.openai.com/codex/guides/agents-md) ·
@@ -184,7 +184,7 @@ Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 | **Instructions** ◆ | `~/.pi/agent/AGENTS.md` — also reads `CLAUDE.md`; all discovered files concatenated | `<repo>/AGENTS.md` — loaded from parent dirs + cwd at startup |
 | **System prompt** ◆ | `~/.pi/agent/SYSTEM.md` (replace), `~/.pi/agent/APPEND_SYSTEM.md` (append) | `.pi/SYSTEM.md` (replace), `.pi/APPEND_SYSTEM.md` (append) — per-project |
 | **Settings** ◆ | `~/.pi/agent/settings.json` | `.pi/settings.json` — project overrides global |
-| **Skills** ◆ | `~/.pi/agent/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — bare root `.md` files count as skills in `~/.pi/agent/skills/` only (not in `~/.agents/skills/`); `settings.json` `skills: []` can add other paths (e.g. `~/.claude/skills`) | `.pi/skills/`, **`.agents/skills/*/SKILL.md`** — walks cwd→git root; `/skill:<name>` to invoke. Skill name need not match directory |
+| **Skills** ◆ | `~/.pi/agent/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — bare root `.md` files count as skills in `~/.pi/agent/skills/` and `.pi/skills/` only (not in `.agents/skills/` locations); `settings.json` `skills: []` can add other paths (e.g. `~/.claude/skills`) | `.pi/skills/`, **`.agents/skills/*/SKILL.md`** — walks cwd→git root; `/skill:<name>` to invoke. Skill name need not match directory |
 | **Prompt templates** ◆ | `~/.pi/agent/prompts/*.md` → `/<name>` | `.pi/prompts/*.md` |
 | **Models** ◆ | `~/.pi/agent/models.json` — custom providers (Ollama, vLLM, LM Studio, proxies) | — |
 | **Extensions** ◆ | `~/.pi/agent/extensions/*.ts` — TypeScript modules; how MCP, subagents, hooks, plan mode etc. are added | `.pi/extensions/` — auto-discovered |
@@ -224,4 +224,4 @@ All paths use Unix notation; `~` = `%USERPROFILE%` on Windows. `$CODEX_HOME`, `$
 
 ---
 
-*Last verified: 20260611*
+*Last verified: 20260612*
