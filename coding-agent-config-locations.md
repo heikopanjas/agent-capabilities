@@ -48,7 +48,7 @@ Home: `~/.claude/`
 
 Home: `~/.codex/` (`$CODEX_HOME`)
 
-> **Rust rewrite complete:** The TypeScript CLI was retired mid-2025. The current codebase is 96.0% Rust (`codex-rs/`), production-stable since June 2025, with a ~2 releases/day cadence. Core config paths are stable post-transition.
+> **Rust rewrite complete:** The TypeScript CLI was retired mid-2025. The current codebase is 95.6% Rust (`codex-rs/`), production-stable since June 2025, with a ~2 releases/day cadence. Core config paths are stable post-transition.
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
@@ -227,4 +227,4 @@ All paths use Unix notation; `~` = `%USERPROFILE%` on Windows. `$CODEX_HOME`, `$
 
 ---
 
-*Last verified: 20260614*
+*Last verified: 20260615*
