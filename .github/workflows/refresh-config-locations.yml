@@ -65,15 +65,38 @@ jobs:
                requests. Only edit the file in place — a later workflow step
                handles committing.
 
+      # The action exits 0 even when Claude itself errors out (e.g. a bad API
+      # key fails on turn 1 for $0), so the step outcome alone cannot be
+      # trusted. Inspect the result event in the execution log instead.
+      - name: Check attempt 1 result
+        id: check1
+        env:
+          CLAUDE_OUTPUT: ${{ steps.attempt1.outputs.execution_file }}
+        run: |
+          if [ -z "$CLAUDE_OUTPUT" ] || [ ! -f "$CLAUDE_OUTPUT" ]; then
+            echo "No execution output from attempt 1 — treating as failure."
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          ERR=$(jq -s 'flatten | map(select(.type=="result")) | last | .is_error' "$CLAUDE_OUTPUT" 2>/dev/null)
+          echo "attempt 1 is_error=$ERR"
+          if [ "$ERR" = "false" ]; then
+            echo "failed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+          fi
+
       # Wait out a brief capacity blip before retrying.
       - name: Cool-down before retry
-        if: steps.attempt1.outcome == 'failure'
+        if: steps.check1.outputs.failed == 'true'
         run: sleep 120
 
-      # Attempt 2 — only runs if attempt 1 failed; this one fails the job
-      # for real if it also errors out.
+      # Attempt 2 — only runs if attempt 1 errored. Also soft-fails; the
+      # verification step below is what fails the job for real.
       - name: Research and refresh document (retry)
-        if: steps.attempt1.outcome == 'failure'
+        id: attempt2
+        if: steps.check1.outputs.failed == 'true'
+        continue-on-error: true
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -102,6 +125,25 @@ jobs:
             5. Do NOT run git, and do NOT create commits, branches, or pull
                requests. Only edit the file in place — a later workflow step
                handles committing.
+
+      # Ground truth: fail the job if the effective Claude run still errored,
+      # so a dead API key surfaces as a red ✕ instead of a silent green tick.
+      # Uses attempt 2's log if the retry ran, otherwise attempt 1's.
+      - name: Verify Claude succeeded
+        env:
+          CLAUDE_OUTPUT: ${{ steps.attempt2.outputs.execution_file || steps.attempt1.outputs.execution_file }}
+        run: |
+          if [ -z "$CLAUDE_OUTPUT" ] || [ ! -f "$CLAUDE_OUTPUT" ]; then
+            echo "::error::Claude produced no execution output — the run did not complete."
+            exit 1
+          fi
+          ERR=$(jq -s 'flatten | map(select(.type=="result")) | last | .is_error' "$CLAUDE_OUTPUT" 2>/dev/null)
+          if [ "$ERR" != "false" ]; then
+            echo "::error::Claude run reported is_error=$ERR — check the API key, credits, or model access. Failing so this is not masked as a successful run."
+            jq -s 'flatten | map(select(.type=="result")) | last' "$CLAUDE_OUTPUT" 2>/dev/null || true
+            exit 1
+          fi
+          echo "Claude run completed successfully (is_error=false)."
 
       - name: Commit refreshed document
         env:
