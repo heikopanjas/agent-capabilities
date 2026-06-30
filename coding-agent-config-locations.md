@@ -53,8 +53,8 @@ Home: `~/.codex/` (`$CODEX_HOME`)
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
 | **Instructions** ◆ | `~/.codex/AGENTS.override.md` (takes precedence), `~/.codex/AGENTS.md` — global user-level instructions | `<repo>/AGENTS.override.md`, `<repo>/AGENTS.md` — walks root→cwd; override file wins; first non-empty used; 1 file/dir; 32 KiB default cap (`project_doc_max_bytes`). Fallbacks via `project_doc_fallback_filenames` |
-| **Config** ◆ | `~/.codex/config.toml`; `~/.codex/<profile>.config.toml` — named profile selected via `--profile` flag. Enterprise managed defaults: `/etc/codex/managed_config.toml` (Linux/macOS) · `~/.codex/managed_config.toml` (Windows fallback) · macOS MDM `com.openai.codex` domain (highest precedence) | `.codex/config.toml` — walks root→cwd; closest wins (trusted projects only). System: `/etc/codex/config.toml`. Enterprise enforced: `/etc/codex/requirements.toml` (Unix) · `%ProgramData%\OpenAI\Codex\requirements.toml` (Windows) — cannot be overridden |
-| **Skills** ◆ | `~/.codex/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — user-level | `.agents/skills/*/SKILL.md` — walks CWD → parent → repo root; `/skills` to invoke. Toggle via `[[skills.config]]` (`path`, `enabled`) in config.toml. Admin: `/etc/codex/skills/`; System: bundled |
+| **Config** ◆ | `~/.codex/config.toml`; `~/.codex/<profile>.config.toml` — named profile selected via `--profile` flag. Enterprise managed defaults: `/etc/codex/config.toml` (Linux/macOS) · macOS MDM `com.openai.codex` domain (highest precedence) | `.codex/config.toml` — walks root→cwd; closest wins (trusted projects only). System: `/etc/codex/config.toml`. Enterprise enforced: `/etc/codex/requirements.toml` (Unix) · `%ProgramData%\OpenAI\Codex\requirements.toml` (Windows) — cannot be overridden |
+| **Skills** ◆ | `~/.agents/skills/*/SKILL.md` — user-level | `.agents/skills/*/SKILL.md` — walks CWD → parent → repo root; `/skills` to invoke. Toggle via `[[skills.config]]` (`path`, `enabled`) in config.toml. Admin: `/etc/codex/skills/`; System: bundled |
 | **Subagents** ◆ | `~/.codex/agents/*.toml` | `.codex/agents/*.toml`; also `[agents.*]` in `config.toml`. Global settings under `[agents]` (`max_depth` default `1`) |
 | **Rules** ◆ | `~/.codex/rules/default.rules` — Starlark syntax; written by TUI allow-command | `.codex/rules/` |
 | **Hooks** ◆ | `~/.codex/hooks.json` — or inline `[hooks]` table in `config.toml` (Rust-era addition; merges both if present in same layer) | `.codex/hooks.json`; or inline `[hooks]` in `.codex/config.toml` |
@@ -132,7 +132,7 @@ Home: `.cursor/` (project-centric)
 
 Home: `~/.vibe/` (`$VIBE_HOME`)
 
-> **Note:** Current version: 2.18.0 (June 25, 2026). Config surface has been stable since Vibe 2.0.
+> **Note:** Current version: 2.18.2 (June 29, 2026). Config surface has been stable since Vibe 2.0.
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
@@ -142,7 +142,7 @@ Home: `~/.vibe/` (`$VIBE_HOME`)
 | **Skills** ◆ | `~/.vibe/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — agentskills.io; invoke via `/`. Custom paths via `skill_paths` in config.toml ○ unconfirmed | `.vibe/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** (trusted folders only) |
 | **Agents** ◆ | `~/.vibe/agents/*.toml` — `display_name`, `safety`, `enabled_tools` | `.vibe/agents/*.toml` — subagents: `agent_type = "subagent"`; user-facing selectable agents: `agent_type = "agent"` |
 | **API keys** ◆ | `~/.vibe/.env` — auto-loaded; env vars take precedence | — |
-| **Hooks** ○ | `~/.vibe/hooks.toml` — `before_tool`/`after_tool`/`post_agent_turn` lifecycle events; enable via `enable_experimental_hooks = true` in `config.toml` (experimental, still required as of v2.18.0) | `.vibe/hooks.toml` |
+| **Hooks** ○ | `~/.vibe/hooks.toml` — `before_tool`/`after_tool`/`post_agent_turn` lifecycle events; enable via `enable_experimental_hooks = true` in `config.toml` or `VIBE_ENABLE_EXPERIMENTAL_HOOKS` env var (experimental, still required as of v2.18.2) | `.vibe/hooks.toml` |
 | **Trust / misc** ◆ | `~/.vibe/trusted_folders.toml` (○ filename unconfirmed) — trust management. `~/.vibe/tools/` — custom tools. `~/.vibe/logs/` — session logs. `~/.vibe/sessions/` — session storage | — |
 
 **Sources:**
@@ -184,7 +184,7 @@ Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
-| **Instructions** ◆ | `~/.pi/agent/AGENTS.md` — also reads `CLAUDE.md`; all discovered files concatenated | `<repo>/AGENTS.md` — loaded from parent dirs + cwd at startup |
+| **Instructions** ◆ | `~/.pi/agent/AGENTS.md` — also reads `CLAUDE.md`; all discovered files concatenated | `<repo>/AGENTS.md`, `.pi/AGENTS.md` — loaded from parent dirs + cwd at startup |
 | **System prompt** ◆ | `~/.pi/agent/SYSTEM.md` (replace), `~/.pi/agent/APPEND_SYSTEM.md` (append) | `.pi/SYSTEM.md` (replace), `.pi/APPEND_SYSTEM.md` (append) — per-project |
 | **Settings** ◆ | `~/.pi/agent/settings.json`; `~/.pi/agent/keybindings.json` — keyboard shortcuts; `~/.pi/agent/trust.json` — saved project trust decisions (v0.79.0) | `.pi/settings.json` — project overrides global |
 | **Skills** ◆ | `~/.pi/agent/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — bare root `.md` files count as skills in `~/.pi/agent/skills/` and `.pi/skills/` only (not in `.agents/skills/` locations); `settings.json` `skills: []` can add other paths (e.g. `~/.claude/skills`) | `.pi/skills/`, **`.agents/skills/*/SKILL.md`** — walks cwd→git root; `/skill:<name>` to invoke. Skill name need not match directory |
@@ -217,7 +217,7 @@ Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 
 - **`.agents/skills/`** — The cross-agent convention from the [agentskills.io client implementation guide](https://agentskills.io/client-implementation/adding-skills-support). The spec instructs all compliant clients to scan both their own native directory and `.agents/skills/`. Scanned by Codex, Copilot, OpenCode, Gemini CLI, Cursor, Vibe, and Pi among others. Symlink-friendly for a single canonical skill tree.
 
-- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), originated from collaborative efforts by OpenAI Codex, Amp, Jules (Google), Cursor, and Factory (August 2025); contributed by OpenAI and now stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation (founded December 2025). Tools listed on agents.md as of June 2026 (24 on main page; additional tools via 'View all supported agents' link): Codex (OpenAI), Jules (Google), Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin (Cognition), UiPath, Junie (JetBrains), Amp, Cursor, RooCode, Gemini CLI, Kilo Code, Phoenix, Semgrep, GitHub Copilot, Ona, Windsurf (Cognition), Augment Code, and one additional. Over 60,000 open-source projects use AGENTS.md. (Note: Pi and Mistral Vibe support AGENTS.md but are not listed on agents.md.)
+- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), originated from collaborative efforts by OpenAI Codex, Amp, Jules (Google), Cursor, and Factory (August 2025); contributed by OpenAI and now stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation (founded December 2025). Tools listed on agents.md as of June 2026 (23 on main page; additional tools via 'View all supported agents' link): Codex (OpenAI), Jules (Google), Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin (Cognition), UiPath, Junie (JetBrains), Amp, Cursor, RooCode, Gemini CLI, Kilo Code, Phoenix, Semgrep, GitHub Copilot, Ona, Windsurf (Cognition), Augment Code. Over 60,000 open-source projects use AGENTS.md. (Note: Pi and Mistral Vibe support AGENTS.md but are not listed on agents.md.)
 
 - **`SKILL.md`** — [Agent Skills spec](https://agentskills.io/specification). No explicit version number in the spec itself — there is no top-level `version:` frontmatter field; skill package versioning goes under the `metadata:` map (e.g., `metadata:\n  version: "1.0"`). Originally developed by Anthropic (released 2025-12-18); now maintained by the independent `agentskills` org at [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills) (Apache 2.0 code / CC-BY-4.0 docs). Structure: `skill-name/{SKILL.md, scripts/, references/, assets/}`. `allowed-tools` frontmatter field is Experimental. Adopted by **~41 tools** on the live showcase (list has evolved significantly from prior verification).
 
@@ -227,4 +227,4 @@ All paths use Unix notation; `~` = `%USERPROFILE%` on Windows. `$CODEX_HOME`, `$
 
 ---
 
-*Last verified: 20260629*
+*Last verified: 20260630*
