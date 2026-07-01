@@ -83,7 +83,7 @@ Home: `~/.copilot/` · `~/.github/`
 | **Instructions** ★ | `$HOME/.copilot/copilot-instructions.md` (CLI). VS Code: `~/.copilot/instructions/*.instructions.md`. `$COPILOT_CUSTOM_INSTRUCTIONS_DIRS` | `.github/copilot-instructions.md` — repository-wide. Also reads `AGENTS.md` (**treated as primary instructions**; CLI + VS Code via `chat.useAgentsMdFile`; experimental nested: `chat.useNestedAgentsMdFiles`), `CLAUDE.md`, `GEMINI.md` at root. VS Code additionally reads `.claude/CLAUDE.md` and `CLAUDE.local.md` (workspace) and `~/.claude/CLAUDE.md` (user home) via `chat.useClaudeMdFile` |
 | **Path-specific** ★ | — | `.github/instructions/*.instructions.md` — YAML frontmatter `applyTo:` glob; optional `excludeAgent:` key to exclude from `code-review` or `cloud-agent`; searched recursively |
 | **Prompt files** ★ | — | `.github/prompts/*.prompt.md` — invoke via `#prompt:` or `/` |
-| **Custom agents** ◆ | `~/.copilot/agents/` — user-level agents (CLI/VS Code); `~/.github/agents/` — user-level agents (VS 2026, added April 2026 update) | `.github/agents/*.agent.md` (legacy: `.chatmode.md` files must be renamed to `.agent.md`) — YAML: name, description, tools, model, mcp-servers, target (`vscode`\|`github-copilot`), disable-model-invocation, user-invocable, metadata. (`handoffs`, `agents`, and `argument-hint` are VS Code-only fields; not supported for cloud agents on GitHub.com. `hooks` is **VS Code preview** — requires `chat.useCustomAgentHooks` setting.) `infer` field is **retired**; use `disable-model-invocation` + `user-invocable` instead. `.claude/agents/` — VS Code workspace agents (Claude format). Org: `.github-private` repo `agents/` dir |
+| **Custom agents** ◆ | `~/.copilot/agents/` — user-level agents (CLI/VS Code); `~/.github/agents/` — user-level agents (VS 2026, added April 2026 update) | `.github/agents/*.agent.md` (legacy: `.chatmode.md` files must be renamed to `.agent.md`) — YAML: name, description, tools, model, mcp-servers, target (`vscode`\|`github-copilot`), disable-model-invocation, user-invocable, metadata. (`handoffs`, `agents`, and `argument-hint` are VS Code-only fields; not supported for cloud agents on GitHub.com. `hooks` is **VS Code preview** — requires `chat.useCustomAgentHooks` setting.) `infer` field is **retired**; use `disable-model-invocation` + `user-invocable` instead. `.claude/agents/` — VS Code workspace agents (Claude format). Org: `.github` or `.github-private` repo `agents/` dir |
 | **Skills** ★ | `~/.copilot/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` (CLI); also `~/.claude/skills/*/SKILL.md` (VS Code only) ¹ | `.github/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** — all three discovered ¹; `gh skill` CLI (GitHub CLI ≥ 2.90.0, public preview) |
 | **MCP** ◆ | — | `.vscode/mcp.json` — VS Code project-level MCP (`.github/copilot/mcp.json` not confirmed in current docs) |
 
@@ -132,7 +132,7 @@ Home: `.cursor/` (project-centric)
 
 Home: `~/.vibe/` (`$VIBE_HOME`)
 
-> **Note:** Current version: 2.18.2 (June 29, 2026). Config surface has been stable since Vibe 2.0.
+> **Note:** Current version: 2.18.3 (June 30, 2026). Config surface has been stable since Vibe 2.0.
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
@@ -227,4 +227,4 @@ All paths use Unix notation; `~` = `%USERPROFILE%` on Windows. `$CODEX_HOME`, `$
 
 ---
 
-*Last verified: 20260630*
+*Last verified: 20260701*
