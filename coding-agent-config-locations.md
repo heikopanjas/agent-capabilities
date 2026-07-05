@@ -132,7 +132,7 @@ Home: `.cursor/` (project-centric)
 
 Home: `~/.vibe/` (`$VIBE_HOME`)
 
-> **Note:** Current version: 2.18.4 (July 1, 2026). Config surface has been stable since Vibe 2.0.
+> **Note:** Current version: 2.19.0 (July 3, 2026). Config surface has been stable since Vibe 2.0.
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
@@ -217,9 +217,9 @@ Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 
 - **`.agents/skills/`** — The cross-agent convention from the [agentskills.io client implementation guide](https://agentskills.io/client-implementation/adding-skills-support). The spec instructs all compliant clients to scan both their own native directory and `.agents/skills/`. Scanned by Codex, Copilot, OpenCode, Gemini CLI, Cursor, Vibe, and Pi among others. Symlink-friendly for a single canonical skill tree.
 
-- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), originated from collaborative efforts by OpenAI Codex, Amp, Jules (Google), Cursor, and Factory (August 2025); contributed by OpenAI and now stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation (founded December 2025). Tools listed on agents.md as of June 2026 (23 on main page; additional tools via 'View all supported agents' link): Codex (OpenAI), Jules (Google), Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin (Cognition), UiPath, Junie (JetBrains), Amp, Cursor, RooCode, Gemini CLI, Kilo Code, Phoenix, Semgrep, GitHub Copilot, Ona, Windsurf (Cognition), Augment Code. Over 60,000 open-source projects use AGENTS.md. (Note: Pi and Mistral Vibe support AGENTS.md but are not listed on agents.md.)
+- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), originated from collaborative efforts by OpenAI Codex, Amp, Jules (Google), Cursor, and Factory (August 2025); contributed by OpenAI and now stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation (founded December 2025). Tools listed on agents.md as of July 2026 (24 on main page; additional tools via 'View all supported agents' link): Codex (OpenAI), Jules (Google), Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin (Cognition), UiPath, Junie (JetBrains), Amp, Cursor, RooCode, Gemini CLI, Kilo Code, Phoenix, Semgrep, GitHub Copilot, Ona, Windsurf (Cognition), Augment Code. Over 60,000 open-source projects use AGENTS.md. (Note: Pi and Mistral Vibe support AGENTS.md but are not listed on agents.md.)
 
-- **`SKILL.md`** — [Agent Skills spec](https://agentskills.io/specification). No explicit version number in the spec itself — there is no top-level `version:` frontmatter field; skill package versioning goes under the `metadata:` map (e.g., `metadata:\n  version: "1.0"`). Originally developed by Anthropic (released 2025-12-18); now maintained by the independent `agentskills` org at [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills) (Apache 2.0 code / CC-BY-4.0 docs). Structure: `skill-name/{SKILL.md, scripts/, references/, assets/}`. `allowed-tools` frontmatter field is Experimental. Adopted by **~42 tools** on the live showcase (list has evolved significantly from prior verification).
+- **`SKILL.md`** — [Agent Skills spec](https://agentskills.io/specification). No explicit version number in the spec itself — there is no top-level `version:` frontmatter field; skill package versioning goes under the `metadata:` map (e.g., `metadata:\n  version: "1.0"`). Originally developed by Anthropic (released 2025-12-18); now maintained by the independent `agentskills` org at [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills) (Apache 2.0 code / CC-BY-4.0 docs). Structure: `skill-name/{SKILL.md, scripts/, references/, assets/}`. `allowed-tools` frontmatter field is Experimental. Adopted by **~40 tools** on the live showcase (list has evolved significantly from prior verification).
 
 - **Subagent format split:** Claude Code, Copilot (`.agent.md`), OpenCode, and Cursor define agents as Markdown + YAML frontmatter. Codex uses Markdown+YAML for Agent Skills; TOML is used only for Codex's own internal subagent profile definitions (`.codex/agents/*.toml`). Vibe uses TOML for its internal subagent config profiles and Markdown+YAML for SKILL.md skills.
 
@@ -227,4 +227,4 @@ All paths use Unix notation; `~` = `%USERPROFILE%` on Windows. `$CODEX_HOME`, `$
 
 ---
 
-*Last verified: 20260703*
+*Last verified: 20260705*
