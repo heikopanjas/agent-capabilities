@@ -40,7 +40,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           claude_args: >-
-            --model claude-sonnet-4-6
+            --model claude-sonnet-5
             --allowedTools WebSearch,WebFetch,Read,Write,Edit,Glob,Grep
           prompt: |
             You are refreshing a reference document about coding-agent
@@ -101,7 +101,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           claude_args: >-
-            --model claude-sonnet-4-6
+            --model claude-sonnet-5
             --allowedTools WebSearch,WebFetch,Read,Write,Edit,Glob,Grep
           prompt: |
             You are refreshing a reference document about coding-agent
