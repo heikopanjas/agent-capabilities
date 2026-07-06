@@ -32,7 +32,7 @@ Home: `~/.claude/`
 | **Workflows** ◆ | `~/.claude/workflows/*.js` — JavaScript multi-agent orchestration scripts | `.claude/workflows/*.js` — each file becomes a named workflow command via `/workflows` |
 | **Output styles** ◆ | `~/.claude/output-styles/*.md` — custom response format styles (frontmatter-based) | `.claude/output-styles/*.md` |
 | **Worktrees** ◆ | — | `<repo>/.worktreeinclude` — lists gitignored files to copy into new worktrees; `.gitignore` syntax |
-| **MCP** ★ | `~/.claude.json` — global MCP server config; `managed-mcp.json` in system dirs for enterprise | `<repo>/.mcp.json` |
+| **MCP** ★ | `~/.claude.json` — global MCP server config; enterprise `managed-mcp.json` at `/etc/claude-code/managed-mcp.json` (Linux/WSL) · `/Library/Application Support/ClaudeCode/managed-mcp.json` (macOS) · `C:\Program Files\ClaudeCode\managed-mcp.json` (Windows) | `<repo>/.mcp.json` |
 
 **Sources:**
 [Memory & instructions](https://code.claude.com/docs/en/memory) ·
@@ -48,7 +48,7 @@ Home: `~/.claude/`
 
 Home: `~/.codex/` (`$CODEX_HOME`)
 
-> **Rust rewrite complete:** The TypeScript CLI was gradually phased out through late 2025 (no formal retirement date announced). The current codebase is 96.6% Rust (`codex-rs/`), production-stable since June 2025, with a ~2 releases/day cadence. Core config paths are stable post-transition.
+> **Rust rewrite complete:** The TypeScript CLI was gradually phased out through late 2025 (no formal retirement date announced). The current codebase is ~95.6% Rust (`codex-rs/`), production-stable since June 2025, with a ~2 releases/day cadence. Core config paths are stable post-transition. (A separate TypeScript **SDK**, `sdk/typescript`, still exists and is unrelated to the retired TS CLI.)
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
@@ -59,7 +59,7 @@ Home: `~/.codex/` (`$CODEX_HOME`)
 | **Rules** ◆ | `~/.codex/rules/default.rules` — Starlark syntax; written by TUI allow-command | `.codex/rules/` |
 | **Hooks** ◆ | `~/.codex/hooks.json` — or inline `[hooks]` table in `config.toml` (Rust-era addition; merges both if present in same layer) | `.codex/hooks.json`; or inline `[hooks]` in `.codex/config.toml` |
 | **MCP** ◆ | `[mcp_servers]` in `~/.codex/config.toml` | `[mcp_servers]` in `.codex/config.toml` |
-| **Plugins** ◆ | — | `.codex-plugin/plugin.json` — bundles skills, MCP configs, and hooks |
+| **Plugins** ◆ | `~/.agents/plugins/marketplace.json` — personal plugin marketplace catalog; installed plugins under `~/.codex/plugins/` | `.codex-plugin/plugin.json` — manifest bundling `skills/`, `.mcp.json`, and `hooks/hooks.json` (not a top-level `hooks.json`); repo marketplace at `.agents/plugins/marketplace.json` with plugins under `plugins/` |
 
 **Sources:**
 [AGENTS.md discovery](https://developers.openai.com/codex/guides/agents-md) ·
@@ -85,7 +85,7 @@ Home: `~/.copilot/` · `~/.github/`
 | **Prompt files** ★ | — | `.github/prompts/*.prompt.md` — invoke via `#prompt:` or `/` |
 | **Custom agents** ◆ | `~/.copilot/agents/` — user-level agents (CLI/VS Code); `~/.github/agents/` — user-level agents (VS 2026, added April 2026 update) | `.github/agents/*.agent.md` (legacy: `.chatmode.md` files must be renamed to `.agent.md`) — YAML: name, description, tools, model, mcp-servers, target (`vscode`\|`github-copilot`), disable-model-invocation, user-invocable, metadata. (`handoffs`, `agents`, and `argument-hint` are VS Code-only fields; not supported for cloud agents on GitHub.com. `hooks` is **VS Code preview** — requires `chat.useCustomAgentHooks` setting.) `infer` field is **retired**; use `disable-model-invocation` + `user-invocable` instead. `.claude/agents/` — VS Code workspace agents (Claude format). Org: `.github` or `.github-private` repo `agents/` dir |
 | **Skills** ★ | `~/.copilot/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` (CLI); also `~/.claude/skills/*/SKILL.md` (VS Code only) ¹ | `.github/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** — all three discovered ¹; `gh skill` CLI (GitHub CLI ≥ 2.90.0, public preview) |
-| **MCP** ◆ | — | `.vscode/mcp.json` — VS Code project-level MCP (`.github/copilot/mcp.json` not confirmed in current docs) |
+| **MCP** ◆ | `~/.copilot/mcp-config.json` — CLI, `mcpServers` key. VS Code: user-profile `mcp.json` via "MCP: Open User Configuration" command, `servers` key | `.vscode/mcp.json` — VS Code project-level MCP, `servers` key (`.github/copilot/mcp.json` and a distinct CLI project-level path not confirmed in current docs). Key name diverges by surface: CLI uses `mcpServers`, VS Code uses `servers` |
 
 **Sources:**
 [Custom instructions (CLI)](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) ·
@@ -106,9 +106,9 @@ Home: `.cursor/` (project-centric)
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
-| **Instructions** ★ | User Rules (Customize → Rules) — plain text; always applied | `<repo>/AGENTS.md` — root level and subdirectories; plain-markdown alternative to `.cursor/rules`. Legacy: `.cursorrules` (deprecated since ~v0.43; officially deprecated and undocumented but still functional as of June 2026 — migrate to `.cursor/rules/`) |
-| **Rules** ★ | — | `.cursor/rules/*.mdc` — YAML frontmatter: `alwaysApply`, `description`, `globs`. 4 modes: Always Apply, Apply Intelligently, Apply to Specific Files, Apply Manually. (`.md` files in this directory are ignored; use `.mdc`.) Subdirectory grouping supported. Remote rules imported from GitHub live at `.cursor/rules/imported/<repoName>/path/to/rule.mdc` |
-| **Commands** ◆ | `~/.cursor/commands/*.md` — user-global, all projects (**deprecated** as of v2.4; removed from official docs — migrate via `/migrate-to-skills`) | `.cursor/commands/*.md` — invoke via `/`; filename becomes command name — **deprecated** as of v2.4 (January 22, 2026); removed from official docs; use `/migrate-to-skills` to convert to skills/subagents |
+| **Instructions** ★ | User Rules (Customize → Rules) — plain text; always applied. As of v3.9 (Jun 22, 2026) a unified "Customize" page also centrally manages rules/skills/MCP/subagents/commands/hooks at user/team/workspace scope | `<repo>/AGENTS.md` — root level and subdirectories; plain-markdown alternative to `.cursor/rules`. Legacy: `.cursorrules` (deprecated since ~v0.43; officially deprecated and undocumented but still functional as of June 2026 — migrate to `.cursor/rules/`) |
+| **Rules** ★ | — | `.cursor/rules/*.mdc` — YAML frontmatter: `alwaysApply`, `description`, `globs`. 4 modes: Always Apply, Apply Intelligently, Apply to Specific Files, Apply Manually. (`.md` files in this directory are ignored; use `.mdc`.) Subdirectory grouping supported. Remote rules imported from GitHub ○ — official docs don't document an exact path; community reports (2026) point to `~/.cursor/projects/<project_name>/rules/<github_repo_name>/`, not the `.cursor/rules/imported/` path previously assumed here — treat as unverified |
+| **Commands** ◆ | `~/.cursor/commands/*.md` — user-global, all projects; still fully supported and documented (not deprecated) | `.cursor/commands/*.md` — invoke via `/`; filename becomes command name. Still fully supported — official "Agent Best Practices" docs recommend committing these to git. As of v3.9 (Jun 22, 2026) folded into the unified "Customize" page alongside skills/rules/MCP/subagents/hooks (a UI consolidation, not a deprecation). `/migrate-to-skills` (~v2.4) remains available as an *optional* converter for "Apply Intelligently" rules and slash commands into skills |
 | **Skills** ◆ | `~/.cursor/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — primary; `~/.claude/skills/*/SKILL.md`, `~/.codex/skills/*/SKILL.md` — legacy compat ² | `.cursor/skills/*/SKILL.md`, `.agents/skills/*/SKILL.md` — primary; `.claude/skills/*/SKILL.md`, `.codex/skills/*/SKILL.md` — legacy compat ² — agentskills.io; loaded on demand. SKILL.md: `paths` field (current) scopes activation by glob; `globs` is now the legacy alias |
 | **Subagents** ◆ | `~/.cursor/agents/*.md` — user-level; compat: `~/.claude/agents/`, `~/.codex/agents/` | Markdown+YAML files in `.cursor/agents/` (project primary); compat: `.claude/agents/`, `.codex/agents/`; `.cursor/` takes precedence on name conflict. Fields: `name`, `description`, `model` (default `inherit`), `readonly`, `is_background`. Background agents write output to `~/.cursor/subagents/`. Parallel (v2.4+); nested tree (v2.5+). `.cursor/worktrees.json` — setup commands; searched in worktree path first, then project root |
 | **Hooks** ◆ | `~/.cursor/hooks.json`; hook scripts in `~/.cursor/hooks/`; Enterprise: `/Library/Application Support/Cursor/hooks.json` (macOS) · `/etc/cursor/hooks.json` (Linux) · `C:\ProgramData\Cursor\hooks.json` (Windows) | `.cursor/hooks.json`; hook scripts in `.cursor/hooks/` — camelCase event names (`preToolUse`/`postToolUse`); `loop_limit` defaults to 5; `failClosed` boolean (default `false`) blocks action on hook failure; supports `type: "prompt"` (LLM-evaluated condition); NOT identical to Claude Code hooks format (PascalCase, unlimited). Priority: Enterprise → Team → Project → User |
@@ -132,18 +132,18 @@ Home: `.cursor/` (project-centric)
 
 Home: `~/.vibe/` (`$VIBE_HOME`)
 
-> **Note:** Current version: 2.19.0 (July 3, 2026). Config surface has been stable since Vibe 2.0.
+> **Note:** Current version: 2.19.0 (July 3, 2026). Core config paths stable since Vibe 2.0, though several features were added after: AGENTS.md parent-folder walking and `.agents/skills/` discovery (2.5.0), `~/.agents/skills` (2.11.0), hooks introduced (2.9.0) then breaking-changed (2.15.0), project-config persistence (2.18.3).
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
 | **Instructions** ◆ | `~/.vibe/AGENTS.md` (or `$VIBE_HOME/AGENTS.md`) — user-level instruction file; official docs confirm this path | `<repo>/AGENTS.md` — walks cwd upward within trusted folders (official docs confirm path traversal within trusted project directories; single-root workspace recommended) |
 | **Config** ◆ | `~/.vibe/config.toml` — fallback | `.vibe/config.toml` — project-local, checked first |
 | **System prompts** ◆ | `~/.vibe/prompts/*.md` — set `system_prompt_id` or `compaction_prompt_id` in config.toml | `.vibe/prompts/*.md` |
-| **Skills** ◆ | `~/.vibe/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — agentskills.io; invoke via `/`. Custom paths via `skill_paths` in config.toml ○ unconfirmed | `.vibe/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** (trusted folders only) |
-| **Agents** ◆ | `~/.vibe/agents/*.toml` — `display_name`, `safety`, `enabled_tools` | `.vibe/agents/*.toml` — subagents: `agent_type = "subagent"`; user-facing selectable agents: `agent_type = "agent"` |
-| **API keys** ◆ | `~/.vibe/.env` — auto-loaded; env vars take precedence | — |
-| **Hooks** ○ | `~/.vibe/hooks.toml` — `pre_tool_call`/`post_tool_call`/`post_agent_turn` lifecycle events; enable via `enable_experimental_hooks = true` in `config.toml` or `VIBE_ENABLE_EXPERIMENTAL_HOOKS` env var (experimental, still required as of v2.18.4) | `.vibe/hooks.toml` |
-| **Trust / misc** ◆ | `~/.vibe/trusted_folders.toml` (○ filename unconfirmed) — trust management. `~/.vibe/tools/` — custom tools. `~/.vibe/logs/` — session logs. `~/.vibe/sessions/` — session storage | — |
+| **Skills** ◆ | `~/.vibe/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — agentskills.io; invoke via `/`. Custom paths via `skill_paths` in config.toml, plus `enabled_skills`/`disabled_skills` | `.vibe/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** (trusted folders only) |
+| **Agents** ◆ | `~/.vibe/agents/*.toml` — `display_name`, `safety` (safe/neutral/destructive/yolo; display-only), `enabled_tools` | `.vibe/agents/*.toml` — subagents: `agent_type = "subagent"`; user-facing selectable agents: `agent_type = "agent"` |
+| **API keys** ◆ | `~/.vibe/.env` — auto-loaded; env vars (e.g. `MISTRAL_API_KEY`) take precedence | — |
+| **Hooks** ○ | `~/.vibe/hooks.toml` — `before_tool`/`after_tool`/`post_agent_turn` lifecycle events (renamed from earlier `pre_tool_call`/`post_tool_call` naming in v2.15.0, which also made hooks require exit code 0); enable via `enable_experimental_hooks = true` in `config.toml` or `VIBE_ENABLE_EXPERIMENTAL_HOOKS` env var (experimental, still required as of v2.19.0) | `.vibe/hooks.toml` |
+| **Trust / misc** ◆ | `~/.vibe/trusted_folders.toml` — trust management (e.g. `trusted = ["~/projects", ...]`). `~/.vibe/tools/` — custom tools. `~/.vibe/logs/` — session logs (○ a separate `~/.vibe/sessions/` dir is asserted by some sources but not confirmed in official docs — session state may live under `logs/` instead) | — |
 
 **Sources:**
 [Configuration](https://docs.mistral.ai/mistral-vibe/terminal/configuration) ·
@@ -165,7 +165,7 @@ Home: `~/.config/opencode/`
 | **Config** ★ | `~/.config/opencode/opencode.json` (or `.jsonc`). TUI settings: `tui.json` (or `.jsonc`; legacy `tui` key in `opencode.json` deprecated). System/managed: `/etc/opencode/` (Linux) · `/Library/Application Support/opencode/` (macOS) · `%ProgramData%\opencode` (Windows). Env overrides: `OPENCODE_CONFIG` (custom file path), `OPENCODE_CONFIG_DIR` (replaces `~/.config/opencode/`), `OPENCODE_CONFIG_CONTENT` (inline JSON), `OPENCODE_TUI_CONFIG`. Config values support `{env:VAR}` and `{file:path}` interpolation | `<repo>/opencode.json`. Remote/org config: `.well-known/opencode` (lowest precedence; fetched on provider auth) |
 | **Commands** ★ | `~/.config/opencode/commands/*.md` — invoke via `/` in the TUI | `.opencode/commands/*.md` — filename becomes command name |
 | **Skills** ★ | `~/.config/opencode/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` | `.opencode/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** — walks cwd→git root. Claude compat discovery gated by `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS` / `OPENCODE_DISABLE_CLAUDE_CODE` |
-| **Modes** ○ | `~/.config/opencode/modes/*.md` | `.opencode/modes/*.md` — custom conversation modes |
+| **Modes** ○ | *(deprecated)* `~/.config/opencode/modes/*.md` — no official docs page remains (404); folded into the Agents row's `mode` field (`primary`\|`subagent`\|`all`) | *(deprecated)* `.opencode/modes/*.md` — same; may still load for backward compatibility but is no longer independently documented |
 | **Agents** ★ | `~/.config/opencode/agents/*.md` — YAML: description, model, temperature, top_p, mode (`primary`\|`subagent`\|`all`), permission, color, steps, disable, hidden | `.opencode/agents/*.md` — primary (Tab) or subagent (@ invoke) |
 
 **Sources:**
@@ -217,7 +217,7 @@ Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 
 - **`.agents/skills/`** — The cross-agent convention from the [agentskills.io client implementation guide](https://agentskills.io/client-implementation/adding-skills-support). The spec instructs all compliant clients to scan both their own native directory and `.agents/skills/`. Scanned by Codex, Copilot, OpenCode, Gemini CLI, Cursor, Vibe, and Pi among others. Symlink-friendly for a single canonical skill tree.
 
-- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), originated from collaborative efforts by OpenAI Codex, Amp, Jules (Google), Cursor, and Factory (August 2025); contributed by OpenAI and now stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation (founded December 2025). Tools listed on agents.md as of July 2026 (24 on main page; additional tools via 'View all supported agents' link): Codex (OpenAI), Jules (Google), Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin (Cognition), UiPath, Junie (JetBrains), Amp, Cursor, RooCode, Gemini CLI, Kilo Code, Phoenix, Semgrep, GitHub Copilot, Ona, Windsurf (Cognition), Augment Code. Over 60,000 open-source projects use AGENTS.md. (Note: Pi and Mistral Vibe support AGENTS.md but are not listed on agents.md.)
+- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), originated from collaborative efforts by OpenAI Codex, Amp, Jules (Google), Cursor, and Factory (August 2025); contributed by OpenAI and now stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation (founded December 2025). Tools listed on agents.md as of July 2026 (23 on main page; additional tools via 'View all supported agents' link): Codex (OpenAI), Jules (Google), Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin (Cognition), UiPath, Junie (JetBrains), Amp, Cursor, RooCode, Gemini CLI, Kilo Code, Phoenix, Semgrep, GitHub Copilot, Ona, Windsurf (Cognition), Augment Code. Over 60,000 open-source projects use AGENTS.md. (Note: Pi and Mistral Vibe support AGENTS.md but are not listed on agents.md.)
 
 - **`SKILL.md`** — [Agent Skills spec](https://agentskills.io/specification). No explicit version number in the spec itself — there is no top-level `version:` frontmatter field; skill package versioning goes under the `metadata:` map (e.g., `metadata:\n  version: "1.0"`). Originally developed by Anthropic (released 2025-12-18); now maintained by the independent `agentskills` org at [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills) (Apache 2.0 code / CC-BY-4.0 docs). Structure: `skill-name/{SKILL.md, scripts/, references/, assets/}`. `allowed-tools` frontmatter field is Experimental. Adopted by **~40 tools** on the live showcase (list has evolved significantly from prior verification).
 
@@ -227,4 +227,4 @@ All paths use Unix notation; `~` = `%USERPROFILE%` on Windows. `$CODEX_HOME`, `$
 
 ---
 
-*Last verified: 20260705*
+*Last verified: 20260706*
