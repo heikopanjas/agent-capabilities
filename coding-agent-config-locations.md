@@ -216,6 +216,230 @@ Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 
 ---
 
+## Aider — open source
+
+Home: configuration is file-based; no dedicated home directory
+
+| Feature | Global (user) | Project (repo) |
+|---|---|---|
+| **Instructions / conventions** ◆ | Any file passed with `--read`; persist it via `read:` in `~/.aider.conf.yml` | Convention files such as `CONVENTIONS.md`, loaded with `/read` or `--read`; persist via `read:` in the repo's `.aider.conf.yml` |
+| **Config** ◆ | `~/.aider.conf.yml`; environment variables `AIDER_*`; optional `.env` | `<git-root>/.aider.conf.yml`, `<cwd>/.aider.conf.yml`; `.env` defaults to the git root. CLI flags override file settings |
+| **Model config** ◆ | Paths selected by `model-settings-file` and `model-metadata-file`; commonly `.aider.model.settings.yml` and `.aider.model.metadata.json` | Same keys can point to repo-local files |
+| **History** ◆ | — | `.aider.chat.history.md` and `.aider.input.history` by default; filenames are configurable |
+| **Skills / subagents / MCP** ◆ | No native Agent Skills, subagent-definition, or MCP configuration convention documented | *(same)* |
+
+**Sources:**
+[Configuration](https://aider.chat/docs/config.html) ·
+[YAML config reference](https://aider.chat/docs/config/aider_conf.html) ·
+[Coding conventions](https://aider.chat/docs/usage/conventions.html)
+
+---
+
+## Cline — Cline Bot Inc.
+
+Home: `~/.cline/` (CLI/SDK/Kanban; IDE integrations also use platform storage)
+
+| Feature | Global (user) | Project (repo) |
+|---|---|---|
+| **Instructions / rules** ◆ | `~/.cline/rules/`, `~/.agents/AGENTS.md`; compatibility search path `~/Documents/Cline/Rules/` (Linux may also use `~/Cline/Rules/`) | `.cline/rules/` and primary legacy-compatible `.clinerules/`; also reads `AGENTS.md`, `.cursorrules`, and `.windsurfrules`. Conditional rules use `paths:` YAML frontmatter |
+| **Settings** ◆ | `~/.cline/data/settings/providers.json`, `global-settings.json`, and `cline_mcp_settings.json`; `CLINE_DATA_DIR` replaces `~/.cline/data/` | Project behavior is stored in `.cline/` subdirectories; secrets stay in global provider settings |
+| **Skills** ◆ | `~/.cline/skills/*/SKILL.md` | `.cline/skills/*/SKILL.md` (recommended), `.clinerules/skills/`, `.claude/skills/`; experimental, progressive disclosure |
+| **Agents** ◆ | `~/.cline/agents/` | `.cline/agents/` |
+| **Hooks** ◆ | `~/.cline/hooks/`; compatibility `~/Documents/Cline/Hooks/` | `.cline/hooks/` and `.clinerules/hooks/`; lifecycle scripts receive/return JSON |
+| **Workflows / plugins** ◆ | `~/.cline/data/workflows/`, `~/.cline/plugins/`; compatibility under `~/Documents/Cline/` | `.cline/plugins/`; project workflows are supported by Cline's configuration system |
+| **MCP** ◆ | `~/.cline/data/settings/cline_mcp_settings.json` | Managed through Cline settings; no separate committed project MCP filename documented |
+
+**Sources:**
+[Configuration and storage](https://docs.cline.bot/getting-started/config) ·
+[Rules](https://docs.cline.bot/customization/cline-rules) ·
+[Skills](https://docs.cline.bot/customization/skills) ·
+[Hooks](https://docs.cline.bot/customization/hooks) ·
+[MCP](https://docs.cline.bot/mcp/mcp-overview)
+
+---
+
+## Continue — Continue Dev, Inc.
+
+Home: `~/.continue/`
+
+| Feature | Global (user) | Project (repo) |
+|---|---|---|
+| **Config / agents** ◆ | `~/.continue/config.yaml` — models, context, rules, prompts, docs, and MCP servers; `config.json` and `config.ts` are legacy | Local blocks under `.continue/`; the CLI can load any YAML config with `--config <path>` |
+| **Rules** ◆ | Rules can be embedded or referenced from `config.yaml` | `.continue/rules/*.md` (recommended; YAML is also accepted); optional `globs` frontmatter |
+| **Prompts** ◆ | Declared or referenced under `prompts:` in `config.yaml` | Local prompt blocks can be referenced from workspace configuration and invoked as slash commands |
+| **Models / tools** ◆ | `~/.continue/config.yaml`; reusable global blocks | `.continue/models/`, `.continue/mcpServers/`; workspace blocks apply to all configs |
+| **MCP** ◆ | `mcpServers:` in `~/.continue/config.yaml` | `.continue/mcpServers/*.yaml`; MCP tools are available in Agent mode |
+| **Secrets / permissions** ◆ | `~/.continue/.env`; Continue CLI decisions in `~/.continue/permissions.yaml` | `<repo>/.env` or `.continue/.env`; workspace secrets take precedence |
+
+**Sources:**
+[Configuration](https://docs.continue.dev/cli/configuration) ·
+[`config.yaml` reference](https://docs.continue.dev/reference) ·
+[Models, rules, and tools](https://docs.continue.dev/guides/configuring-models-rules-tools) ·
+[Rules](https://docs.continue.dev/customize/rules) ·
+[MCP examples](https://docs.continue.dev/customize/deep-dives/mcp-examples)
+
+---
+
+## Devin — Cognition
+
+Home: cloud-managed; configuration is primarily organization- and repository-scoped in the Devin web app
+
+| Feature | Global (user / organization) | Project (repo) |
+|---|---|---|
+| **Instructions / knowledge** ◆ | Knowledge and Enterprise Knowledge are managed in Settings & Library; items can be pinned to all repos, one repo, or retrieved by triggers | Root `AGENTS.md` is recommended; Devin also imports specialized files including `CLAUDE.md`, `.cursorrules`, `.mdc`, and `.windsurf` into repo knowledge |
+| **Skills** ◆ | — | Agent Skills live in the repository as `*/SKILL.md` packages and are discovered automatically or invoked with `@skills:<name>` |
+| **Playbooks** ◆ | Managed in the Devin web app; reusable organization- or enterprise-scoped prompts attached manually to sessions | — |
+| **Environment** ◆ | Environment snapshots, secrets, and repository access are managed in Devin settings | Declarative environment blueprints are version-controlled YAML; `.envrc` can provide repo environment variables and should normally be gitignored |
+| **MCP** ◆ | Settings → MCP Marketplace; custom stdio, SSE, and HTTP servers are entered through the UI or API | No committed repo-level MCP file documented |
+
+**Sources:**
+[Knowledge](https://docs.devin.ai/product-guides/knowledge) ·
+[Knowledge onboarding](https://docs.devin.ai/onboard-devin/knowledge-onboarding) ·
+[Skills](https://docs.devin.ai/product-guides/skills) ·
+[Environment configuration](https://docs.devin.ai/onboard-devin/environment) ·
+[MCP Marketplace](https://docs.devin.ai/work-with-devin/mcp)
+
+---
+
+## Gemini CLI — Google
+
+Home: `~/.gemini/`
+
+| Feature | Global (user) | Project (repo) |
+|---|---|---|
+| **Instructions** ◆ | `~/.gemini/GEMINI.md` | Hierarchical `GEMINI.md`; filename(s) configurable via `context.fileName`, enabling `AGENTS.md`. Supports `@file` imports |
+| **Settings** ◆ | `~/.gemini/settings.json`; system defaults/overrides under `/etc/gemini-cli/` (Linux), `/Library/Application Support/GeminiCli/` (macOS), or `C:\ProgramData\gemini-cli\` (Windows) | `.gemini/settings.json`; project settings override user settings but are overridden by system policy, environment, and CLI arguments |
+| **Skills** ◆ | `~/.gemini/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` | `.gemini/skills/*/SKILL.md`, `.agents/skills/*/SKILL.md`; workspace skills require trust; cross-agent alias wins within a scope |
+| **Subagents** ◆ | `~/.gemini/agents/*.md` | `.gemini/agents/*.md` — Markdown + YAML; local or A2A remote agents; subagents cannot recursively call subagents |
+| **Commands** ◆ | `~/.gemini/commands/*.toml` | `.gemini/commands/*.toml`; project commands override user commands; subdirectories create `:` namespaces |
+| **Hooks** ◆ | `hooks` object in `~/.gemini/settings.json` | `hooks` in `.gemini/settings.json`; extension hooks are lowest precedence |
+| **MCP** ◆ | `mcpServers` in `~/.gemini/settings.json` | `mcpServers` in `.gemini/settings.json`; agent definitions may contain isolated inline MCP servers |
+| **Extensions** ◆ | `~/.gemini/extensions/<name>/gemini-extension.json` | Extensions can bundle context, commands, skills, hooks, themes, and MCP servers; workspace settings override conflicts |
+
+**Sources:**
+[Configuration](https://geminicli.com/docs/get-started/configuration-v1/) ·
+[`GEMINI.md`](https://geminicli.com/docs/cli/gemini-md/) ·
+[Agent Skills](https://geminicli.com/docs/cli/skills/) ·
+[Subagents](https://geminicli.com/docs/core/subagents/) ·
+[Custom commands](https://geminicli.com/docs/cli/custom-commands/) ·
+[Hooks](https://geminicli.com/docs/hooks/) ·
+[MCP](https://geminicli.com/docs/tools/mcp-server/) ·
+[Extensions](https://geminicli.com/docs/extensions/reference/)
+
+---
+
+## Goose — Agentic AI Foundation
+
+Home: `~/.config/goose/` (macOS/Linux) · `%APPDATA%\Block\goose\config\` (Windows)
+
+| Feature | Global (user) | Project (repo) |
+|---|---|---|
+| **Instructions** ◆ | `~/.config/goose/.goosehints`; also reads `~/.agents/AGENTS.md` through configurable context filenames | Hierarchical `.goosehints` and `AGENTS.md` from cwd to git root and nested directories; `CONTEXT_FILE_NAMES` adds alternatives |
+| **Config** ◆ | `~/.config/goose/config.yaml`; `permission.yaml`, `secrets.yaml`, and `permissions/tool_permissions.json` alongside it | Environment variables override global config; no separate project config file documented |
+| **Skills** ◆ | `~/.agents/skills/*/SKILL.md`, `~/.config/goose/skills/*/SKILL.md`, plus Claude-compatible paths | `.agents/skills/*/SKILL.md`, `.goose/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`; project paths precede global paths |
+| **Recipes / commands** ◆ | `~/.config/goose/recipes/*.{yaml,json}`; recipe-backed slash commands configured in `config.yaml` | `.goose/recipes/*.{yaml,json}` |
+| **MCP / extensions** ◆ | `extensions:` in `~/.config/goose/config.yaml`; built-in and stdio MCP extensions | Recipes can declare required extensions; no separate repo MCP file documented |
+| **Prompts / permissions** ◆ | `~/.config/goose/prompts/`, `permission.yaml`, and runtime permission decisions | Project hints and recipes provide committed behavior |
+
+**Sources:**
+[Configuration files](https://github.com/aaif-goose/goose/blob/main/documentation/docs/guides/config-files.md) ·
+[Project hints](https://github.com/aaif-goose/goose/blob/main/documentation/docs/guides/context-engineering/using-goosehints.md) ·
+[Recipes](https://github.com/aaif-goose/goose/blob/main/documentation/docs/guides/recipes/storing-recipes.md) ·
+[Goose repository](https://github.com/aaif-goose/goose)
+
+---
+
+## Hermes Agent — Nous Research
+
+Home: `~/.hermes/` (profiles may use an alternate home)
+
+| Feature | Global (user) | Project (repo) |
+|---|---|---|
+| **Instructions / identity** ◆ | `~/.hermes/SOUL.md` — primary identity | First matching context type wins: `.hermes.md` → `AGENTS.md` → `CLAUDE.md` → `.cursorrules`; hierarchical `AGENTS.md` files are combined |
+| **Config / secrets** ◆ | `~/.hermes/config.yaml`, `.env`, `auth.json`; precedence: CLI → config.yaml → .env → defaults | No separate project configuration file documented; working directory and backend are selected globally or per invocation |
+| **Skills** ◆ | `~/.hermes/skills/*/SKILL.md` — primary source of truth; external directories configurable | Plans created by the bundled plan skill land under `.hermes/plans/`; project-local skills are not a default discovery path |
+| **Memory** ◆ | `~/.hermes/memories/MEMORY.md` and `USER.md`; optional external memory providers configured in `config.yaml` | Cross-session search and sessions are stored under `~/.hermes/`; no committed project memory convention documented |
+| **MCP** ◆ | `mcp_servers:` in `~/.hermes/config.yaml`; catalog installations are managed with `hermes mcp` | No separate project MCP file documented |
+| **Automation** ◆ | `~/.hermes/cron/`, sessions, logs, messaging gateway config, and tool settings | Workspace artifacts created by skills may live under `.hermes/` |
+
+**Sources:**
+[Configuration](https://hermes-agent.nousresearch.com/docs/user-guide/configuration/) ·
+[Context and identity](https://hermes-agent.nousresearch.com/docs/user-guide/configuration/#personality--soulmd) ·
+[Skills](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills/) ·
+[Memory](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory/) ·
+[MCP](https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp/)
+
+---
+
+## Kiro — Amazon Web Services
+
+Home: `~/.kiro/`
+
+| Feature | Global (user) | Project (repo) |
+|---|---|---|
+| **Instructions / steering** ◆ | `~/.kiro/steering/*.md`; global `AGENTS.md` is supported there | `.kiro/steering/*.md`; root `AGENTS.md` is supported; steering modes include always, automatic, file-match, and manual |
+| **Settings** ◆ | `~/.kiro/settings/cli.json` | Project configuration is stored under `.kiro/`; no project `cli.json` documented |
+| **Skills** ◆ | `~/.kiro/skills/*/SKILL.md` | `.kiro/skills/*/SKILL.md`; workspace skill wins on name conflict; Agent Skills standard |
+| **Custom agents** ◆ | `~/.kiro/agents/` | `.kiro/agents/`; agent configuration can embed MCP servers, hooks, tools, permissions, and steering resources |
+| **Prompts** ◆ | `~/.kiro/prompts/` | `.kiro/prompts/`; project prompts override global prompts |
+| **MCP** ◆ | `~/.kiro/settings/mcp.json` | `.kiro/settings/mcp.json`; resolution: Agent > Project > Global |
+| **Specs / hooks** ◆ | Hooks may be embedded in custom-agent configuration | `.kiro/specs/` and `.kiro/hooks/`; IDE and CLI support lifecycle/tool hooks, with the current CLI agent schema also allowing inline hooks |
+
+**Sources:**
+[CLI configuration](https://kiro.dev/docs/cli/chat/configuration/) ·
+[Agent configuration](https://kiro.dev/docs/cli/custom-agents/configuration-reference/) ·
+[Agent Skills](https://kiro.dev/docs/skills/) ·
+[Steering](https://kiro.dev/docs/web/steering/) ·
+[Getting started](https://kiro.dev/docs/getting-started/first-project/)
+
+---
+
+## OpenHands — OpenHands / All Hands AI
+
+Home: `~/.openhands/` for local state; cloud settings are managed in the UI
+
+| Feature | Global (user) | Project (repo) |
+|---|---|---|
+| **Instructions** ◆ | User skills under `~/.agents/skills/` | Root `AGENTS.md` (recommended); `GEMINI.md` and `CLAUDE.md` supported as model-specific permanent context |
+| **Settings** ◆ | CLI: `~/.openhands/settings.json` and `agent_settings.json`; state root controlled by `OH_PERSISTENCE_DIR` | `.openhands/setup.sh` runs when work begins; `.openhands/hooks.json` customizes lifecycle/tool execution |
+| **Skills** ◆ | `~/.agents/skills/*/SKILL.md`; deprecated `~/.openhands/skills/` and `microagents/` fallbacks | `.agents/skills/*/SKILL.md` (recommended), including legacy `.md` skills; deprecated `.openhands/skills/` and `.openhands/microagents/` |
+| **Agents** ◆ | `~/.agents/agents/*.md`, fallback `~/.openhands/agents/*.md` | `.agents/agents/*.md`, fallback `.openhands/agents/*.md`; project definitions take precedence |
+| **MCP** ◆ | `~/.openhands/mcp.json` for CLI; cloud/local GUI settings through the UI | No separate committed project MCP filename documented |
+| **History / persistence** ◆ | `~/.openhands/conversations/`; `OH_PERSISTENCE_DIR` changes the state root | Repository setup and hooks are committed under `.openhands/` |
+
+**Sources:**
+[CLI installation and settings](https://docs.openhands.dev/openhands/usage/cli/installation) ·
+[Skills overview](https://docs.openhands.dev/overview/skills) ·
+[File-based agents](https://docs.openhands.dev/sdk/guides/agent-file-based) ·
+[Repository customization](https://docs.openhands.dev/openhands/usage/customization/repository) ·
+[MCP](https://docs.openhands.dev/openhands/usage/cli/mcp-servers) ·
+[Configuration](https://docs.openhands.dev/openhands/usage/advanced/configuration-options)
+
+---
+
+## Windsurf / Devin Desktop — Cognition
+
+Home: `~/.codeium/windsurf/` (legacy product paths remain active after the Cognition integration)
+
+| Feature | Global (user) | Project (repo) |
+|---|---|---|
+| **Instructions / rules** ◆ | `~/.codeium/windsurf/memories/global_rules.md`; system rules use OS-level `Devin/rules/` with `Windsurf/rules/` fallback | `.devin/rules/*.md` (preferred), `.windsurf/rules/*.md` fallback, legacy `.windsurfrules`; hierarchical `AGENTS.md` is supported |
+| **Memory** ◆ | Workspace-scoped generated memories are stored under `~/.codeium/windsurf/memories/` | Memories are local and not committed; durable team context should use rules or `AGENTS.md` |
+| **Skills** ◆ | `~/.codeium/windsurf/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` | `.windsurf/skills/*/SKILL.md`, `.agents/skills/*/SKILL.md`; optional Claude-compatible discovery |
+| **Workflows** ◆ | `~/.codeium/windsurf/global_workflows/*.md` | `.windsurf/workflows/*.md`; manual `/name` invocation; discovered through subdirectories and parents to git root |
+| **Hooks** ◆ | `~/.codeium/windsurf/hooks.json`; JetBrains plugin: `~/.codeium/hooks.json` | `.windsurf/hooks.json`; system → user → workspace merge order; pre-hooks can block with exit code 2 |
+| **MCP** ◆ | `~/.codeium/windsurf/mcp_config.json`; MCP Marketplace and enterprise allowlists | No separate committed project MCP filename documented |
+
+**Sources:**
+[Memories and rules](https://docs.devin.ai/desktop/cascade/memories) ·
+[Skills](https://docs.devin.ai/desktop/cascade/skills) ·
+[Workflows](https://docs.devin.ai/desktop/cascade/workflows) ·
+[Hooks](https://docs.devin.ai/desktop/cascade/hooks) ·
+[MCP](https://docs.devin.ai/desktop/cascade/mcp) ·
+[AGENTS.md](https://docs.devin.ai/desktop/cascade/agents-md)
+
+---
+
 ## Notes
 
 ¹ VS 2026 and VS Code discover `.github/skills/`, `.claude/skills/`, and `.agents/skills/` at project scope; Copilot CLI discovers the same three project paths. User-scope: VS Code and VS 2026 discover `~/.copilot/skills/`, `~/.claude/skills/`, and `~/.agents/skills/`; Copilot CLI discovers only `~/.copilot/skills/` and `~/.agents/skills/` (not `~/.claude/skills/`). See [VS 2026 April update](https://github.blog/changelog/2026-04-30-github-copilot-in-visual-studio-april-update/).

@@ -7,8 +7,10 @@ daily automated re-research job.
 ## Contents
 
 **[`coding-agent-config-locations.md`](coding-agent-config-locations.md)** is
-the reference document. It covers Claude Code, Codex CLI, GitHub Copilot,
-Cursor, Mistral Vibe, OpenCode, and Pi, plus the cross-agent standards
+the reference document. It covers Aider, Claude Code, Cline, Codex CLI,
+Continue, Cursor, Devin, Gemini CLI, GitHub Copilot, Goose, Hermes Agent,
+Kiro, Mistral Vibe, OpenCode, OpenHands, Pi, and Windsurf / Devin Desktop,
+plus the cross-agent standards
 (`AGENTS.md`, `SKILL.md`, `.agents/skills/`). Each path carries a confidence
 marker:
 

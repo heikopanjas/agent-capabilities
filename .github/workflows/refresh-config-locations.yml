@@ -50,8 +50,10 @@ jobs:
                It uses confidence markers (star = spec/stable, diamond =
                documented current, circle = observed).
             2. For every agent in that document (Claude Code, Codex CLI,
-               GitHub Copilot, Cursor, Mistral Vibe, OpenCode, Pi) and the
-               cross-agent standards section, use WebSearch and WebFetch to
+               GitHub Copilot, Cursor, Mistral Vibe, OpenCode, Pi, Aider,
+               Cline, Continue, Devin, Gemini CLI, Goose, Hermes Agent, Kiro,
+               OpenHands, Windsurf / Devin Desktop) and the cross-agent
+               standards section, use WebSearch and WebFetch to
                verify the current state of each config path, file convention,
                skill/subagent location, and CLI behavior against the official
                documentation linked in each "Sources" block.
@@ -111,8 +113,10 @@ jobs:
                It uses confidence markers (star = spec/stable, diamond =
                documented current, circle = observed).
             2. For every agent in that document (Claude Code, Codex CLI,
-               GitHub Copilot, Cursor, Mistral Vibe, OpenCode, Pi) and the
-               cross-agent standards section, use WebSearch and WebFetch to
+               GitHub Copilot, Cursor, Mistral Vibe, OpenCode, Pi, Aider,
+               Cline, Continue, Devin, Gemini CLI, Goose, Hermes Agent, Kiro,
+               OpenHands, Windsurf / Devin Desktop) and the cross-agent
+               standards section, use WebSearch and WebFetch to
                verify the current state of each config path, file convention,
                skill/subagent location, and CLI behavior against the official
                documentation linked in each "Sources" block.
