@@ -26,7 +26,7 @@ Home: `~/.claude/`
 | **Rules** ★ | `~/.claude/rules/*.md` | `.claude/rules/*.md` — path-scoped via YAML frontmatter `paths:`; discovered recursively |
 | **Settings** ★ | `~/.claude/settings.json`; Managed: `/etc/claude-code/managed-settings.json` + `managed-settings.d/*.json` (Linux/WSL) · `/Library/Application Support/ClaudeCode/managed-settings.json` + `managed-settings.d/` + MDM plist `com.anthropic.claudecode` (macOS) · `C:\Program Files\ClaudeCode\managed-settings.json` + `managed-settings.d\` + `HKLM\SOFTWARE\Policies\ClaudeCode` + `HKCU\SOFTWARE\Policies\ClaudeCode` (Windows; `C:\ProgramData\ClaudeCode\` deprecated since v2.1.75) | `.claude/settings.json`, `.claude/settings.local.json` (gitignored). Precedence: Managed > CLI args > Local > Project > User |
 | **Skills** ★ | `~/.claude/skills/*/SKILL.md` | `.claude/skills/*/SKILL.md` — progressive disclosure per agentskills.io |
-| **Subagents** ★ | `~/.claude/agents/*.md`; managed/enterprise subagents deployed inside the managed-settings directory take highest priority | `.claude/agents/*.md` — Markdown + YAML frontmatter; subdirectory discovery supported (directory-qualified names on clash, e.g. `apps/web:deploy`); `isolation: worktree` frontmatter runs the subagent in a temporary git worktree; `background` field; `--agents` CLI flag defines session-scoped JSON subagents; nested spawning up to depth 5 |
+| **Subagents** ★ | `~/.claude/agents/*.md`; managed/enterprise subagents deployed inside the managed-settings directory take highest priority | `.claude/agents/*.md` — Markdown + YAML frontmatter; subdirectory discovery supported, but identity comes only from the `name` field — no directory-qualified naming on clash (that pattern, e.g. `apps/web:deploy`, applies to skills, not subagents); same-name files resolve by unspecified filesystem read order; only plugin subagents get scoped identifiers like `my-plugin:review:security`. `isolation: worktree` frontmatter runs the subagent in a temporary git worktree; `background` field; `--agents` CLI flag defines session-scoped JSON subagents; nested spawning up to depth 5 |
 | **Agent memory** ◆ | `~/.claude/agent-memory/<agent-name>/` — subagent user-scoped (`memory: user`). Main-session auto-memory: `~/.claude/projects/<project>/memory/MEMORY.md` (v2.1.59+; `autoMemoryDirectory` setting overrides) | `.claude/agent-memory/<agent-name>/` (`memory: project`, committable), `.claude/agent-memory-local/<agent-name>/` (`memory: local`, gitignored) |
 | **Commands** ★ | `~/.claude/commands/*.md` → `/<name>` (superseded by skills, still works) | `.claude/commands/*.md` → `/<name>` (superseded by skills, still works) ⁴ |
 | **Workflows** ◆ | `~/.claude/workflows/*.js` — JavaScript multi-agent orchestration scripts | `.claude/workflows/*.js` — each saved file becomes a `/<name>` command; `/workflows` opens the separate run-management/progress view (list, watch, pause, stop). Dynamic workflows require v2.1.154+ and, on the Pro plan, manual enablement via `/config` |
@@ -63,7 +63,7 @@ Home: `~/.codex/` (`$CODEX_HOME`)
 | **Rules** ◆ | `~/.codex/rules/default.rules` — Starlark `prefix_rule()` syntax (`pattern`, `decision` [allow/prompt/forbidden], `justification`, `match`/`not_match`); written by TUI allow-command; validate via `codex execpolicy check` | `.codex/rules/` — loads only when the project is trusted |
 | **Hooks** ◆ | `~/.codex/hooks.json` — or inline `[hooks]` table in `config.toml` (merges both if present in same layer, with a startup warning); gated by `features.hooks`. Events: `SessionStart`, `PreToolUse`, `PermissionRequest`, `PostToolUse`, `UserPromptSubmit`, `PreCompact`/`PostCompact`, `SubagentStart`/`SubagentStop`, `Stop` | `.codex/hooks.json`; or inline `[hooks]` in `.codex/config.toml`. `--dangerously-bypass-hook-trust` runs hooks without persisted trust |
 | **MCP** ◆ | `[mcp_servers]` in `~/.codex/config.toml` | `[mcp_servers]` in `.codex/config.toml` |
-| **Plugins** ◆ | `~/.agents/plugins/marketplace.json` — personal plugin marketplace catalog; installed plugins cached at `~/.codex/plugins/cache/$MARKETPLACE_NAME/$PLUGIN_NAME/$VERSION/` (`local` version for local plugins) | `.codex-plugin/plugin.json` — manifest bundling `skills/`, `.mcp.json`, `hooks/hooks.json`, `.app.json`, `assets/`, plugin-level `agents/`/`commands/` (not a top-level `hooks.json`); repo marketplace at `.agents/plugins/marketplace.json` with plugins under `plugins/` |
+| **Plugins** ◆ | `~/.agents/plugins/marketplace.json` — personal plugin marketplace catalog; installed plugins cached at `~/.codex/plugins/cache/$MARKETPLACE_NAME/$PLUGIN_NAME/$VERSION/` (`local` version for local plugins) | `.codex-plugin/plugin.json` — manifest bundling `skills/`, `.mcp.json`, `hooks/hooks.json`, `.app.json`, `assets/` (not a top-level `hooks.json`); repo marketplace at `.agents/plugins/marketplace.json` with plugins under `plugins/` |
 
 **Sources:** (`developers.openai.com/codex/*` now 308-redirects to `learn.chatgpt.com/docs/*`, rebranded "ChatGPT Learn"; canonical URLs below)
 [AGENTS.md discovery](https://learn.chatgpt.com/docs/agent-configuration/agents-md) ·
@@ -91,7 +91,7 @@ Home: `~/.copilot/` · `~/.github/`
 | **Prompt files** ◆ | — | `.github/prompts/*.prompt.md` — invoke via `#prompt:` or `/`; public preview, subject to change; VS Code, Visual Studio, and JetBrains IDEs only — not yet supported in Copilot CLI |
 | **Custom agents** ◆ | `~/.copilot/agents/` — user-level agents (CLI/VS Code); `~/.github/agents/` — user-level agents (VS 2026, added April 2026 update) | `.github/agents/*.agent.md` (legacy: `.chatmode.md` files must be renamed to `.agent.md`) — YAML: name, description, tools, model, mcp-servers, target (`vscode`\|`github-copilot`), disable-model-invocation, user-invocable, metadata. (`handoffs`, `agents`, and `argument-hint` are VS Code-only fields; not supported for cloud agents on GitHub.com. `hooks` is **VS Code preview** — requires `chat.useCustomAgentHooks` setting.) `infer` field is **retired**; use `disable-model-invocation` + `user-invocable` instead. `.claude/agents/` — VS Code workspace agents (Claude format). Org: `.github` or `.github-private` repo `agents/` dir; Enterprise-wide: `.github-private` repo of a designated org |
 | **Skills** ★ | `~/.copilot/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` (CLI); also `~/.claude/skills/*/SKILL.md` (VS Code only) ¹ | `.github/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** — all three discovered ¹; `gh skill` CLI (GitHub CLI ≥ 2.90.0, public preview) |
-| **MCP** ◆ | `~/.copilot/mcp-config.json` — CLI, `mcpServers` key. VS Code: user-profile `mcp.json` via "MCP: Open User Configuration" command, `servers` key | `.vscode/mcp.json` — VS Code project-level MCP, `servers` key. Cloud agent's repo-level MCP config is entered as JSON directly via the repo's Settings → Copilot → MCP servers page on GitHub.com — not a committed file; a `.github/mcp.json` convention remains an open feature request ([github/copilot-cli#2528](https://github.com/github/copilot-cli/issues/2528)), not shipped. No repo-level MCP config file is confirmed for Copilot CLI. Key name diverges by surface: CLI uses `mcpServers`, VS Code uses `servers` |
+| **MCP** ◆ | `~/.copilot/mcp-config.json` — CLI, `mcpServers` key. VS Code: user-profile `mcp.json` via "MCP: Open User Configuration" command, `servers` key | `.vscode/mcp.json` — VS Code project-level MCP, `servers` key (no longer read by Copilot CLI as of v1.0.22). Copilot CLI: `.mcp.json` (project root/cwd, shipped v1.0.22, 2026-04-09) and auto-loaded `.github/mcp.json` (shipped v1.0.61, 2026-06-09), `mcpServers` key — CLI walks cwd → git root loading every match found, closest wins ([github/copilot-cli#2528](https://github.com/github/copilot-cli/issues/2528), closed/shipped). Cloud agent's repo-level MCP config is entered separately as JSON directly via the repo's Settings → Copilot → MCP servers page on GitHub.com — not a committed file. Key name diverges by surface: CLI uses `mcpServers`, VS Code uses `servers` |
 
 **Sources:**
 [Custom instructions (CLI)](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) ·
@@ -204,7 +204,7 @@ Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 | **Prompt templates** ◆ | `~/.pi/agent/prompts/*.md` → `/<name>` | `.pi/prompts/*.md` |
 | **Models** ◆ | `~/.pi/agent/models.json` — custom providers (Ollama, vLLM, LM Studio, proxies) | — |
 | **Extensions** ◆ | `~/.pi/agent/extensions/*.ts` — TypeScript modules; how MCP, subagents, hooks, plan mode etc. are added | `.pi/extensions/` — auto-discovered |
-| **MCP / Subagents** ○ | Not built in — provided via extensions. `~/.pi/agent/mcp.json` is a **community extension convention** only; not a core Pi path | *(same)* |
+| **MCP / Subagents** ○ | Not built in — provided via extensions. `~/.pi/agent/mcp.json` is a **proposed community extension convention** (unshipped; native MCP/ACP support is still only under discussion) | `.pi/mcp.json` — proposed project-level convention, a distinct path from the global one, not the same file |
 | **Packages** ◆ | npm/git bundles declared via a `pi` key in `package.json` (`extensions`, `skills`, `prompts`, `themes`) | *(same)* |
 
 **Sources:**
@@ -243,7 +243,7 @@ Home: `~/.cline/` (CLI/SDK/Kanban; IDE integrations also use platform storage)
 |---|---|---|
 | **Instructions / rules** ◆ | `~/.cline/rules/`, `~/.agents/AGENTS.md`; compatibility search path `~/Documents/Cline/Rules/` (Linux may also use `~/Cline/Rules/`) | `.cline/rules/` and primary legacy-compatible `.clinerules/`; also reads `AGENTS.md`, `.cursorrules`, and `.windsurfrules`. Conditional rules use `paths:` YAML frontmatter |
 | **Settings** ◆ | `~/.cline/data/settings/providers.json`, `global-settings.json`, and `cline_mcp_settings.json`; `CLINE_DATA_DIR` replaces `~/.cline/data/` | Project behavior is stored in `.cline/` subdirectories; secrets stay in global provider settings |
-| **Skills** ◆ | `~/.cline/skills/*/SKILL.md` | `.cline/skills/*/SKILL.md` (recommended), `.clinerules/skills/`, `.claude/skills/`; experimental, progressive disclosure |
+| **Skills** ◆ | `~/.cline/skills/*/SKILL.md` | `.cline/skills/*/SKILL.md` (recommended), `.clinerules/skills/`, `.claude/skills/`; progressive disclosure (no longer labeled experimental — graduated to a standard feature) |
 | **Agents** ◆ | `~/.cline/agents/` | `.cline/agents/` |
 | **Hooks** ◆ | `~/.cline/hooks/`; compatibility `~/Documents/Cline/Hooks/` | `.cline/hooks/` and `.clinerules/hooks/`; lifecycle scripts receive/return JSON |
 | **Workflows / plugins** ◆ | `~/.cline/data/workflows/`, `~/.cline/plugins/`; compatibility under `~/Documents/Cline/` | `.cline/plugins/`; project workflows are supported by Cline's configuration system |
@@ -262,10 +262,13 @@ Home: `~/.cline/` (CLI/SDK/Kanban; IDE integrations also use platform storage)
 
 Home: `~/.continue/`
 
+> **Acquired / discontinued:** Continue.dev was acquired by Cursor (announced ~June 16, 2026). The `continuedev/continue` GitHub repo is now read-only and no longer actively maintained, with v2.0.0 (shipped 2026-06-19) as the final release. Continue's cloud data (conversation history, saved configs, team settings) is scheduled for deletion after 2026-07-15. Local extension/CLI config on users' own machines is unaffected, so the table below still describes the final shipped behavior.
+
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
 | **Config / agents** ◆ | `~/.continue/config.yaml` — models, context, rules, prompts, docs, and MCP servers; `config.json` and `config.ts` are legacy | Local blocks under `.continue/`; the CLI can load any YAML config with `--config <path>` |
 | **Rules** ◆ | Rules can be embedded or referenced from `config.yaml` | `.continue/rules/*.md` (recommended; YAML is also accepted); optional `globs` frontmatter |
+| **Skills** ○ | Not documented for global scope | `.continue/skills/*/SKILL.md` or `.claude/skills/*/SKILL.md` — YAML frontmatter + Markdown body, retrieved via a `read_skill` tool (merged [PR #9353](https://github.com/continuedev/continue/pull/9353), 2026-01-15); never made it into official docs before the product wound down, so sourced to the PR rather than docs.continue.dev |
 | **Prompts** ◆ | Declared or referenced under `prompts:` in `config.yaml` | Local prompt blocks can be referenced from workspace configuration and invoked as slash commands |
 | **Models / tools** ◆ | `~/.continue/config.yaml`; reusable global blocks | `.continue/models/`, `.continue/mcpServers/`; workspace blocks apply to all configs |
 | **MCP** ◆ | `mcpServers:` in `~/.continue/config.yaml` | `.continue/mcpServers/*.yaml`; MCP tools are available in Agent mode |
@@ -286,11 +289,11 @@ Home: cloud-managed; configuration is primarily organization- and repository-sco
 
 | Feature | Global (user / organization) | Project (repo) |
 |---|---|---|
-| **Instructions / knowledge** ◆ | Knowledge and Enterprise Knowledge are managed in Settings & Library; items can be pinned to all repos, one repo, or retrieved by triggers | Root `AGENTS.md` is recommended; Devin also imports specialized files including `CLAUDE.md`, `.cursorrules`, `.mdc`, and `.windsurf` into repo knowledge |
+| **Instructions / knowledge** ◆ | Knowledge and Enterprise Knowledge are managed in Settings & Library; items can be pinned to all repos, one repo, or retrieved by triggers | A centralized specialized file such as root `AGENTS.md` is recommended; Devin also auto-pulls updates from specialized files including `.rules`, `.mdc`, `.cursorrules`, `.windsurf`, `CLAUDE.md`, and `AGENTS.md` into repo knowledge |
 | **Skills** ◆ | — | Agent Skills live in the repository as `*/SKILL.md` packages and are discovered automatically or invoked with `@skills:<name>` |
 | **Playbooks** ◆ | Managed in the Devin web app; reusable organization- or enterprise-scoped prompts attached manually to sessions | — |
 | **Environment** ◆ | Environment snapshots, secrets, and repository access are managed in Devin settings | Declarative environment blueprints are version-controlled YAML; `.envrc` can provide repo environment variables and should normally be gitignored |
-| **MCP** ◆ | Settings → MCP Marketplace; custom stdio, SSE, and HTTP servers are entered through the UI or API | No committed repo-level MCP file documented |
+| **MCP** ◆ | Settings → Organization settings → MCP Marketplace; custom stdio, SSE, and HTTP servers are entered through a web form (the JSON shown in docs is illustrative only, not a documented API) | No committed repo-level MCP file documented |
 
 **Sources:**
 [Knowledge](https://docs.devin.ai/product-guides/knowledge) ·
@@ -305,6 +308,8 @@ Home: cloud-managed; configuration is primarily organization- and repository-sco
 
 Home: `~/.gemini/`
 
+> **Sunsetting for individual users:** Per Google's Developers Blog ("An important update: Transitioning Gemini CLI to Antigravity CLI"), Gemini CLI stopped serving free/Pro/Ultra individual-user requests on 2026-06-18, superseded by the closed-source, Go-based Antigravity CLI (which reportedly retains Skills, Hooks, Subagents, and Extensions concepts). Only Gemini Code Assist Standard/Enterprise/Google Cloud licensees retain access. The geminicli.com docs remain live and technically accurate as of today, so the table below still reflects current behavior for licensed users.
+
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
 | **Instructions** ◆ | `~/.gemini/GEMINI.md` | Hierarchical `GEMINI.md`; filename(s) configurable via `context.fileName`, enabling `AGENTS.md`. Supports `@file` imports |
@@ -317,7 +322,7 @@ Home: `~/.gemini/`
 | **Extensions** ◆ | `~/.gemini/extensions/<name>/gemini-extension.json` | Extensions can bundle context, commands, skills, hooks, themes, and MCP servers; workspace settings override conflicts |
 
 **Sources:**
-[Configuration](https://geminicli.com/docs/get-started/configuration-v1/) ·
+[Configuration](https://geminicli.com/docs/reference/configuration/) ·
 [`GEMINI.md`](https://geminicli.com/docs/cli/gemini-md/) ·
 [Agent Skills](https://geminicli.com/docs/cli/skills/) ·
 [Subagents](https://geminicli.com/docs/core/subagents/) ·
@@ -334,9 +339,9 @@ Home: `~/.config/goose/` (macOS/Linux) · `%APPDATA%\Block\goose\config\` (Windo
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
-| **Instructions** ◆ | `~/.config/goose/.goosehints`; also reads `~/.agents/AGENTS.md` through configurable context filenames | Hierarchical `.goosehints` and `AGENTS.md` from cwd to git root and nested directories; `CONTEXT_FILE_NAMES` adds alternatives |
+| **Instructions** ◆ | `~/.config/goose/.goosehints` is the only documented global hints file (no home-level `AGENTS.md` path is documented) | Hierarchical `.goosehints` and `AGENTS.md` from cwd to git root and nested directories, controlled by default `CONTEXT_FILE_NAMES` (`["AGENTS.md", ".goosehints"]`); `CONTEXT_FILE_NAMES` adds alternatives |
 | **Config** ◆ | `~/.config/goose/config.yaml`; `permission.yaml`, `secrets.yaml`, and `permissions/tool_permissions.json` alongside it | Environment variables override global config; no separate project config file documented |
-| **Skills** ◆ | `~/.agents/skills/*/SKILL.md`, `~/.config/goose/skills/*/SKILL.md`, plus Claude-compatible paths | `.agents/skills/*/SKILL.md`, `.goose/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`; project paths precede global paths |
+| **Skills** ◆ | `~/.agents/skills/*/SKILL.md` (recommended standard); backward-compatible discovery also checks `~/.claude/skills/*/SKILL.md` and other platform-specific config dirs (`~/.config/goose/skills/` is not a documented path) | `.agents/skills/*/SKILL.md` (recommended standard), `.goose/skills/*/SKILL.md`, `.claude/skills/*/SKILL.md`; docs do not state an explicit precedence rule between project and global paths on name conflict |
 | **Recipes / commands** ◆ | `~/.config/goose/recipes/*.{yaml,json}`; recipe-backed slash commands configured in `config.yaml` | `.goose/recipes/*.{yaml,json}` |
 | **MCP / extensions** ◆ | `extensions:` in `~/.config/goose/config.yaml`; built-in and stdio MCP extensions | Recipes can declare required extensions; no separate repo MCP file documented |
 | **Prompts / permissions** ◆ | `~/.config/goose/prompts/`, `permission.yaml`, and runtime permission decisions | Project hints and recipes provide committed behavior |
@@ -419,7 +424,9 @@ Home: `~/.openhands/` for local state; cloud settings are managed in the UI
 
 ## Windsurf / Devin Desktop — Cognition
 
-Home: `~/.codeium/windsurf/` (legacy product paths remain active after the Cognition integration)
+Home: `~/.codeium/windsurf/` (legacy Codeium/Windsurf paths; still read by Devin Local for backward compatibility)
+
+> **Rebrand complete:** Windsurf was renamed **Devin Desktop** (announced 2026-06-02) — same editor, same features, unified under the Devin brand. Its local agent, Cascade, reached end-of-life 2026-07-01 and was replaced as the default local agent by **Devin Local** (a Rust rewrite, ~30% better token efficiency, adds subagent support, and supports the Agent Client Protocol at launch, running Codex/Claude Agent/OpenCode etc.). Devin Desktop also acts as a command center for Devin Cloud sessions, which remain a separate SKU (see the Devin section above). Legacy `~/.codeium/windsurf/` and `.windsurf/` paths are still read for backward compatibility.
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
@@ -428,7 +435,7 @@ Home: `~/.codeium/windsurf/` (legacy product paths remain active after the Cogni
 | **Skills** ◆ | `~/.codeium/windsurf/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` | `.windsurf/skills/*/SKILL.md`, `.agents/skills/*/SKILL.md`; optional Claude-compatible discovery |
 | **Workflows** ◆ | `~/.codeium/windsurf/global_workflows/*.md` | `.windsurf/workflows/*.md`; manual `/name` invocation; discovered through subdirectories and parents to git root |
 | **Hooks** ◆ | `~/.codeium/windsurf/hooks.json`; JetBrains plugin: `~/.codeium/hooks.json` | `.windsurf/hooks.json`; system → user → workspace merge order; pre-hooks can block with exit code 2 |
-| **MCP** ◆ | `~/.codeium/windsurf/mcp_config.json`; MCP Marketplace and enterprise allowlists | No separate committed project MCP filename documented |
+| **MCP** ◆ | `~/.codeium/windsurf/mcp_config.json` (legacy Cascade path, still read); Devin Local adds a user-level `~/.config/devin/config.json`; MCP Marketplace and enterprise allowlists | Devin Local introduces a committed project MCP file, `.devin/config.json` (team-shared `mcpServers`), with `.devin/config.local.json` for personal/gitignored overrides |
 
 **Sources:**
 [Memories and rules](https://docs.devin.ai/desktop/cascade/memories) ·
@@ -436,7 +443,9 @@ Home: `~/.codeium/windsurf/` (legacy product paths remain active after the Cogni
 [Workflows](https://docs.devin.ai/desktop/cascade/workflows) ·
 [Hooks](https://docs.devin.ai/desktop/cascade/hooks) ·
 [MCP](https://docs.devin.ai/desktop/cascade/mcp) ·
-[AGENTS.md](https://docs.devin.ai/desktop/cascade/agents-md)
+[AGENTS.md](https://docs.devin.ai/desktop/cascade/agents-md) ·
+[Devin Local](https://docs.devin.ai/desktop/devin-local) ·
+[Devin Desktop FAQ](https://docs.devin.ai/desktop/devin-desktop-faq)
 
 ---
 
