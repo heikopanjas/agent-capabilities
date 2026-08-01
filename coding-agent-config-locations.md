@@ -1,6 +1,6 @@
 # Coding Agent Configuration Locations
 
-Instruction files, custom prompts, skills & subagents for CLI / agentic coding tools — July 2026
+Instruction files, custom prompts, skills & subagents for CLI / agentic coding tools — August 2026
 
 Skills follow the [agentskills.io](https://agentskills.io/specification) open standard.
 `.agents/` is the cross-agent convention path.
@@ -26,7 +26,7 @@ Home: `~/.claude/`
 | **Rules** ★ | `~/.claude/rules/*.md` | `.claude/rules/*.md` — path-scoped via YAML frontmatter `paths:`; discovered recursively |
 | **Settings** ★ | `~/.claude/settings.json`; Managed: `/etc/claude-code/managed-settings.json` + `managed-settings.d/*.json` (Linux/WSL) · `/Library/Application Support/ClaudeCode/managed-settings.json` + `managed-settings.d/` + MDM plist `com.anthropic.claudecode` (macOS) · `C:\Program Files\ClaudeCode\managed-settings.json` + `managed-settings.d\` + `HKLM\SOFTWARE\Policies\ClaudeCode` + `HKCU\SOFTWARE\Policies\ClaudeCode` (Windows; `C:\ProgramData\ClaudeCode\` deprecated since v2.1.75) | `.claude/settings.json`, `.claude/settings.local.json` (gitignored). Precedence: Managed > CLI args > Local > Project > User |
 | **Skills** ★ | `~/.claude/skills/*/SKILL.md` | `.claude/skills/*/SKILL.md` — progressive disclosure per agentskills.io |
-| **Subagents** ★ | `~/.claude/agents/*.md`; managed/enterprise subagents deployed inside the managed-settings directory take highest priority | `.claude/agents/*.md` — Markdown + YAML frontmatter; subdirectory discovery supported, but identity comes only from the `name` field — no directory-qualified naming on clash (that pattern, e.g. `apps/web:deploy`, applies to skills, not subagents); same-name files within one `.claude/agents/` tree resolve by unspecified filesystem read order, but across nested project `.claude/agents/` directories the definition closest to the working directory wins (v2.1.178+); only plugin subagents get scoped identifiers like `my-plugin:review:security`. `isolation: worktree` frontmatter runs the subagent in a temporary git worktree; `background` field; `--agents` CLI flag defines session-scoped JSON subagents; nested spawning up to depth 5 |
+| **Subagents** ★ | `~/.claude/agents/*.md`; managed/enterprise subagents deployed inside the managed-settings directory take highest priority | `.claude/agents/*.md` — Markdown + YAML frontmatter; subdirectory discovery supported, but identity comes only from the `name` field — no directory-qualified naming on clash (that pattern, e.g. `apps/web:deploy`, applies to skills, not subagents); same-name files within one `.claude/agents/` tree resolve by unspecified filesystem read order, but across nested project `.claude/agents/` directories the definition closest to the working directory wins (v2.1.178+); only plugin subagents get scoped identifiers like `my-plugin:review:security`. `isolation: worktree` frontmatter runs the subagent in a temporary git worktree; `background` field; `--agents` CLI flag defines session-scoped JSON subagents; nested spawning up to depth 3 by default (v2.1.219+; was depth 5 in v2.1.172–v2.1.216, depth 1 in v2.1.217–v2.1.218) |
 | **Agent memory** ◆ | `~/.claude/agent-memory/<agent-name>/` — subagent user-scoped (`memory: user`). Main-session auto-memory: `~/.claude/projects/<project>/memory/MEMORY.md` (v2.1.59+; `autoMemoryDirectory` setting overrides) | `.claude/agent-memory/<agent-name>/` (`memory: project`, committable), `.claude/agent-memory-local/<agent-name>/` (`memory: local`, gitignored) |
 | **Commands** ★ | `~/.claude/commands/*.md` → `/<name>` (superseded by skills, still works) | `.claude/commands/*.md` → `/<name>` (superseded by skills, still works) ⁴ |
 | **Workflows** ◆ | `~/.claude/workflows/*.js` — JavaScript multi-agent orchestration scripts | `.claude/workflows/*.js` — each saved file becomes a `/<name>` command; `/workflows` opens the separate run-management/progress view (list, watch, pause, stop). Dynamic workflows require v2.1.154+ and, on the Pro plan, manual enablement via `/config` |
@@ -59,9 +59,9 @@ Home: `~/.codex/` (`$CODEX_HOME`)
 | **Instructions** ◆ | `~/.codex/AGENTS.override.md` (takes precedence), `~/.codex/AGENTS.md` — global user-level instructions | `<repo>/AGENTS.override.md`, `<repo>/AGENTS.md` — walks root→cwd; override file wins; first non-empty used; 1 file/dir; 32 KiB default cap (`project_doc_max_bytes`). Fallbacks via `project_doc_fallback_filenames` |
 | **Config** ◆ | `~/.codex/config.toml`; `~/.codex/<profile>.config.toml` — named profile selected via `--profile` flag. Enterprise managed defaults: `/etc/codex/managed_config.toml` (Unix) · `~/.codex/managed_config.toml` (Windows/non-Unix) · macOS MDM `com.openai.codex` domain (`config_toml_base64`, `requirements_toml_base64` keys; highest precedence) | `.codex/config.toml` — walks root→cwd; closest wins (trusted projects only). System: `/etc/codex/config.toml`. Enterprise enforced: `/etc/codex/requirements.toml` (Unix) · `%ProgramData%\OpenAI\Codex\requirements.toml` (Windows) — cannot be overridden. `--strict-config` errors on unrecognized fields |
 | **Skills** ◆ | `~/.agents/skills/*/SKILL.md` — user-level | `.agents/skills/*/SKILL.md` — walks CWD → parent → repo root; `/skills` or `$` to invoke. Toggle via `[[skills.config]]` (`path`, `enabled`) in config.toml. Admin: `/etc/codex/skills/`; System: bundled |
-| **Subagents** ◆ | `~/.codex/agents/*.toml` — required fields `name`, `description`, `developer_instructions` | `.codex/agents/*.toml`; also `[agents.*]` in `config.toml`. Global settings under `[agents]` (`max_depth` default `1`, `max_threads` default `6`, `job_max_runtime_seconds` default `1800`) |
+| **Subagents** ◆ | `~/.codex/agents/*.toml` — required fields `name`, `description`, `developer_instructions` | `.codex/agents/*.toml`; also `agents.<name>.config_file`/`agents.<name>.description` in `config.toml`. Global settings under `[agents]`: `enabled` (default `true`), `max_concurrent_threads_per_session` (legacy alias `max_threads`), `default_subagent_model`, `default_subagent_reasoning_effort`, `interrupt_message` (default `true`) |
 | **Rules** ◆ | `~/.codex/rules/default.rules` — Starlark `prefix_rule()` syntax (`pattern`, `decision` [allow/prompt/forbidden], `justification`, `match`/`not_match`); written by TUI allow-command; validate via `codex execpolicy check` | `.codex/rules/` — loads only when the project is trusted |
-| **Hooks** ◆ | `~/.codex/hooks.json` — or inline `[hooks]` table in `config.toml` (merges both if present in same layer, with a startup warning); gated by `features.hooks`. Events: `SessionStart`, `PreToolUse`, `PermissionRequest`, `PostToolUse`, `UserPromptSubmit`, `PreCompact`/`PostCompact`, `SubagentStart`/`SubagentStop`, `Stop` | `.codex/hooks.json`; or inline `[hooks]` in `.codex/config.toml`. `--dangerously-bypass-hook-trust` runs hooks without persisted trust |
+| **Hooks** ◆ | `~/.codex/hooks.json` — or inline `[hooks]` table in `config.toml` (merges both if present in same layer, with a startup warning); gated by `features.hooks`. Events: `SessionStart`, `SessionEnd`, `PreToolUse`, `PermissionRequest`, `PostToolUse`, `UserPromptSubmit`, `PreCompact`/`PostCompact`, `SubagentStart`/`SubagentStop`, `Stop` | `.codex/hooks.json`; or inline `[hooks]` in `.codex/config.toml`. `--dangerously-bypass-hook-trust` runs hooks without persisted trust |
 | **MCP** ◆ | `[mcp_servers]` in `~/.codex/config.toml` | `[mcp_servers]` in `.codex/config.toml` |
 | **Plugins** ◆ | `~/.agents/plugins/marketplace.json` — personal plugin marketplace catalog; installed plugins cached at `~/.codex/plugins/cache/$MARKETPLACE_NAME/$PLUGIN_NAME/$VERSION/` (`local` version for local plugins) | `.codex-plugin/plugin.json` — manifest bundling `skills/`, `.mcp.json`, `hooks/hooks.json`, `.app.json`, `assets/` (not a top-level `hooks.json`); repo marketplace at `.agents/plugins/marketplace.json` with plugins under `plugins/` |
 
@@ -114,7 +114,7 @@ Home: `.cursor/` (project-centric)
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
-| **Instructions** ★ | User Rules (Customize → Rules) — plain text; always applied. As of v3.9 (Jun 22, 2026) a unified "Customize" page also centrally manages plugins/rules/skills/MCP/subagents/commands/hooks at user/team/workspace scope | `<repo>/AGENTS.md` — root level and subdirectories; plain-markdown alternative to `.cursor/rules`. Legacy: `.cursorrules` (deprecated since ~v0.43; officially deprecated and undocumented but still functional as of June 2026 — migrate to `.cursor/rules/`) |
+| **Instructions** ★ | User Rules (Customize → Rules) — plain text; always applied. Unified "Customize" page (introduced v3.9, Jun 22, 2026) centrally manages plugins/rules/skills/MCP/subagents/commands/hooks at user/team/workspace scope; current release is v3.11 (Jul 10, 2026 — side chats, conversation search, expanded cloud-agent hooks), with frequent feature updates since | `<repo>/AGENTS.md` — root level and subdirectories; plain-markdown alternative to `.cursor/rules`. Legacy: `.cursorrules` (deprecated since ~v0.43; officially deprecated and undocumented but still functional as of June 2026 — migrate to `.cursor/rules/`) |
 | **Rules** ★ | — | `.cursor/rules/*.mdc` — YAML frontmatter: `alwaysApply`, `description`, `globs`. 4 modes: Always Apply, Apply Intelligently, Apply to Specific Files, Apply Manually. (`.md` files in this directory are ignored; use `.mdc`.) Subdirectory grouping supported. Remote rules imported from GitHub ◆ — land at `.cursor/rules/imported/<repoName>/` (relative paths preserved, e.g. `dir/rule.mdc` → `.cursor/rules/imported/<repoName>/dir/rule.mdc`) via Customize → Rules → Add Rule → Remote Rule (GitHub). Known bug (community-reported, Jan 2026) ○: rules may instead cache at `~/.cursor/projects/<hashed-path>/rules/` (a path hash, not the literal project name) and fail to sync into `.cursor/rules/`; a fix shipped to the nightly channel Apr 2026, stable-channel status unconfirmed |
 | **Commands** ◆ | `~/.cursor/commands/*.md` — user-global, all projects; still fully supported and documented (not deprecated) | `.cursor/commands/*.md` — invoke via `/`; filename becomes command name. Still fully supported — official "Agent Best Practices" docs recommend committing these to git. As of v3.9 (Jun 22, 2026) folded into the unified "Customize" page alongside skills/rules/MCP/subagents/hooks (a UI consolidation, not a deprecation). `/migrate-to-skills` (~v2.4) remains available as an *optional* converter for "Apply Intelligently" rules and slash commands into skills |
 | **Skills** ◆ | `~/.cursor/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — primary; `~/.claude/skills/*/SKILL.md`, `~/.codex/skills/*/SKILL.md` — legacy compat ² | `.cursor/skills/*/SKILL.md`, `.agents/skills/*/SKILL.md` — primary; `.claude/skills/*/SKILL.md`, `.codex/skills/*/SKILL.md` — legacy compat ² — agentskills.io; loaded on demand. SKILL.md: `paths` field (current) scopes activation by glob; `globs` is now the legacy alias |
@@ -140,7 +140,7 @@ Home: `.cursor/` (project-centric)
 
 Home: `~/.vibe/` (`$VIBE_HOME`)
 
-> **Note:** Current version: 2.19.1 (July 9, 2026). Core config paths stable since Vibe 2.0, though several features were added after: AGENTS.md parent-folder walking (2.5.0), `.agents/skills/` discovery (2.2.0), `~/.agents/skills` (2.11.0), hooks introduced (2.9.0) then breaking-changed (2.15.0), project-config persistence (2.18.3). 2.19.1 added an experimental managed bash tool, a `--disabled-tools` CLI flag, and per-tool description overrides via `<tools-dir>/prompts/<name>.md`; none of this changes documented config paths.
+> **Note:** Current version: 2.23.2 (July 30, 2026). Core config paths stable since Vibe 2.0, though several features were added after: AGENTS.md parent-folder walking (2.5.0), `.agents/skills/` discovery (2.2.0), `~/.agents/skills` (2.11.0), hooks introduced (2.9.0) then breaking-changed (2.15.0), project-config persistence (2.18.3), hooks graduated from experimental to stable with renamed events (2.21.0, 2026-07-17), full migration to a `ConfigOrchestrator` for config handling (2.22.0), managed-shell/app-server refactor (2.23.0), built-in skill-creator skill (2.23.2). None of this changes documented config paths.
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
@@ -150,13 +150,14 @@ Home: `~/.vibe/` (`$VIBE_HOME`)
 | **Skills** ◆ | `~/.vibe/skills/*/SKILL.md` — agentskills.io; invoke via `/`. Custom paths via `skill_paths` in config.toml, plus `enabled_skills`/`disabled_skills`. Discovery order: `skill_paths` → project (`.vibe/skills/`, `.agents/skills/`) → user (`~/.vibe/skills/`). Note: CHANGELOG 2.11.0 states `~/.agents/skills` was added as a *global* path, but the current live docs page no longer lists it at user scope (only at project scope) — discrepancy unresolved, treat `~/.agents/skills/*/SKILL.md` at the global/user level as unconfirmed | `.vibe/skills/*/SKILL.md`, **`.agents/skills/*/SKILL.md`** (trusted folders only) |
 | **Agents** ◆ | `~/.vibe/agents/*.toml` — `display_name`, `safety` (safe/neutral/destructive/yolo; display-only), `enabled_tools` | `.vibe/agents/*.toml` — subagents: `agent_type = "subagent"`; user-facing selectable agents: `agent_type = "agent"` |
 | **API keys** ◆ | `~/.vibe/.env` — auto-loaded; env vars (e.g. `MISTRAL_API_KEY`) take precedence | — |
-| **Hooks** ○ | `~/.vibe/hooks.toml` — `post_agent_turn` lifecycle event (added v2.9.0); `before_tool`/`after_tool` tool-call hooks added v2.15.0 (can deny calls or rewrite tool inputs), which also breaking-changed `post_agent_turn` retries from exit-code-2 to exit-0 + JSON `{"decision":"deny","reason":"..."}`; enable via `enable_experimental_hooks = true` in `config.toml` or `VIBE_ENABLE_EXPERIMENTAL_HOOKS` env var (experimental, still required as of v2.19.1) | `.vibe/hooks.toml` |
+| **Hooks** ◆ | `~/.vibe/hooks.toml` — stable since v2.21.0 (2026-07-17, graduated from experimental); current event names `post_agent` (after an assistant turn, was `post_agent_turn`, added v2.9.0), `pre_tool`/`post_tool` (tool-call hooks, can deny calls or rewrite tool inputs; renamed from `before_tool`/`after_tool`, added v2.15.0). `enable_experimental_hooks`/`VIBE_ENABLE_EXPERIMENTAL_HOOKS` gate removed in v2.21.0; hooks now load unconditionally when declared | `.vibe/hooks.toml` — checked before `~/.vibe/hooks.toml` (trusted folders only); same hook name in both, project wins |
 | **Trust / misc** ◆ | `~/.vibe/trusted_folders.toml` — trust management (e.g. `trusted = ["~/projects", ...]`); `--trust` CLI flag grants session-only (non-persistent) trust. `~/.vibe/tools/` — custom tools. `~/.vibe/logs/` — session logs (○ sources disagree: official docs list only `logs/`; community/reverse-engineered sources variously claim a sibling `~/.vibe/sessions/` dir or `~/.vibe/logs/session(s)/`, configurable via `[session_logging] save_dir` — unresolved) | — |
 
 **Sources:**
-[Configuration](https://docs.mistral.ai/mistral-vibe/terminal/configuration) ·
-[Agents & Skills](https://docs.mistral.ai/mistral-vibe/agents-skills) ·
+[Configuration](https://docs.mistral.ai/vibe/code/cli/configuration) ·
+[Agents](https://docs.mistral.ai/vibe/code/cli/agents) ·
 [Skills reference](https://docs.mistral.ai/vibe/code/cli/skills) ·
+[Hooks](https://docs.mistral.ai/vibe/code/cli/hooks) ·
 [GitHub: mistralai/mistral-vibe](https://github.com/mistralai/mistral-vibe) ·
 [PyPI: mistral-vibe](https://pypi.org/project/mistral-vibe/) ·
 [Vibe 2.0 announcement](https://mistral.ai/news/mistral-vibe-2-0) ·
@@ -193,7 +194,7 @@ Home: `~/.config/opencode/`
 
 Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 
-> **Philosophy:** Pi is a minimal terminal harness — "primitives, not features." It deliberately ships **no built-in MCP, subagents, or plan mode**; those are added as TypeScript extensions. Distributed on npm as `@earendil-works/pi-coding-agent` (migrated from `@mariozechner/pi-coding-agent` at v0.74.0 — old package deprecated at v0.73.1, new repo at `earendil-works/pi`). Current version: 0.80.6 (npm, as of July 2026). Core paths stable since the v0.74.0 rename; `trust.json` added v0.79.0.
+> **Philosophy:** Pi is a minimal terminal harness — "primitives, not features." It deliberately ships **no built-in MCP, subagents, or plan mode**; those are added as TypeScript extensions. Distributed on npm as `@earendil-works/pi-coding-agent` (migrated from `@mariozechner/pi-coding-agent` at v0.74.0 — old package deprecated at v0.73.1, new repo at `earendil-works/pi`). Current version: 0.83.0 (npm, released 2026-07-29). Core paths stable since the v0.74.0 rename; `trust.json` added v0.79.0.
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
@@ -243,7 +244,7 @@ Home: `~/.cline/` (CLI/SDK/Kanban; IDE integrations also use platform storage)
 |---|---|---|
 | **Instructions / rules** ◆ | `~/.cline/rules/`, `~/.agents/AGENTS.md`; compatibility search path `~/Documents/Cline/Rules/` (Linux may also use `~/Cline/Rules/`) | `.cline/rules/` and primary legacy-compatible `.clinerules/`; also reads `AGENTS.md`, `.cursorrules`, and `.windsurfrules`. Conditional rules use `paths:` YAML frontmatter |
 | **Settings** ◆ | `~/.cline/data/settings/providers.json`, `global-settings.json`, and `cline_mcp_settings.json`; `CLINE_DATA_DIR` replaces `~/.cline/data/` | Project behavior is stored in `.cline/` subdirectories; secrets stay in global provider settings |
-| **Skills** ◆ | `~/.cline/skills/*/SKILL.md` | `.cline/skills/*/SKILL.md` (recommended), `.clinerules/skills/`, `.claude/skills/`; progressive disclosure (shipped v3.48.0, Jan 2026, behind a Settings → Features → Enable Skills toggle; no source confirms it has since become default-on) |
+| **Skills** ◆ | `~/.cline/skills/*/SKILL.md` | `.cline/skills/*/SKILL.md` (recommended), `.clinerules/skills/`, `.claude/skills/`; progressive disclosure (shipped v3.48.0, Jan 2026). Enabled by default since v3.56.0 (~2026-01-30); the Settings → Features → Enable Skills toggle was removed entirely in v3.57.0 (~2026-02-05) — skills are now always on, with only per-skill toggles |
 | **Agents** ◆ | `~/.cline/agents/` | `.cline/agents/` |
 | **Hooks** ◆ | `~/.cline/hooks/`; compatibility `~/Documents/Cline/Hooks/` | `.cline/hooks/` and `.clinerules/hooks/`; lifecycle scripts receive/return JSON |
 | **Workflows / plugins** ◆ | `~/.cline/data/workflows/`, `~/.cline/plugins/`; compatibility under `~/Documents/Cline/` | `.cline/plugins/`; project workflows are supported by Cline's configuration system |
@@ -388,14 +389,15 @@ Home: `~/.kiro/`
 | **Custom agents** ◆ | `~/.kiro/agents/` | `.kiro/agents/`; agent configuration can embed MCP servers, hooks, tools, permissions, and steering resources |
 | **Prompts** ◆ | `~/.kiro/prompts/` | `.kiro/prompts/`; project prompts override global prompts |
 | **MCP** ◆ | `~/.kiro/settings/mcp.json` | `.kiro/settings/mcp.json`; resolution: Agent > Project > Global |
-| **Specs / hooks** ◆ | Hooks may be embedded in custom-agent configuration | `.kiro/specs/` and `.kiro/hooks/`; IDE and CLI support lifecycle/tool hooks, with the current CLI agent schema also allowing inline hooks |
+| **Specs / hooks** ◆ | `~/.kiro/hooks/` — global hooks (CLI v3 preview, added v2.13.0, 2026-07-17): define once, apply across all workspaces; hooks may also be embedded in custom-agent configuration | `.kiro/specs/` and `.kiro/hooks/`; IDE and CLI support lifecycle/tool hooks, with the current CLI agent schema also allowing inline hooks |
 
 **Sources:**
 [CLI configuration](https://kiro.dev/docs/cli/chat/configuration/) ·
 [Agent configuration](https://kiro.dev/docs/cli/custom-agents/configuration-reference/) ·
 [Agent Skills](https://kiro.dev/docs/skills/) ·
 [Steering](https://kiro.dev/docs/cli/steering/) ·
-[Getting started](https://kiro.dev/docs/getting-started/first-project/)
+[Getting started](https://kiro.dev/docs/getting-started/first-project/) ·
+[Changelog: global hooks (v2.13)](https://kiro.dev/changelog/cli/2-13/)
 
 ---
 
@@ -425,9 +427,9 @@ Home: `~/.openhands/` for local state; cloud settings are managed in the UI
 
 ## Windsurf / Devin Desktop — Cognition
 
-Home: `~/.codeium/windsurf/` (legacy Codeium/Windsurf paths; still read by Devin Local for backward compatibility)
+Home: `~/.codeium/windsurf/` (legacy Codeium/Windsurf paths; still read by the legacy Cascade agent bundled in Devin Desktop, not by Devin Local)
 
-> **Rebrand complete:** Windsurf was renamed **Devin Desktop** (announced 2026-06-02) — same editor, same features, unified under the Devin brand. Its local agent, Cascade, reached end-of-life 2026-07-01 and was replaced as the default local agent by **Devin Local** (a Rust rewrite, ~30% better token efficiency, adds subagent support, and supports the Agent Client Protocol at launch, running Codex/Claude Agent/OpenCode etc.). Devin Desktop also acts as a command center for Devin Cloud sessions, which remain a separate SKU (see the Devin section above). Legacy `~/.codeium/windsurf/` and `.windsurf/` paths are still read for backward compatibility.
+> **Rebrand complete:** Windsurf was renamed **Devin Desktop** (announced 2026-06-02) — same editor, same features, unified under the Devin brand. Its local agent, Cascade, remained available through July 2026 (per the official FAQ; no exact end-of-life day is published) before being replaced as the default local agent by **Devin Local** (a Rust rewrite, ~30% better token efficiency, adds subagent support, and supports the Agent Client Protocol at launch, running Codex/Claude Agent/OpenCode etc.). Devin Desktop also acts as a command center for Devin Cloud sessions, which remain a separate SKU (see the Devin section above). Legacy `~/.codeium/windsurf/` and `.windsurf/` paths are still read for backward compatibility.
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
@@ -474,4 +476,4 @@ All paths use Unix notation; `~` = `%USERPROFILE%` on Windows. `$CODEX_HOME`, `$
 
 ---
 
-*Last verified: 20260713*
+*Last verified: 20260801*
