@@ -114,7 +114,7 @@ Home: `.cursor/` (project-centric)
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
-| **Instructions** ★ | User Rules (Customize → Rules) — plain text; always applied. Unified "Customize" page (introduced v3.9, Jun 22, 2026) centrally manages plugins/rules/skills/MCP/subagents/commands/hooks at user/team/workspace scope; current release is v3.11 (Jul 10, 2026 — side chats, conversation search, expanded cloud-agent hooks), with frequent feature updates since | `<repo>/AGENTS.md` — root level and subdirectories; plain-markdown alternative to `.cursor/rules`. Legacy: `.cursorrules` (deprecated since ~v0.43; officially deprecated and undocumented but still functional as of June 2026 — migrate to `.cursor/rules/`) |
+| **Instructions** ★ | User Rules (Customize → Rules) — plain text; always applied. Unified "Customize" page (introduced v3.9, Jun 22, 2026) centrally manages plugins/rules/skills/MCP/subagents/commands/hooks at user/team/workspace scope; v3.11 (Jul 10, 2026 — side chats, conversation search, expanded cloud-agent hooks) remains the newest numbered release as of Aug 2026, but frequent unversioned feature drops have continued: Slack integration improvements (Jul 17), Cursor Router auto-mode model routing (Jul 22), Cursor Start pricing tier for India (Jul 28), Cursor for iPad (Jul 29) | `<repo>/AGENTS.md` — root level and subdirectories; plain-markdown alternative to `.cursor/rules`. Legacy: `.cursorrules` (deprecated since ~v0.43; officially deprecated and undocumented but still functional as of Aug 2026 — migrate to `.cursor/rules/`) |
 | **Rules** ★ | — | `.cursor/rules/*.mdc` — YAML frontmatter: `alwaysApply`, `description`, `globs`. 4 modes: Always Apply, Apply Intelligently, Apply to Specific Files, Apply Manually. (`.md` files in this directory are ignored; use `.mdc`.) Subdirectory grouping supported. Remote rules imported from GitHub ◆ — land at `.cursor/rules/imported/<repoName>/` (relative paths preserved, e.g. `dir/rule.mdc` → `.cursor/rules/imported/<repoName>/dir/rule.mdc`) via Customize → Rules → Add Rule → Remote Rule (GitHub). Known bug (community-reported, Jan 2026) ○: rules may instead cache at `~/.cursor/projects/<hashed-path>/rules/` (a path hash, not the literal project name) and fail to sync into `.cursor/rules/`; a fix shipped to the nightly channel Apr 2026, stable-channel status unconfirmed |
 | **Commands** ◆ | `~/.cursor/commands/*.md` — user-global, all projects; still fully supported and documented (not deprecated) | `.cursor/commands/*.md` — invoke via `/`; filename becomes command name. Still fully supported — official "Agent Best Practices" docs recommend committing these to git. As of v3.9 (Jun 22, 2026) folded into the unified "Customize" page alongside skills/rules/MCP/subagents/hooks (a UI consolidation, not a deprecation). `/migrate-to-skills` (~v2.4) remains available as an *optional* converter for "Apply Intelligently" rules and slash commands into skills |
 | **Skills** ◆ | `~/.cursor/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — primary; `~/.claude/skills/*/SKILL.md`, `~/.codex/skills/*/SKILL.md` — legacy compat ² | `.cursor/skills/*/SKILL.md`, `.agents/skills/*/SKILL.md` — primary; `.claude/skills/*/SKILL.md`, `.codex/skills/*/SKILL.md` — legacy compat ² — agentskills.io; loaded on demand. SKILL.md: `paths` field (current) scopes activation by glob; `globs` is now the legacy alias |
@@ -219,7 +219,7 @@ Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 
 ## Aider — open source
 
-Home: configuration is file-based; no dedicated home directory
+Home: no dedicated directory for user-editable config (`~/.aider.conf.yml`, `.env` sit directly in the home dir), but `~/.aider/` holds non-config state — `oauth-keys.env`, `caches/` (model pricing/context-window cache), `analytics.json` (opt-in anonymous analytics)
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
@@ -227,7 +227,7 @@ Home: configuration is file-based; no dedicated home directory
 | **Config** ◆ | `~/.aider.conf.yml`; environment variables `AIDER_*`; optional `.env` | `<git-root>/.aider.conf.yml`, `<cwd>/.aider.conf.yml`; `.env` follows the same three-location search order as `.aider.conf.yml` (home → git root → cwd, last-loaded wins), or override with `--env-file`. CLI flags override file settings |
 | **Model config** ◆ | Paths selected by `model-settings-file` and `model-metadata-file`; commonly `.aider.model.settings.yml` and `.aider.model.metadata.json` | Same keys can point to repo-local files |
 | **History** ◆ | — | `.aider.chat.history.md` and `.aider.input.history` by default; filenames are configurable |
-| **Skills / subagents / MCP** ◆ | No native Agent Skills, subagent-definition, or MCP configuration convention documented | *(same)* |
+| **Skills / subagents / MCP** ◆ | No native Agent Skills, subagent-definition, or MCP configuration convention documented (MCP requested via open issue/RFC #4506; a PR adding it was closed unmerged) | *(same)* |
 
 **Sources:**
 [Configuration](https://aider.chat/docs/config.html) ·
