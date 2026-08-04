@@ -2,7 +2,7 @@
 
 A reference for **where CLI / agentic coding tools keep their configuration** —
 instruction files, custom prompts, skills, and subagents — kept current by a
-daily automated re-research job.
+weekly automated re-research job.
 
 ## Contents
 
@@ -23,11 +23,11 @@ marker:
 ## How the refresh works
 
 [`.github/workflows/refresh-config-locations.yml`](.github/workflows/refresh-config-locations.yml)
-runs daily at 06:00 UTC (and on manual dispatch). It uses
+runs weekly, every Thursday at 06:00 UTC (and on manual dispatch). It uses
 [`claude-code-action`](https://github.com/anthropics/claude-code-action) with
 web search to re-research each agent's published docs, updates
 `coding-agent-config-locations.md` in place, and commits any changes to `main`.
-The git history of that file is the changelog — each daily commit shows exactly
+The git history of that file is the changelog — each weekly commit shows exactly
 what changed.
 
 ## License

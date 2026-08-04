@@ -1,6 +1,6 @@
 name: Refresh coding-agent config locations
 
-# Runs daily: re-researches the agents documented in
+# Runs weekly: re-researches the agents documented in
 # coding-agent-config-locations.md and commits any verified updates
 # back into that same file on main. The git history is the changelog.
 #
@@ -9,7 +9,7 @@ name: Refresh coding-agent config locations
 
 on:
   schedule:
-    - cron: "0 6 * * *" # daily at 06:00 UTC
+    - cron: "0 6 * * 4" # weekly, Thursday at 06:00 UTC
   workflow_dispatch: # allow manual runs from the Actions tab
 
 permissions:
@@ -160,7 +160,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to $FILE — nothing to commit."
           else
-            git commit -m "Daily refresh: re-verify coding-agent config locations"
+            git commit -m "Weekly refresh: re-verify coding-agent config locations"
             # claude-code-action rewrites the origin remote with its own
             # short-lived token, so a bare `git push` fails auth. Push via an
             # explicit GITHUB_TOKEN URL instead (contents: write covers this).
