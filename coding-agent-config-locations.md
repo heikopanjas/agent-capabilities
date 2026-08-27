@@ -52,7 +52,7 @@ Home: `~/.claude/`
 
 Home: `~/.codex/` (`$CODEX_HOME`)
 
-> **Rust rewrite complete:** The TypeScript CLI was gradually phased out through late 2025 (no formal retirement date announced). The current codebase is ~96.5% Rust (`codex-rs/`, up from ~95.6% a week prior — a continuously drifting figure), production-stable since June 2025 (precise GA date unconfirmed by official sources), with a ~2 releases/day cadence (confirmed: releases shipping ~1–2/day through July 2026). Core config paths are stable post-transition. (A separate TypeScript **SDK**, `sdk/typescript`, still exists and is unrelated to the retired TS CLI.)
+> **Rust rewrite complete:** The TypeScript CLI was gradually phased out through late 2025 (no formal retirement date announced). The current codebase is ~96.5% Rust (`codex-rs/`, up from ~95.6% a week prior — a continuously drifting figure), production-stable since June 2025 (precise GA date unconfirmed by official sources), with a release cadence that has accelerated further — multiple releases/day are now routine (e.g. 10 tags across Aug 26–27, 2026, including alpha builds), up from ~1–2/day in July 2026. Core config paths are stable post-transition. (A separate TypeScript **SDK**, `sdk/typescript`, still exists and is unrelated to the retired TS CLI.)
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
@@ -114,7 +114,7 @@ Home: `.cursor/` (project-centric)
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
-| **Instructions** ★ | User Rules (Customize → Rules) — plain text; always applied. Unified "Customize" page (introduced v3.9, Jun 22, 2026) centrally manages plugins/rules/skills/MCP/subagents/commands/hooks at user/team/workspace scope; v3.11 (Jul 10, 2026 — side chats, conversation search, expanded cloud-agent hooks) remains the newest numbered release as of Aug 2026, but frequent unversioned feature drops have continued: Slack integration improvements (Jul 17), Cursor Router auto-mode model routing (Jul 22), Cursor Start pricing tier for India (Jul 28), Cursor for iPad (Jul 29), Google Workspace Plugins — Gmail/Drive/Calendar access for agents (Aug 3); no further dated changelog entries found through Aug 13, 2026 | `<repo>/AGENTS.md` — root level and subdirectories; plain-markdown alternative to `.cursor/rules`. Legacy: `.cursorrules` (deprecated since ~v0.43; officially deprecated and undocumented but still functional as of Aug 2026 — migrate to `.cursor/rules/`) |
+| **Instructions** ★ | User Rules (Customize → Rules) — plain text; always applied. Unified "Customize" page (introduced v3.9, Jun 22, 2026) centrally manages plugins/rules/skills/MCP/subagents/commands/hooks at user/team/workspace scope; v3.11 (Jul 10, 2026 — side chats, conversation search, expanded cloud-agent hooks) remains the newest numbered release as of Aug 2026, but frequent unversioned feature drops have continued: Slack integration improvements (Jul 17), Cursor Router auto-mode model routing (Jul 22), Cursor Start pricing tier for India (Jul 28), Cursor for iPad (Jul 29), Google Workspace Plugins — Gmail/Drive/Calendar access for agents (Aug 3); further unversioned drops continued: Grok 4.6 model (Aug 12), Origin code-hosting beta (Aug 17), Cloud Agents/Cursor Harness improvements — `/goal` command, PR/Slack subscriptions, isolated-VM subagents (Aug 19); no new numbered release found through Aug 27, 2026 | `<repo>/AGENTS.md` — root level and subdirectories; plain-markdown alternative to `.cursor/rules`. Legacy: `.cursorrules` (deprecated since ~v0.43; officially deprecated and undocumented but still functional as of Aug 2026 — migrate to `.cursor/rules/`) |
 | **Rules** ★ | — | `.cursor/rules/*.mdc` — YAML frontmatter: `alwaysApply`, `description`, `globs`. 4 modes: Always Apply, Apply Intelligently, Apply to Specific Files, Apply Manually. (`.md` files in this directory are ignored; use `.mdc`.) Subdirectory grouping supported. Remote rules imported from GitHub ◆ — land at `.cursor/rules/imported/<repoName>/` (relative paths preserved, e.g. `dir/rule.mdc` → `.cursor/rules/imported/<repoName>/dir/rule.mdc`) via Customize → Rules → Add Rule → Remote Rule (GitHub). Known bug (community-reported, Jan 2026) ○: rules may instead cache at `~/.cursor/projects/<hashed-path>/rules/` (a path hash, not the literal project name) and fail to sync into `.cursor/rules/`; a fix shipped to the nightly channel Apr 2026, stable-channel status unconfirmed |
 | **Commands** ◆ | `~/.cursor/commands/*.md` — user-global, all projects; still fully supported and documented (not deprecated) | `.cursor/commands/*.md` — invoke via `/`; filename becomes command name. Still fully supported — official "Agent Best Practices" docs recommend committing these to git. As of v3.9 (Jun 22, 2026) folded into the unified "Customize" page alongside skills/rules/MCP/subagents/hooks (a UI consolidation, not a deprecation). `/migrate-to-skills` (~v2.4) remains available as an *optional* converter for "Apply Intelligently" rules and slash commands into skills |
 | **Skills** ◆ | `~/.cursor/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` — primary; `~/.claude/skills/*/SKILL.md`, `~/.codex/skills/*/SKILL.md` — legacy compat ² | `.cursor/skills/*/SKILL.md`, `.agents/skills/*/SKILL.md` — primary; `.claude/skills/*/SKILL.md`, `.codex/skills/*/SKILL.md` — legacy compat ² — agentskills.io; loaded on demand. SKILL.md: `paths` field (current) scopes activation by glob; `globs` is now the legacy alias |
@@ -140,7 +140,7 @@ Home: `.cursor/` (project-centric)
 
 Home: `~/.vibe/` (`$VIBE_HOME`)
 
-> **Note:** Current version: 2.24.1 (August 11, 2026). Core config paths stable since Vibe 2.0, though several features were added after: AGENTS.md parent-folder walking (2.5.0), `.agents/skills/` discovery (2.2.0), `~/.agents/skills` (2.11.0), hooks introduced (2.9.0) then breaking-changed (2.15.0), project-config persistence (2.18.3), hooks graduated from experimental to stable with renamed events (2.21.0, 2026-07-17), full migration to a `ConfigOrchestrator` for config handling (2.22.0), managed-shell/app-server refactor (2.23.0), built-in skill-creator skill (2.23.2), `/retry` and fork-vs-rewind-in-place `/rewind` (2.23.3, 2026-08-03), admin config layer for shared/enforced config overlaying user config (2.24.0, 2026-08-05, no new documented file path), inline ghost-text skill completion and faster resume via deferred sub-agent instantiation (2.24.1, 2026-08-11). None of this changes documented config paths.
+> **Note:** Current version: 2.24.4 (August 26, 2026). Core config paths stable since Vibe 2.0, though several features were added after: AGENTS.md parent-folder walking (2.5.0), `.agents/skills/` discovery (2.2.0), `~/.agents/skills` (2.11.0), hooks introduced (2.9.0) then breaking-changed (2.15.0), project-config persistence (2.18.3), hooks graduated from experimental to stable with renamed events (2.21.0, 2026-07-17), full migration to a `ConfigOrchestrator` for config handling (2.22.0), managed-shell/app-server refactor (2.23.0), built-in skill-creator skill (2.23.2), `/retry` and fork-vs-rewind-in-place `/rewind` (2.23.3, 2026-08-03), admin config layer for shared/enforced config overlaying user config (2.24.0, 2026-08-05, no new documented file path), inline ghost-text skill completion and faster resume via deferred sub-agent instantiation (2.24.1, 2026-08-11), in-app session picker/`/log-level`/worktree cleanup/admin-config retry improvements (2.24.2, 2026-08-18), process renamed "Vibe CLI" with PID in status bar plus live slash-command/setting pickers during agent runs (2.24.3, 2026-08-20), LLM-generated session titles/queued-message edit mode/git info in session header/reused model connections/fixed Nix-managed skills symlink loading (2.24.4, 2026-08-26). None of this changes documented config paths.
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
@@ -196,7 +196,7 @@ Home: `~/.config/opencode/`
 
 Home: `~/.pi/` (agent config under `~/.pi/agent/`)
 
-> **Philosophy:** Pi is a minimal terminal harness — "primitives, not features." It deliberately ships **no built-in MCP, subagents, or plan mode**; those are added as TypeScript extensions. Distributed on npm as `@earendil-works/pi-coding-agent` (migrated from `@mariozechner/pi-coding-agent` at v0.74.0 — old package deprecated at v0.73.1, new repo at `earendil-works/pi`). Current version: 0.83.0 (npm, released 2026-07-29). Core paths stable since the v0.74.0 rename; `trust.json` added v0.79.0.
+> **Philosophy:** Pi is a minimal terminal harness — "primitives, not features." It deliberately ships **no built-in MCP, subagents, or plan mode**; those are added as TypeScript extensions. Distributed on npm as `@earendil-works/pi-coding-agent` (migrated from `@mariozechner/pi-coding-agent` at v0.74.0 — old package deprecated at v0.73.1, new repo at `earendil-works/pi`). Current version: 0.84.3 (npm, released ~2026-08-25). Core paths stable since the v0.74.0 rename; `trust.json` added v0.79.0.
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
@@ -246,7 +246,7 @@ Home: `~/.cline/` (CLI/SDK/Kanban; IDE integrations also use platform storage)
 |---|---|---|
 | **Instructions / rules** ◆ | `~/.cline/rules/`, `~/.agents/AGENTS.md`; compatibility search path `~/Documents/Cline/Rules/` (Linux may also use `~/Cline/Rules/`) | `.cline/rules/` and primary legacy-compatible `.clinerules/`; also reads `AGENTS.md`, `.cursorrules`, and `.windsurfrules`. Conditional rules use `paths:` YAML frontmatter |
 | **Settings** ◆ | `~/.cline/data/settings/providers.json`, `global-settings.json`, and `cline_mcp_settings.json`; `CLINE_DATA_DIR` replaces `~/.cline/data/` | Project behavior is stored in `.cline/` subdirectories; secrets stay in global provider settings |
-| **Skills** ◆ | `~/.cline/skills/*/SKILL.md` | `.cline/skills/*/SKILL.md` (recommended), `.clinerules/skills/`, `.claude/skills/`; progressive disclosure (shipped v3.48.0, Jan 2026). Enabled by default since v3.56.0 (~2026-01-30); the Settings → Features → Enable Skills toggle was removed entirely in v3.57.0 (~2026-02-05) — skills are now always on, with only per-skill toggles |
+| **Skills** ◆ | `~/.cline/skills/*/SKILL.md` | `.cline/skills/*/SKILL.md` (recommended), `.clinerules/skills/`, `.claude/skills/`; progressive disclosure (shipped v3.48.0, Jan 2026). Made always-on with the Settings → Features → Enable Skills toggle removed entirely in a single v3.57.0 change (~2026-02-05) — skills are now always on, with only per-skill toggles. (v3.56.0, ~2026-01-30, was unrelated to skills — it shipped GPT-5 OAuth and Jupyter notebook support.) A v4.x line (Customize marketplace) has since shipped, current ~v4.1.16 (~2026-08-26) |
 | **Agents** ◆ | `~/.cline/agents/` | `.cline/agents/` |
 | **Hooks** ◆ | `~/.cline/hooks/`; compatibility `~/Documents/Cline/Hooks/` | `.cline/hooks/` and `.clinerules/hooks/`; lifecycle scripts receive/return JSON |
 | **Workflows / plugins** ◆ | `~/.cline/data/workflows/`, `~/.cline/plugins/`; compatibility under `~/Documents/Cline/` | `.cline/plugins/`; project workflows are supported by Cline's configuration system |
@@ -293,7 +293,7 @@ Home: cloud-managed; configuration is primarily organization- and repository-sco
 | Feature | Global (user / organization) | Project (repo) |
 |---|---|---|
 | **Instructions / knowledge** ◆ | Knowledge and Enterprise Knowledge are managed in Settings & Library; items can be pinned to all repos, one repo, or retrieved by triggers | A centralized specialized file such as root `AGENTS.md` is recommended; Devin also auto-pulls updates from specialized files including `.rules`, `.mdc`, `.cursorrules`, `.windsurf`, `CLAUDE.md`, and `AGENTS.md` into repo knowledge |
-| **Skills** ◆ | — | `.agents/skills/*/SKILL.md` (recommended); also discovered: `.devin/skills/`, `.github/skills/`, `.claude/skills/`, `.cursor/skills/`, `.codex/skills/`, `.cognition/skills/`, `.windsurf/skills/` — discovered automatically or invoked with `@skills:<name>` |
+| **Skills** ◆ | — | `.agents/skills/*/SKILL.md` (recommended); also discovered: `.devin/skills/`, `.github/skills/`, `.claude/skills/`, `.cursor/skills/`, `.codex/skills/`, `.cognition/skills/`, `.windsurf/skills/`, `.codeium/skills/` — nine paths scanned in every repo; discovered automatically or invoked with `@skills:<name>` |
 | **Playbooks** ◆ | Managed in the Devin web app; reusable organization- or enterprise-scoped prompts attached manually to sessions | — |
 | **Environment** ◆ | Environment snapshots, secrets, and repository access are managed in Devin settings | Declarative environment blueprints are version-controlled YAML; `.envrc` can provide repo environment variables and should normally be gitignored |
 | **MCP** ◆ | Settings → Connections → MCP servers (page titled "MCP Marketplace"); custom stdio, SSE, and HTTP servers entered through a web form, gated by the "Manage MCP Servers" permission | No committed repo-level MCP file documented |
@@ -363,9 +363,9 @@ Home: `~/.hermes/` (profiles may use an alternate home)
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
-| **Instructions / identity** ◆ | `~/.hermes/SOUL.md` — primary identity | First matching context type wins: `.hermes.md` → `AGENTS.md` → `CLAUDE.md` → `.cursorrules`; hierarchical `AGENTS.md` files are combined |
+| **Instructions / identity** ◆ | `~/.hermes/SOUL.md` — primary identity (system-prompt slot #1) | Additional context files (`.hermes.md`, `AGENTS.md`, `CLAUDE.md`, `.cursorrules`) are all injected into the system prompt together, subject to `context_file_max_chars` truncation — no documented first-match-wins precedence |
 | **Config / secrets** ◆ | `~/.hermes/config.yaml`, `.env`, `auth.json`; precedence: CLI → config.yaml → .env → defaults | No separate project configuration file documented; working directory and backend are selected globally or per invocation |
-| **Skills** ◆ | `~/.hermes/skills/*/SKILL.md` — primary source of truth; external directories configurable | Plans created by the bundled plan skill land under `.hermes/plans/`; project-local skills are not a default discovery path |
+| **Skills** ◆ | `~/.hermes/skills/*/SKILL.md` — primary source of truth; external directories configurable | Plans created by the bundled plan skill land under `.hermes/plans/`; project-local skills (`.hermes/skills/`, `.agents/skills/`) are discovered but require explicit `hermes skills trust` before loading — not a default (auto-load) path |
 | **Memory** ◆ | `~/.hermes/memories/MEMORY.md` and `USER.md`; optional external memory providers configured in `config.yaml` | Cross-session search and sessions are stored under `~/.hermes/`; no committed project memory convention documented |
 | **MCP** ◆ | `mcp_servers:` in `~/.hermes/config.yaml`; catalog installations are managed with `hermes mcp` | No separate project MCP file documented |
 | **Automation** ◆ | `~/.hermes/cron/`, sessions, logs, messaging gateway config, and tool settings | Workspace artifacts created by skills may live under `.hermes/` |
@@ -385,7 +385,7 @@ Home: `~/.kiro/`
 
 | Feature | Global (user) | Project (repo) |
 |---|---|---|
-| **Instructions / steering** ◆ | `~/.kiro/steering/*.md`; global `AGENTS.md` is supported there | `.kiro/steering/*.md`; root `AGENTS.md` is supported; steering modes include always, automatic, file-match, and manual |
+| **Instructions / steering** ◆ | `~/.kiro/steering/*.md`; global `AGENTS.md` is supported there | `.kiro/steering/*.md`; `AGENTS.md` is discovered anywhere in the workspace tree, not just root (since CLI v2.18.0, 2026-08-12) — previously root-only; steering modes include always, automatic, file-match, and manual |
 | **Settings** ◆ | `~/.kiro/settings/cli.json` | Project configuration is stored under `.kiro/`; no project `cli.json` documented |
 | **Skills** ◆ | `~/.kiro/skills/*/SKILL.md` | `.kiro/skills/*/SKILL.md`; workspace skill wins on name conflict; Agent Skills standard |
 | **Custom agents** ◆ | `~/.kiro/agents/` | `.kiro/agents/`; agent configuration can embed MCP servers, hooks, tools, permissions, and steering resources |
@@ -394,12 +394,13 @@ Home: `~/.kiro/`
 | **Specs / hooks** ◆ | `~/.kiro/hooks/` — global hooks (CLI v3 preview, added v2.13.0, 2026-07-17): define once, apply across all workspaces; hooks may also be embedded in custom-agent configuration | `.kiro/specs/` and `.kiro/hooks/`; IDE and CLI support lifecycle/tool hooks, with the current CLI agent schema also allowing inline hooks |
 
 **Sources:**
-[CLI configuration](https://kiro.dev/docs/cli/chat/configuration/) ·
-[Agent configuration](https://kiro.dev/docs/cli/custom-agents/configuration-reference/) ·
+[CLI configuration](https://kiro.dev/docs/configuration/) ·
+[Agent configuration](https://kiro.dev/docs/custom-agents/configuration-reference/) ·
 [Agent Skills](https://kiro.dev/docs/skills/) ·
-[Steering](https://kiro.dev/docs/cli/steering/) ·
+[Steering](https://kiro.dev/docs/steering/) ·
 [Getting started](https://kiro.dev/docs/getting-started/first-project/) ·
-[Changelog: global hooks (v2.13)](https://kiro.dev/changelog/cli/2-13/)
+[Changelog: global hooks (v2.13)](https://kiro.dev/changelog/cli/2-13/) ·
+[Changelog: AGENTS.md workspace-wide (v2.18)](https://kiro.dev/changelog/cli/2-18/)
 
 ---
 
@@ -440,7 +441,7 @@ Home: `~/.codeium/windsurf/` (legacy Codeium/Windsurf paths; still read by the l
 | **Skills** ◆ | `~/.codeium/windsurf/skills/*/SKILL.md`, `~/.agents/skills/*/SKILL.md` | `.windsurf/skills/*/SKILL.md`, `.agents/skills/*/SKILL.md`; optional Claude-compatible discovery |
 | **Workflows** ◆ | `~/.codeium/windsurf/global_workflows/*.md` | `.windsurf/workflows/*.md`; manual `/name` invocation; discovered through subdirectories and parents to git root |
 | **Hooks** ◆ | `~/.codeium/windsurf/hooks.json`; JetBrains plugin: `~/.codeium/hooks.json` | `.windsurf/hooks.json`; system → user → workspace merge order; pre-hooks can block with exit code 2 |
-| **MCP** ◆ | `~/.codeium/windsurf/mcp_config.json` (legacy Cascade path, still read); Devin Local adds a user-level `~/.config/devin/config.json`; MCP Marketplace and enterprise allowlists | Devin Local introduces a committed project MCP file, `.devin/config.json` (team-shared `mcpServers`), with `.devin/config.local.json` for personal/gitignored overrides |
+| **MCP** ◆ | `~/.codeium/windsurf/mcp_config.json` (legacy Cascade path, still read); Devin Local adds a user-level `~/.config/devin/mcp_config.json` (since the Local 3.6 / v3000.3 release, 2026-07-29; older `mcpServers` entries in `config.json` are auto-migrated); MCP Marketplace and enterprise allowlists | Devin Local uses dedicated MCP config files: `.devin/mcp_config.json` (team-shared, committed) and `.devin/mcp_config.local.json` (personal/gitignored) — superseding the earlier combined `.devin/config.json`/`.devin/config.local.json` |
 
 **Sources:**
 [Memories and rules](https://docs.devin.ai/desktop/cascade/memories) ·
@@ -450,7 +451,8 @@ Home: `~/.codeium/windsurf/` (legacy Codeium/Windsurf paths; still read by the l
 [MCP](https://docs.devin.ai/desktop/cascade/mcp) ·
 [AGENTS.md](https://docs.devin.ai/desktop/cascade/agents-md) ·
 [Devin Local](https://docs.devin.ai/desktop/devin-local) ·
-[Devin Desktop FAQ](https://docs.devin.ai/desktop/devin-desktop-faq)
+[Devin Desktop FAQ](https://docs.devin.ai/desktop/devin-desktop-faq) ·
+[CLI extensibility / MCP config (Local 3.6)](https://docs.devin.ai/cli/extensibility/configuration)
 
 ---
 
@@ -478,4 +480,4 @@ All paths use Unix notation; `~` = `%USERPROFILE%` on Windows. `$CODEX_HOME`, `$
 
 ---
 
-*Last verified: 20260801*
+*Last verified: 20260827*
