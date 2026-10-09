@@ -604,20 +604,20 @@ Home: `~/.openhands/` for local state; cloud settings are managed in the UI
 
 ---
 
-## Windsurf / Devin Desktop — Cognition
+## Devin Desktop — Cognition
 
-Home: `~/.codeium/windsurf/` (legacy Codeium/Windsurf paths; still read by the legacy Cascade agent bundled in Devin Desktop, not by Devin Local)
+Home: `~/.config/devin/` (Devin Local) · `~/.codeium/windsurf/` (legacy global paths)
 
-> **Rebrand:** Windsurf is now **Devin Desktop**. Its legacy local agent, Cascade, reads the legacy `~/.codeium/windsurf/` and `.windsurf/` paths; the default local agent, **Devin Local**, reads the `.devin/` and `~/.config/devin/` paths. Devin Desktop also acts as a command center for Devin Cloud sessions (see the Devin section above).
+> **Local agent:** The default local agent, **Devin Local**, reads the `.devin/` and `~/.config/devin/` paths and still falls back to the legacy `.windsurf/` and `~/.codeium/windsurf/` locations marked below. The older Cascade agent is retired. Devin Desktop also acts as a command center for Devin Cloud sessions (see the Devin section above).
 
 | Feature | Project (repo) | Global (user) |
 |---|---|---|
-| **Instructions / rules** ◆ | `.devin/rules/*.md` (preferred, discovered recursively), `.windsurf/rules/*.md` fallback, legacy `.windsurfrules`; hierarchical `AGENTS.md` is supported | `~/.codeium/windsurf/memories/global_rules.md`; system rules use OS-level `Devin/rules/` with `Windsurf/rules/` fallback |
+| **Instructions / rules** ◆ | `.devin/rules/*.md` (preferred, discovered recursively), `.windsurf/rules/*.md` legacy fallback, `.windsurfrules` legacy; hierarchical `AGENTS.md` is supported | `~/.codeium/windsurf/memories/global_rules.md`; system rules use OS-level `Devin/rules/` with `Windsurf/rules/` fallback |
 | **Memory** ◆ | Memories are local and not committed; durable team context should use rules or `AGENTS.md` | Workspace-scoped generated memories are stored under `~/.codeium/windsurf/memories/` |
 | **Skills** ◆ | `.devin/skills/*/SKILL.md` (preferred), `.windsurf/skills/*/SKILL.md` (legacy fallback), `.agents/skills/*/SKILL.md`; optional Claude-compatible discovery | `~/.codeium/windsurf/skills/*/SKILL.md`, `~/.config/devin/skills/*/SKILL.md` (shared with Devin CLI), `~/.agents/skills/*/SKILL.md` |
 | **Workflows** ◆ | `.devin/workflows/*.md` (preferred), `.windsurf/workflows/*.md` (fallback, used only if the workspace hasn't migrated); manual `/name` invocation; discovered through subdirectories and parents to git root. Devin Local doesn't support workflows — migrate them to skills | `~/.codeium/windsurf/global_workflows/*.md` |
 | **Hooks** ◆ | `.devin/hooks.json` (preferred); `.windsurf/hooks.json` used only if `.devin/hooks.json` is missing or defines no hooks; system → user → workspace merge order (Enterprise cloud-dashboard hooks load before all file levels); pre-hooks can block with exit code 2 | `~/.codeium/windsurf/hooks.json`; JetBrains plugin: `~/.codeium/hooks.json` |
-| **MCP** ◆ | `.devin/mcp_config.json` (team-shared, committed) and `.devin/mcp_config.local.json` (personal, gitignored). `docs.devin.ai/cli/extensibility/configuration` is authoritative for MCP-specific paths | `~/.codeium/windsurf/mcp_config.json` (Cascade path, still read); Devin Local user scope: `~/.config/devin/mcp_config.json` (Windows `%APPDATA%\devin\mcp_config.json`), with `mcpServers` entries in `~/.config/devin/config.json` auto-migrated on startup; MCP Marketplace and enterprise allowlists |
+| **MCP** ◆ | `.devin/mcp_config.json` (team-shared, committed) and `.devin/mcp_config.local.json` (personal, gitignored). `docs.devin.ai/cli/extensibility/configuration` is authoritative for MCP-specific paths | `~/.codeium/windsurf/mcp_config.json` (legacy path, still read); Devin Local user scope: `~/.config/devin/mcp_config.json` (Windows `%APPDATA%\devin\mcp_config.json`), with `mcpServers` entries in `~/.config/devin/config.json` auto-migrated on startup; MCP Marketplace and enterprise allowlists |
 
 **Sources:**
 [Memories and rules](https://docs.devin.ai/desktop/cascade/memories) ·
@@ -628,7 +628,7 @@ Home: `~/.codeium/windsurf/` (legacy Codeium/Windsurf paths; still read by the l
 [AGENTS.md](https://docs.devin.ai/desktop/cascade/agents-md) ·
 [Devin Local](https://docs.devin.ai/desktop/devin-local) ·
 [Devin Desktop FAQ](https://docs.devin.ai/desktop/devin-desktop-faq) ·
-[CLI extensibility / MCP config (Local 3.6)](https://docs.devin.ai/cli/extensibility/configuration) ·
+[CLI extensibility / MCP config](https://docs.devin.ai/cli/extensibility/configuration) ·
 [CLI changelog (stable)](https://docs.devin.ai/cli/changelog/stable)
 
 ---
@@ -647,7 +647,7 @@ Home: `~/.codeium/windsurf/` (legacy Codeium/Windsurf paths; still read by the l
 
 - **`.agents/skills/`** — The cross-agent convention from the [agentskills.io client implementation guide](https://agentskills.io/client-implementation/adding-skills-support), described there as "a widely-adopted convention for cross-client skill sharing" that makes skills "automatically visible" across compliant clients. The guide instructs all compliant clients to scan both their own native directory and `.agents/skills/`. Scanned by Codex, Copilot, OpenCode, Gemini CLI, Antigravity CLI, Cursor, Vibe, Pi, Amp, Factory, Junie, Kilo Code, and Augment Code among others. (A single canonical skill tree shared via symlinks is a natural consequence of this convention, though not stated verbatim by the spec.)
 
-- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation. Supported by Codex, Jules, Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin, Junie, Amp, Cursor, RooCode, Gemini CLI, Antigravity, Kilo Code, GitHub Copilot, Windsurf, Augment Code, and others. (Pi and Mistral Vibe also support AGENTS.md.)
+- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation. Supported by Codex, Jules, Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin, Junie, Amp, Cursor, RooCode, Gemini CLI, Antigravity, Kilo Code, GitHub Copilot, Devin Desktop, Augment Code, and others. (Pi and Mistral Vibe also support AGENTS.md.)
 
 - **`SKILL.md`** — [Agent Skills spec](https://agentskills.io/specification). There is no top-level `version:` frontmatter field; skill package versioning goes under the `metadata:` map (e.g., `metadata:\n  version: "1.0"`). Structure: `skill-name/{SKILL.md, scripts/, references/, assets/}`. The `allowed-tools` frontmatter field is experimental. Spec repo: [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills). Client list: [agentskills.io/clients](https://agentskills.io/clients).
 

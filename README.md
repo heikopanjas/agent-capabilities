@@ -6,7 +6,7 @@ The site is at [heikopanjas.github.io/agent-capabilities](https://heikopanjas.gi
 
 ## Contents
 
-[`coding-agent-config-locations.md`](coding-agent-config-locations.md) is the reference document. It covers Aider, Amp, Antigravity CLI, Augment Code, Claude Code, Cline, Codex CLI, Continue, Cursor, Devin, Factory, Gemini CLI, GitHub Copilot, Goose, Hermes Agent, Junie, Kilo Code, Kiro, Mistral Vibe, OpenCode, OpenHands, Pi, and Windsurf / Devin Desktop. It also covers the standards several agents share (`AGENTS.md`, `SKILL.md`, `.agents/skills/`).
+[`coding-agent-config-locations.md`](coding-agent-config-locations.md) is the reference document. It covers Aider, Amp, Antigravity CLI, Augment Code, Claude Code, Cline, Codex CLI, Continue, Cursor, Devin, Factory, Gemini CLI, GitHub Copilot, Goose, Hermes Agent, Junie, Kilo Code, Kiro, Mistral Vibe, OpenCode, OpenHands, Pi, and Devin Desktop. It also covers the standards several agents share (`AGENTS.md`, `SKILL.md`, `.agents/skills/`).
 
 Each agent has a table with one row per feature. The Project (repo) column comes first and the Global (user) column second. Every row has a confidence marker:
 

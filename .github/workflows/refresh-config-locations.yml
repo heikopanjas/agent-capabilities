@@ -56,7 +56,7 @@ jobs:
                Amp, Augment Code, Factory, Junie, Kilo Code,
                GitHub Copilot, Cursor, Mistral Vibe, OpenCode, Pi, Aider,
                Cline, Continue, Devin, Gemini CLI, Goose, Hermes Agent, Kiro,
-               OpenHands, Windsurf / Devin Desktop) and the cross-agent
+               OpenHands, Devin Desktop) and the cross-agent
                standards section, use WebSearch and WebFetch to
                verify the current state of each config path, file convention,
                skill/subagent location, and CLI behavior against the official
@@ -143,7 +143,7 @@ jobs:
                Amp, Augment Code, Factory, Junie, Kilo Code,
                GitHub Copilot, Cursor, Mistral Vibe, OpenCode, Pi, Aider,
                Cline, Continue, Devin, Gemini CLI, Goose, Hermes Agent, Kiro,
-               OpenHands, Windsurf / Devin Desktop) and the cross-agent
+               OpenHands, Devin Desktop) and the cross-agent
                standards section, use WebSearch and WebFetch to
                verify the current state of each config path, file convention,
                skill/subagent location, and CLI behavior against the official
