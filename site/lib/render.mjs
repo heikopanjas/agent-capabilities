@@ -316,7 +316,7 @@ export function renderIndex(model, history) {
 <section class="section" id="agents">
   <div class="section-head">${kicker("02", "Agents")}
     <h2>${model.agents.length} <em>agents</em> tracked.</h2>
-    <p class="section-intro">Open an agent for its full table, notes, and the official sources we checked its paths against.</p>
+    <p class="section-intro">Open an agent for its full table, notes, and the official sources behind each path.</p>
   </div>
   <div class="rack">${model.agents.map((a, i) => agentCard(a, i, root)).join("")}</div>
 </section>
