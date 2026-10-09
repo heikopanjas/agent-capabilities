@@ -363,8 +363,8 @@ export function renderAgent(model, index) {
   <header><h3>${esc(r.feature)}</h3>${badge(r.marker)}<span class="cats">${r.categories.map((k) => `<span class="mini-tag">${esc(CAT_LABEL[k])}</span>`).join("")}</span></header>
   ${r.featureNote ? `<p class="feat-note">${r.featureNote}</p>` : ""}
   <div class="pair">
-    <div><span class="pair-label">${esc(a.columns.global)}</span><div class="pair-body">${cell(r.globalHtml)}</div></div>
     <div><span class="pair-label">${esc(a.columns.project)}</span><div class="pair-body">${cell(r.projectHtml)}</div></div>
+    <div><span class="pair-label">${esc(a.columns.global)}</span><div class="pair-body">${cell(r.globalHtml)}</div></div>
   </div>
 </article>`,
     )
@@ -438,7 +438,7 @@ export function renderCompare(model) {
             ? hits
                 .map(
                   (r) => `<div class="cmp-item"><div class="cmp-feat">${esc(r.feature)} ${badge(r.marker)}</div>
-<dl><dt>Global</dt><dd>${cell(r.globalHtml)}</dd><dt>Project</dt><dd>${cell(r.projectHtml)}</dd></dl></div>`,
+<dl><dt>Project</dt><dd>${cell(r.projectHtml)}</dd><dt>Global</dt><dd>${cell(r.globalHtml)}</dd></dl></div>`,
                 )
                 .join("")
             : `<span class="nil">Not documented</span>`;
