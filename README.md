@@ -4,6 +4,10 @@ A reference for **where CLI / agentic coding tools keep their configuration** �
 instruction files, custom prompts, skills, and subagents — kept current by a
 weekly automated re-research job.
 
+**Browse it at [heikopanjas.github.io/agent-capabilities](https://heikopanjas.github.io/agent-capabilities/)**:
+a filterable matrix, per-agent pages, a side-by-side compare view, and a
+week-by-week changelog with an [Atom feed](https://heikopanjas.github.io/agent-capabilities/feed.xml).
+
 ## Contents
 
 **[`coding-agent-config-locations.md`](coding-agent-config-locations.md)** is
@@ -29,6 +33,28 @@ web search to re-research each agent's published docs, updates
 `coding-agent-config-locations.md` in place, and commits any changes to `main`.
 The git history of that file is the changelog — each weekly commit shows exactly
 what changed.
+
+## Site
+
+The site is generated from the Markdown document and never committed.
+[`site/build.mjs`](site/build.mjs) parses `coding-agent-config-locations.md`
+([`site/lib/parse.mjs`](site/lib/parse.mjs)), diffs every committed version of
+it to build the changelog ([`site/lib/history.mjs`](site/lib/history.mjs)), and
+renders static HTML into `_site/`. If the document's structure breaks (missing
+confidence markers, malformed table rows, no "Last verified" line), the build
+fails and the previously deployed site stays live.
+
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml) deploys on pushes
+to `main` and after every successful weekly refresh.
+
+Preview locally (Node 22+):
+
+```sh
+npm ci
+npm test
+npm run build
+npm run serve   # http://localhost:8000
+```
 
 ## License
 

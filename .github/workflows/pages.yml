@@ -1,0 +1,74 @@
+name: Deploy site to GitHub Pages
+
+# Builds the static site from coding-agent-config-locations.md (site/build.mjs)
+# and publishes it to https://heikopanjas.github.io/agent-capabilities/.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - coding-agent-config-locations.md
+      - site/**
+      - package.json
+      - package-lock.json
+      - .github/workflows/pages.yml
+  # The weekly refresh pushes with GITHUB_TOKEN, and such pushes never trigger
+  # `push` workflows — so redeploy whenever a refresh run finishes successfully.
+  workflow_run:
+    workflows: ["Refresh coding-agent config locations"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: main # workflow_run would otherwise check out the triggering commit, not the refresh commit
+          fetch-depth: 0 # the changelog is built from the document's git history
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
