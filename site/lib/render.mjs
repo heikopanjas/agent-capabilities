@@ -1,11 +1,19 @@
 // HTML templates. Pages are fully rendered at build time so the site works
 // without JavaScript; site/assets/app.js only adds filtering and motion.
 
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { CATEGORIES, CONFIDENCE, stripHtml } from "./parse.mjs";
 import { escapeHtml as esc } from "./history.mjs";
 
 export const REPO_URL = "https://github.com/heikopanjas/agent-capabilities";
 const DOC_URL = `${REPO_URL}/blob/main/coding-agent-config-locations.md`;
+
+// Content hash appended to asset URLs so edits bypass browser/CDN caches.
+const assetVersion = (name) =>
+  createHash("sha1").update(readFileSync(new URL(`../assets/${name}`, import.meta.url))).digest("hex").slice(0, 8);
+const CSS_V = assetVersion("style.css");
+const JS_V = assetVersion("app.js");
 
 const ACCENTS = ["teal", "violet", "amber", "green", "blue", "rose"];
 const CONF_ORDER = { stable: 3, documented: 2, observed: 1 };
@@ -89,9 +97,9 @@ function layout({ model, root, active, title, description, body, bodyClass = "" 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="${root}assets/style.css">
+<link rel="stylesheet" href="${root}assets/style.css?v=${CSS_V}">
 <script>document.documentElement.classList.add("js")</script>
-<script src="${root}assets/app.js" defer></script>
+<script src="${root}assets/app.js?v=${JS_V}" defer></script>
 </head>
 <body class="${bodyClass}" data-verified="${esc(model.lastVerified)}">
 <a class="skip" href="#main">Skip to content</a>
