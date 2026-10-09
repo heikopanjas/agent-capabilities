@@ -153,7 +153,7 @@
         }),
       );
       cmp.style.setProperty("--n", Math.max(1, picked.length));
-      hint.textContent = picked.length >= MAX ? `Showing ${MAX}, the maximum. Deselect one to swap.` : "Up to 4 agents. The link updates as you pick.";
+      hint.textContent = picked.length >= MAX ? `Showing ${MAX}, the limit. Deselect one to pick another.` : "Up to 4 agents. The URL updates as you pick.";
       const p = new URLSearchParams(location.search);
       p.set("a", picked.join(","));
       history.replaceState(null, "", `${location.pathname}?${p}`);

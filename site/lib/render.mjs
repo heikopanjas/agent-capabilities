@@ -275,7 +275,7 @@ export function renderIndex(model, history) {
   <div class="hero-inner">
     <p class="eyebrow">Reference · weekly re-verified · ${esc(edition)} edition</p>
     <h1>Where agents <em>keep</em> their config.</h1>
-    <p class="lede">${esc(model.subtitle.replace(/\s+—\s+\w+ \d{4}$/, ""))}. ${model.agents.length} coding agents, every instruction file, skill folder and subagent path, each tagged with how sure we are.</p>
+    <p class="lede">${esc(model.subtitle.replace(/\s+—\s+\w+ \d{4}$/, ""))}. ${model.agents.length} coding agents, with a confidence marker on every row.</p>
     <div class="hero-cta">
       <a class="btn btn-hot" href="#matrix"><span class="btn-lamp"></span>Explore the matrix</a>
       <a class="btn btn-ghost" href="changelog/">What changed this week ↗</a>
@@ -283,18 +283,18 @@ export function renderIndex(model, history) {
   </div>
   <div class="meters">
     <div class="meter"><b>${model.agents.length}</b><span>agents tracked</span></div>
-    <div class="meter"><b>${rowCount}</b><span>features mapped</span></div>
-    <div class="meter"><b>${stable}</b><span>★ spec-stable</span></div>
+    <div class="meter"><b>${rowCount}</b><span>features tracked</span></div>
+    <div class="meter"><b>${stable}</b><span>★ spec-backed rows</span></div>
     <div class="meter"><b>${totalChanges}</b><span>changes logged</span></div>
     <div class="meter"><b id="days-since">${esc(model.lastVerified.slice(5))}</b><span id="days-label">last verified</span></div>
   </div>
-  <div class="hero-foot"><span>● ON AIR</span><span>VERIFIED ${esc(model.lastVerified.replace(/-/g, "."))}</span><span>SCROLL ↓</span></div>
+  <div class="hero-foot"><span>● LIVE</span><span>VERIFIED ${esc(model.lastVerified.replace(/-/g, "."))}</span><span>SCROLL ↓</span></div>
 </section>
 
 <section class="section" id="short">
   <div class="section-head">${kicker("00", "The short version")}
-    <h2>Four <em>standards</em> hold it together.</h2>
-    <p class="section-intro">Every agent invents its own folders, but a few shared conventions keep spreading. Learn these four and most of the matrix reads itself.</p>
+    <h2>Four <em>standards</em> to know.</h2>
+    <p class="section-intro">Each agent picks its own folders, but four conventions show up across most of them. Know these and the matrix is easy to read.</p>
   </div>
   <div class="tldr-grid">${tldr}</div>
   <p class="section-more"><a href="standards/">All standards and notes →</a></p>
@@ -302,8 +302,8 @@ export function renderIndex(model, history) {
 
 <section class="section" id="matrix">
   <div class="section-head">${kicker("01", "Matrix")}
-    <h2>Every path, <em>one</em> grid.</h2>
-    <p class="section-intro">Each light is an agent documenting a category. Brightness follows confidence: <span class="conf conf-stable">★</span> spec or long-standing docs, <span class="conf conf-documented">◆</span> documented but may shift, <span class="conf conf-observed">○</span> observed in the wild. Tap a light to filter the table.</p>
+    <h2>Every path in <em>one</em> grid.</h2>
+    <p class="section-intro">Each light is an agent that documents a category. Brightness shows confidence: <span class="conf conf-stable">★</span> spec or long-standing docs, <span class="conf conf-documented">◆</span> in the official docs but liable to change, <span class="conf conf-observed">○</span> observed, not documented. Click a light to filter the table.</p>
   </div>
   <div class="stage">
     ${coverage(model)}
@@ -314,9 +314,9 @@ export function renderIndex(model, history) {
 </section>
 
 <section class="section" id="agents">
-  <div class="section-head">${kicker("02", "The rack")}
-    <h2>${model.agents.length} agents, <em>one</em> rack.</h2>
-    <p class="section-intro">Open any unit for its full table, vendor notes, and the official sources each path was checked against.</p>
+  <div class="section-head">${kicker("02", "Agents")}
+    <h2>${model.agents.length} <em>agents</em> tracked.</h2>
+    <p class="section-intro">Open an agent for its full table, notes, and the official sources we checked its paths against.</p>
   </div>
   <div class="rack">${model.agents.map((a, i) => agentCard(a, i, root)).join("")}</div>
 </section>
@@ -324,7 +324,7 @@ export function renderIndex(model, history) {
 <section class="section" id="changes">
   <div class="section-head">${kicker("03", "Latest changes")}
     <h2>What <em>moved</em> recently.</h2>
-    <p class="section-intro">Vendors rename folders, deprecate flags and ship new discovery paths all the time. Every refresh is diffed against the previous version.</p>
+    <p class="section-intro">Vendors rename folders, drop flags and add discovery paths. Each refresh is diffed against the previous version.</p>
   </div>
   <ol class="day-list">${latestHtml}</ol>
   <p class="section-more"><a href="changelog/">Full changelog →</a> · <a href="feed.xml">Subscribe via Atom</a></p>
@@ -332,9 +332,9 @@ export function renderIndex(model, history) {
 
 <section class="outro">
   <div class="outro-inner">
-    ${kicker("04", "Stay tuned", "center")}
-    <h2>Paths drift. <em>Subscribe</em> to the signal.</h2>
-    <p>The reference re-verifies itself every Thursday against each vendor's official documentation. The feed carries only weeks where something changed.</p>
+    ${kicker("04", "Subscribe", "center")}
+    <h2>Paths change. <em>Subscribe</em> to hear when.</h2>
+    <p>Every Thursday the reference is checked against each vendor's official docs. The feed has an entry only for weeks where something changed.</p>
     <div class="hero-cta"><a class="btn btn-hot" href="feed.xml"><span class="btn-lamp"></span>Atom feed</a><a class="btn btn-ghost" href="${REPO_URL}">Source on GitHub ↗</a></div>
   </div>
 </section>`;
@@ -344,7 +344,7 @@ export function renderIndex(model, history) {
     root,
     active: "",
     title: "Agent Capabilities: where coding agents keep their config",
-    description: `Instruction files, skills, subagents, MCP and settings paths for ${model.agents.length} coding agents, re-verified weekly.`,
+    description: `Instruction, skill, subagent, MCP and settings paths for ${model.agents.length} coding agents. Re-checked weekly.`,
     body,
     bodyClass: "home",
   });
@@ -410,7 +410,7 @@ export function renderAgent(model, index) {
     root,
     active: "agents",
     title: `${a.name}: config locations · Agent Capabilities`,
-    description: `Where ${a.name} (${a.vendor}) keeps instructions, skills, subagents, MCP and settings, re-verified weekly.`,
+    description: `Where ${a.name} (${a.vendor}) keeps instructions, skills, subagents, MCP and settings. Re-checked weekly.`,
     body,
   });
 }
@@ -460,11 +460,11 @@ export function renderCompare(model) {
   const body = `
 <section class="section">
   <div class="section-head">${kicker("05", "Compare")}
-    <h1 class="page-title">Side by <em>side</em>.</h1>
-    <p class="section-intro">Pick up to four agents. Rows line up by category, so you can see where each one looks for the same kind of file.</p>
+    <h1 class="page-title">Agents <em>side</em> by side.</h1>
+    <p class="section-intro">Pick up to four agents. Rows are grouped by category, so you can see where each agent looks for the same kind of file.</p>
   </div>
   <div class="scenarios picker" role="group" aria-label="Agents to compare">${picker}</div>
-  <p class="mono-fine pick-hint" id="pick-hint">Up to 4 agents. The link updates as you pick.</p>
+  <p class="mono-fine pick-hint" id="pick-hint">Up to 4 agents. The URL updates as you pick.</p>
   <div class="cmp-wrap stage">
     <div class="cmp" id="cmp" style="--n:${defaults.size}">
       <div class="cmp-row cmp-head"><div class="cmp-cat"></div>${headCells}</div>
@@ -479,7 +479,7 @@ export function renderCompare(model) {
     root,
     active: "compare",
     title: "Compare agents · Agent Capabilities",
-    description: "Compare where coding agents keep instructions, skills, subagents and MCP config, side by side.",
+    description: "Compare where up to four coding agents keep instructions, skills, subagents and MCP config.",
     body,
     bodyClass: "compare-page",
   });
@@ -539,7 +539,7 @@ export function renderChangelog(model, history) {
 <section class="section">
   <div class="section-head">${kicker("06", "Changelog")}
     <h1 class="page-title">What <em>changed</em>, week by week.</h1>
-    <p class="section-intro">Each entry is a commit to the reference document, diffed cell by cell against the version before it. <ins class="legend-ins">Green</ins> was added, <del class="legend-del">rose</del> was removed; long unchanged stretches are folded into “…”.</p>
+    <p class="section-intro">Each entry is a commit to the reference document, compared cell by cell with the commit before it. <ins class="legend-ins">Green</ins> text was added and <del class="legend-del">rose</del> text was removed. Long unchanged stretches are folded into "...".</p>
     <p class="fine"><a href="${root}feed.xml">Subscribe via Atom</a></p>
   </div>
   <ol class="day-list changelog">${entries || '<li class="entry quiet"><div>No history available in this build.</div></li>'}</ol>
@@ -550,7 +550,7 @@ export function renderChangelog(model, history) {
     root,
     active: "changes",
     title: "Changelog · Agent Capabilities",
-    description: "Week-by-week changes to where coding agents keep their configuration.",
+    description: "Weekly changes to where coding agents keep their configuration.",
     body,
   });
 }
@@ -571,7 +571,7 @@ export function renderStandards(model) {
   const body = `
 <section class="section">
   <div class="section-head">${kicker("07", "Standards & notes")}
-    <h1 class="page-title">The <em>shared</em> conventions.</h1>
+    <h1 class="page-title">Shared <em>conventions</em>.</h1>
     <p class="section-intro">${model.introHtml.join(" ")}</p>
   </div>
   <div class="std-grid">${cards}</div>
@@ -586,7 +586,7 @@ export function renderStandards(model) {
     root,
     active: "standards",
     title: "Standards & notes · Agent Capabilities",
-    description: "AGENTS.md, SKILL.md, .agents/skills and the other cross-agent conventions.",
+    description: "AGENTS.md, SKILL.md, .agents/skills and other conventions several agents share.",
     body,
   });
 }
