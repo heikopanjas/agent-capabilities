@@ -64,6 +64,23 @@ jobs:
                path, flag, or behavior that has changed. Preserve the
                document's structure, tables, confidence markers, and
                "Sources" lists. Do NOT create any new files.
+               Record only the CURRENT configuration state: file paths,
+               file formats and frontmatter fields, precedence and
+               discovery rules, env vars, and CLI flags that control
+               configuration. Write each entry as a terse present-tense
+               fact in your own words.
+               Do NOT include: changelog or release-note text (quoted or
+               paraphrased), version numbers or release dates for when
+               something was added, changed, deprecated, or fixed, "no
+               longer" / "previously" / "formerly" history, bug or issue
+               references, or product news and marketing. Git history is
+               the changelog. If a path or behavior changed, replace the
+               old entry with the new state; do not annotate the change.
+               If an existing entry already contains such history, strip
+               it while you are there, keeping only the configuration
+               facts. A version number is acceptable only where a
+               config feature is unavailable without a minimum version
+               and users need that to configure it correctly.
             4. Set the trailing "Last verified" line to today's date
                (${{ steps.vars.outputs.date }}).
             5. Do NOT run git, and do NOT create commits, branches, or pull
@@ -131,6 +148,23 @@ jobs:
                path, flag, or behavior that has changed. Preserve the
                document's structure, tables, confidence markers, and
                "Sources" lists. Do NOT create any new files.
+               Record only the CURRENT configuration state: file paths,
+               file formats and frontmatter fields, precedence and
+               discovery rules, env vars, and CLI flags that control
+               configuration. Write each entry as a terse present-tense
+               fact in your own words.
+               Do NOT include: changelog or release-note text (quoted or
+               paraphrased), version numbers or release dates for when
+               something was added, changed, deprecated, or fixed, "no
+               longer" / "previously" / "formerly" history, bug or issue
+               references, or product news and marketing. Git history is
+               the changelog. If a path or behavior changed, replace the
+               old entry with the new state; do not annotate the change.
+               If an existing entry already contains such history, strip
+               it while you are there, keeping only the configuration
+               facts. A version number is acceptable only where a
+               config feature is unavailable without a minimum version
+               and users need that to configure it correctly.
             4. Set the trailing "Last verified" line to today's date
                (${{ steps.vars.outputs.date }}).
             5. Do NOT run git, and do NOT create commits, branches, or pull
