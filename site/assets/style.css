@@ -190,7 +190,11 @@ tr:not(.lead):hover .m-agent a{opacity:.35}
 .m-feature{width:170px}
 .feat{display:block;font-weight:600;color:var(--text);margin-bottom:6px}
 .feat-note{font-size:13px;color:var(--dim);margin-top:6px}
-.m-path{color:var(--soft);width:calc((100% - 320px)/2)}
+.matrix{table-layout:fixed}
+.matrix thead th:nth-child(1){width:150px}
+.matrix thead th:nth-child(2){width:170px}
+.matrix thead th:nth-child(n+3){width:auto}
+.m-path{color:var(--soft);overflow-wrap:anywhere}
 .m-path code{color:var(--text)}
 .empty{padding:28px;text-align:center;color:var(--dim);margin:0}
 @media (max-width:760px){
