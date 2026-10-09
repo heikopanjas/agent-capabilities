@@ -83,6 +83,10 @@ jobs:
             echo "failed=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+          # Both attempts write the same execution file, so keep attempt 1's
+          # copy before a retry overwrites it (uploaded as an artifact below).
+          mkdir -p "$RUNNER_TEMP/claude-transcripts"
+          cp "$CLAUDE_OUTPUT" "$RUNNER_TEMP/claude-transcripts/attempt1.json"
           ERR=$(jq -s 'flatten | map(select(.type=="result")) | last | .is_error' "$CLAUDE_OUTPUT" 2>/dev/null)
           echo "attempt 1 is_error=$ERR"
           if [ "$ERR" = "false" ]; then
@@ -133,6 +137,30 @@ jobs:
                requests. Only edit the file in place — a later workflow step
                handles committing.
 
+      # The action hides Claude's transcript from the job log. Keep it as a
+      # short-lived artifact so a bad run can be diagnosed afterwards
+      # (Actions tab -> run -> Artifacts). Note: artifacts of a public repo
+      # can be downloaded by any signed-in GitHub user.
+      - name: Collect Claude transcripts
+        if: always()
+        env:
+          ATTEMPT2_OUTPUT: ${{ steps.attempt2.outputs.execution_file }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/claude-transcripts"
+          if [ -n "$ATTEMPT2_OUTPUT" ] && [ -f "$ATTEMPT2_OUTPUT" ]; then
+            cp "$ATTEMPT2_OUTPUT" "$RUNNER_TEMP/claude-transcripts/attempt2.json"
+          fi
+          ls -la "$RUNNER_TEMP/claude-transcripts"
+
+      - name: Upload Claude transcripts
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: claude-transcripts-${{ steps.vars.outputs.date }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/claude-transcripts/
+          retention-days: 14
+          if-no-files-found: warn
+
       # Ground truth: fail the job if the effective Claude run still errored,
       # so a dead API key surfaces as a red ✕ instead of a silent green tick.
       # Uses attempt 2's log if the retry ran, otherwise attempt 1's.
@@ -151,6 +179,26 @@ jobs:
             exit 1
           fi
           echo "Claude run completed successfully (is_error=false)."
+          # Surface which tools were refused, without needing the artifact.
+          jq -rs 'flatten | map(select(.type=="result")) | last
+                  | "turns=\(.num_turns) permission_denials=\((.permission_denials // []) | length)",
+                    ((.permission_denials // [])[] | "  denied: \(.tool_name // "?")")' "$CLAUDE_OUTPUT" 2>/dev/null || true
+
+      # A run can end "successfully" without touching the document (seen on
+      # 2026-09-24 and 2026-10-09). Every real refresh sets the trailing
+      # "Last verified" line to today, so require that before committing.
+      - name: Verify document was refreshed
+        env:
+          TODAY: ${{ steps.vars.outputs.date }}
+        run: |
+          FILE="coding-agent-config-locations.md"
+          if ! grep -qx "\*Last verified: ${TODAY}\*" "$FILE"; then
+            echo "::error::Claude finished without updating $FILE — expected '*Last verified: ${TODAY}*', found '$(grep -m1 'Last verified' "$FILE" || echo none)'. Download the claude-transcripts artifact to see what it did."
+            git --no-pager diff --stat -- "$FILE" || true
+            exit 1
+          fi
+          echo "Document refreshed:"
+          git --no-pager diff --stat -- "$FILE"
 
       - name: Commit refreshed document
         env:

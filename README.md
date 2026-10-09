@@ -34,6 +34,10 @@ web search to re-research each agent's published docs, updates
 The git history of that file is the changelog — each weekly commit shows exactly
 what changed.
 
+A run fails if Claude errors out or finishes without updating the document's
+"Last verified" date. Claude's full transcript is kept for 14 days as the
+`claude-transcripts-*` artifact on each run.
+
 ## Site
 
 The site is generated from the Markdown document and never committed.
