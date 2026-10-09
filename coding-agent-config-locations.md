@@ -240,6 +240,36 @@ Home: no dedicated directory for user-editable config (`~/.aider.conf.yml`, `.en
 
 ---
 
+## Antigravity CLI — Google
+
+Home: `~/.gemini/antigravity-cli/` (CLI state) · `~/.gemini/config/` (shared with Antigravity 2.0 and the IDE) · command: `agy`
+
+> **Relation to Gemini CLI:** Antigravity CLI replaces Gemini CLI for individual users. `agy plugin import gemini` converts Gemini extensions to plugins, and legacy commands become skills. Workspace skills in `.gemini/skills/` must be moved to `.agents/skills/` by hand.
+
+| Feature | Project (repo) | Global (user) |
+|---|---|---|
+| **Instructions** ◆ | `AGENTS.md` or `GEMINI.md` in any directory, and `.agents/AGENTS.md` or `.agents/GEMINI.md`; read from the file's folder up to the workspace root. No frontmatter | `~/.gemini/GEMINI.md`, `~/.gemini/AGENTS.md`, `~/.gemini/config/GEMINI.md` or `~/.gemini/config/AGENTS.md`. Always active, no frontmatter |
+| **Rules** ◆ | `.agents/rules/*.md` (legacy `.agent/rules/`); only direct children are scanned unless registered in `.agents/rules.json`. YAML frontmatter is required: `trigger` (`always_on`, `model_decision`, `glob`, `manual`), plus `description` or `globs` depending on the trigger. Files over 24,000 bytes are truncated | `~/.gemini/config/rules/*.md`; CLI only: `~/.gemini/antigravity-cli/rules/*.md`. Global and `always_on` rules share a 20,000-token budget |
+| **Settings** ◆ | Not documented as a file; project settings are edited in the Settings UI | `~/.gemini/antigravity-cli/settings.json` (only non-default values are written), `~/.gemini/antigravity-cli/keybindings.json`. Command-line flags such as `--sandbox` override saved values for the session |
+| **Skills** ◆ | `.agents/skills/*/SKILL.md` (legacy `.agent/skills/`); each skill becomes a slash command. Frontmatter: `description` (required), `name` (defaults to the folder name) | `~/.gemini/antigravity-cli/skills/*/SKILL.md` (Antigravity 2.0 and the IDE use `~/.gemini/config/skills/`) |
+| **Subagents** ◆ | `.agents/agents/<name>.md` or `.agents/agents/<name>/agent.md`. Markdown with YAML frontmatter: `name`, `description` (both required), `tools`, `mainAgent`, `subagent`, `model` (`inherit`, `flash`, `pro`), `commandExecutionPolicy`, `mcpServers`, `skills`, `plugins`. Nesting is limited to 10 levels. `/agents` opens the agent manager | `~/.gemini/config/agents/<name>.md` or `~/.gemini/config/agents/<name>/agent.md` |
+| **Hooks** ◆ | `.agents/hooks.json`. Events `PreToolUse`, `PostToolUse`, `PreInvocation`, `PostInvocation`, `Stop`; handler fields `command`, `type`, `timeout` (default 30s). `/hooks` lists loaded hooks | `~/.gemini/config/hooks.json`, or a `hooks` entry in `~/.gemini/antigravity-cli/settings.json`; merge order between locations is not documented |
+| **MCP** ◆ | `.agents/mcp_config.json` | `~/.gemini/config/mcp_config.json`. `mcpServers` key; remote servers use `serverUrl` (the legacy `url` and `httpUrl` keys are not supported); optional `env`, `headers`, `oauth`, `disabled`, `disabledTools` |
+| **Plugins** ◆ | `.agents/plugins/<name>/` | `~/.gemini/config/plugins/`; CLI installs go to `~/.gemini/antigravity-cli/plugins/<name>/`. A plugin has a `plugin.json` (`name`, optional `description`) and can bundle `skills/`, `agents/`, `rules/`, `mcp_config.json` and `hooks.json`. Manage with `agy plugin install\|list\|enable\|disable\|uninstall` or `/plugin` |
+
+**Sources:**
+[CLI migration from Gemini CLI](https://antigravity.google/docs/cli/gcli-migration/) ·
+[Rules](https://antigravity.google/docs/rules/) ·
+[Skills](https://antigravity.google/docs/skills/) ·
+[Subagents](https://antigravity.google/docs/subagents/) ·
+[Custom agents in the CLI](https://antigravity.google/docs/cli/commands/agents/) ·
+[Hooks](https://antigravity.google/docs/hooks/) ·
+[MCP](https://antigravity.google/docs/mcp/) ·
+[Plugins](https://antigravity.google/docs/plugins/) ·
+[CLI settings](https://antigravity.google/docs/settings?tab=cli)
+
+---
+
 ## Cline — Cline Bot Inc.
 
 Home: `~/.cline/` (CLI/SDK/Kanban; IDE integrations also use platform storage)
@@ -313,7 +343,7 @@ Home: cloud-managed; configuration is primarily organization- and repository-sco
 
 Home: `~/.gemini/`
 
-> **Availability:** Gemini CLI serves only Gemini Code Assist Standard/Enterprise/Google Cloud licensees; individual users are directed to the Antigravity CLI. The table describes Gemini CLI behavior.
+> **Availability:** Gemini CLI serves only Gemini Code Assist Standard/Enterprise/Google Cloud licensees. Individual users use Antigravity CLI, which has its own section.
 
 | Feature | Project (repo) | Global (user) |
 |---|---|---|
@@ -476,9 +506,9 @@ Home: `~/.codeium/windsurf/` (legacy Codeium/Windsurf paths; still read by the l
 
 ### Cross-agent standards
 
-- **`.agents/skills/`** — The cross-agent convention from the [agentskills.io client implementation guide](https://agentskills.io/client-implementation/adding-skills-support), described there as "a widely-adopted convention for cross-client skill sharing" that makes skills "automatically visible" across compliant clients. The guide instructs all compliant clients to scan both their own native directory and `.agents/skills/`. Scanned by Codex, Copilot, OpenCode, Gemini CLI, Cursor, Vibe, and Pi among others. (A single canonical skill tree shared via symlinks is a natural consequence of this convention, though not stated verbatim by the spec.)
+- **`.agents/skills/`** — The cross-agent convention from the [agentskills.io client implementation guide](https://agentskills.io/client-implementation/adding-skills-support), described there as "a widely-adopted convention for cross-client skill sharing" that makes skills "automatically visible" across compliant clients. The guide instructs all compliant clients to scan both their own native directory and `.agents/skills/`. Scanned by Codex, Copilot, OpenCode, Gemini CLI, Antigravity CLI, Cursor, Vibe, and Pi among others. (A single canonical skill tree shared via symlinks is a natural consequence of this convention, though not stated verbatim by the spec.)
 
-- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation. Supported by Codex, Jules, Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin, Junie, Amp, Cursor, RooCode, Gemini CLI, Kilo Code, GitHub Copilot, Windsurf, Augment Code, and others. (Pi and Mistral Vibe also support AGENTS.md.)
+- **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation. Supported by Codex, Jules, Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin, Junie, Amp, Cursor, RooCode, Gemini CLI, Antigravity, Kilo Code, GitHub Copilot, Windsurf, Augment Code, and others. (Pi and Mistral Vibe also support AGENTS.md.)
 
 - **`SKILL.md`** — [Agent Skills spec](https://agentskills.io/specification). There is no top-level `version:` frontmatter field; skill package versioning goes under the `metadata:` map (e.g., `metadata:\n  version: "1.0"`). Structure: `skill-name/{SKILL.md, scripts/, references/, assets/}`. The `allowed-tools` frontmatter field is experimental. Spec repo: [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills). Client list: [agentskills.io/clients](https://agentskills.io/clients).
 
