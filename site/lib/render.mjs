@@ -171,15 +171,15 @@ function matrixTable(model, root) {
           return `<tr data-agent="${a.slug}" data-cats="${r.categories.join(" ")}" data-conf="${r.confidence || ""}" data-text="${esc(text)}"${ri === 0 ? ' class="lead"' : ""} style="--c:var(--${accentFor(ai)})">
 <th scope="row" class="m-agent"><a href="${root}agents/${a.slug}/">${esc(a.name)}</a></th>
 <td class="m-feature"><span class="feat">${esc(r.feature)}</span>${badge(r.marker)}${r.featureNote ? `<div class="feat-note">${r.featureNote}</div>` : ""}</td>
-<td class="m-path" data-label="Global">${cell(r.globalHtml)}</td>
 <td class="m-path" data-label="Project">${cell(r.projectHtml)}</td>
+<td class="m-path" data-label="Global">${cell(r.globalHtml)}</td>
 </tr>`;
         })
         .join("\n"),
     )
     .join("\n");
   return `<div class="table-wrap"><table class="matrix" id="matrix-table">
-<thead><tr><th scope="col">Agent</th><th scope="col">Feature</th><th scope="col">Global <span class="th-sub">user</span></th><th scope="col">Project <span class="th-sub">repo</span></th></tr></thead>
+<thead><tr><th scope="col">Agent</th><th scope="col">Feature</th><th scope="col">Project <span class="th-sub">repo</span></th><th scope="col">Global <span class="th-sub">user</span></th></tr></thead>
 <tbody>
 ${body}
 </tbody></table>
