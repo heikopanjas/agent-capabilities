@@ -64,6 +64,8 @@ jobs:
                path, flag, or behavior that has changed. Preserve the
                document's structure, tables, confidence markers, and
                "Sources" lists. Do NOT create any new files.
+               Tables list the Project (repo) column first, then Global
+               (user); keep that order.
                Record only the CURRENT configuration state: file paths,
                file formats and frontmatter fields, precedence and
                discovery rules, env vars, and CLI flags that control
@@ -148,6 +150,8 @@ jobs:
                path, flag, or behavior that has changed. Preserve the
                document's structure, tables, confidence markers, and
                "Sources" lists. Do NOT create any new files.
+               Tables list the Project (repo) column first, then Global
+               (user); keep that order.
                Record only the CURRENT configuration state: file paths,
                file formats and frontmatter fields, precedence and
                discovery rules, env vars, and CLI flags that control

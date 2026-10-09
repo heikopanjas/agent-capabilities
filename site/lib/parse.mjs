@@ -135,6 +135,7 @@ export function parse(md) {
   let section = "preamble"; // preamble | legend | agent | notes | standards
   let agent = null;
   let inSources = false;
+  let projectFirst = false;
   let pendingCallout = null;
   let currentStandard = null;
 
@@ -235,13 +236,17 @@ export function parse(md) {
         const cells = splitRow(line);
         if (/^:?-{3,}/.test(cells[0])) continue;
         if (/^feature$/i.test(cells[0])) {
-          if (cells[1]) agent.columns.global = cells[1];
-          if (cells[2]) agent.columns.project = cells[2];
+          // Column order follows the header, so older revisions (Global first)
+          // and the current layout (Project first) both parse correctly.
+          projectFirst = /^project/i.test(cells[1] || "");
+          const [globalHead, projectHead] = projectFirst ? [cells[2], cells[1]] : [cells[1], cells[2]];
+          if (globalHead) agent.columns.global = globalHead;
+          if (projectHead) agent.columns.project = projectHead;
           continue;
         }
         const { feature, marker, extra } = parseFeatureCell(cells[0] || "");
-        const globalMd = cells[1] ?? "";
-        const projectMd = cells[2] ?? "";
+        const globalMd = (projectFirst ? cells[2] : cells[1]) ?? "";
+        const projectMd = (projectFirst ? cells[1] : cells[2]) ?? "";
         const globalHtml = inline(globalMd);
         const projectHtml = inline(projectMd);
         agent.rows.push({
