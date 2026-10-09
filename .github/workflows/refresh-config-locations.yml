@@ -53,6 +53,7 @@ jobs:
                It uses confidence markers (star = spec/stable, diamond =
                documented current, circle = observed).
             2. For every agent in that document (Claude Code, Codex CLI, Antigravity CLI,
+               Amp, Augment Code, Factory, Junie, Kilo Code,
                GitHub Copilot, Cursor, Mistral Vibe, OpenCode, Pi, Aider,
                Cline, Continue, Devin, Gemini CLI, Goose, Hermes Agent, Kiro,
                OpenHands, Windsurf / Devin Desktop) and the cross-agent
@@ -139,6 +140,7 @@ jobs:
                It uses confidence markers (star = spec/stable, diamond =
                documented current, circle = observed).
             2. For every agent in that document (Claude Code, Codex CLI, Antigravity CLI,
+               Amp, Augment Code, Factory, Junie, Kilo Code,
                GitHub Copilot, Cursor, Mistral Vibe, OpenCode, Pi, Aider,
                Cline, Continue, Devin, Gemini CLI, Goose, Hermes Agent, Kiro,
                OpenHands, Windsurf / Devin Desktop) and the cross-agent

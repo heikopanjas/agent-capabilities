@@ -240,6 +240,32 @@ Home: no dedicated directory for user-editable config (`~/.aider.conf.yml`, `.en
 
 ---
 
+## Amp — ampcode.com
+
+Home: `~/.config/amp/` · command: `amp`
+
+| Feature | Project (repo) | Global (user) |
+|---|---|---|
+| **Instructions** ◆ | `AGENTS.md` in the cwd (or editor workspace roots) and every parent directory up to `$HOME`, always included; subtree `AGENTS.md` files load when a file in that subtree is read. Without `AGENTS.md` in a directory, Amp falls back to `AGENT.md` or `CLAUDE.md`. `AMP_IGNORE_GUIDANCE_FILES` (colon-delimited globs, `*` disables all) skips files | `~/.config/amp/AGENTS.md` and `~/.config/AGENTS.md`, both always included. Managed system file: `/etc/ampcode/AGENTS.md` (Linux), `/Library/Application Support/ampcode/AGENTS.md` (macOS), `%ProgramData%\ampcode\AGENTS.md` (Windows) |
+| **Settings** ◆ | `.amp/settings.json` or `.amp/settings.jsonc`, nearest one found searching up from the cwd to the repo root; overrides user settings | `~/.config/amp/settings.json` or `.jsonc` (Windows `%USERPROFILE%\.config\amp\`); `--settings-file <path>` points to another file. Managed: `/etc/ampcode/managed-settings.json` (Linux), `/Library/Application Support/ampcode/managed-settings.json` (macOS), `%ProgramData%\ampcode\managed-settings.json` (Windows); the local managed file beats the workspace-level Managed Settings JSON |
+| **Skills** ◆ | `.agents/skills/` and `.claude/skills/` in the project and each parent directory, searched up to 5 levels deep; `SKILL.md` frontmatter `name` and `description`. Extra directories via `amp.skills.path` | `~/.config/agents/skills/` (where `amp skill add --global` installs), `~/.agents/skills/`, `~/.config/amp/skills/`, `~/.claude/skills/`. `amp.skills.disableClaudeCodeSkills` and `amp.skills.disableGlobalAgentsSkills` turn off those source groups. The first skill with a given name wins |
+| **Subagents / hooks** ◆ | No file-based definitions. Plugins define subagents with `amp.createAgent({...})` and hooks with `amp.on(...)` (events `session.start`, `tool.call`, `tool.result`, `agent.start`, `agent.end`, `changes.prompt`) | *(same)* |
+| **Commands** ◆ | Custom commands are removed. Move `.agents/commands/x.md` to `.agents/skills/x/SKILL.md` | Move `~/.config/amp/commands` to `~/.config/agents/skills` |
+| **MCP** ◆ | `amp.mcpServers` in `.amp/settings.json`. Servers need approval (`amp mcp approve <name>`, `amp mcp doctor`). A `mcp.json` can be bundled inside a skill. `amp.mcpPermissions` (first match wins) allows or rejects servers | `amp.mcpServers` in `~/.config/amp/settings.json`, no approval needed. Precedence by server name: `--mcp-config` flag, workspace, user, skills |
+| **Plugins** ◆ | `.amp/plugins/`: a `.ts` or `.js` file, or `<name>/index.ts` (or `index.js`). Single-file plugins cannot register skills. `amp plugins add <url> --target workspace` installs here | `$XDG_CONFIG_HOME/amp/plugins/` or `~/.config/amp/plugins/` |
+
+**Sources:**
+[Manual](https://ampcode.com/manual) ·
+[AGENTS.md](https://ampcode.com/docs/customize/agents-md) ·
+[CLI settings](https://ampcode.com/docs/cli/settings) ·
+[Skills](https://ampcode.com/docs/customize/skills) ·
+[Plugins](https://ampcode.com/docs/customize/plugins) ·
+[Global plugins and skills](https://ampcode.com/docs/customize/global-plugins-and-skills) ·
+[MCP](https://ampcode.com/docs/customize/mcp) ·
+[Plugin API](https://ampcode.com/docs/plugin-api)
+
+---
+
 ## Antigravity CLI — Google
 
 Home: `~/.gemini/antigravity-cli/` (CLI state) · `~/.gemini/config/` (shared with Antigravity 2.0 and the IDE) · command: `agy`
@@ -267,6 +293,35 @@ Home: `~/.gemini/antigravity-cli/` (CLI state) · `~/.gemini/config/` (shared wi
 [MCP](https://antigravity.google/docs/mcp/) ·
 [Plugins](https://antigravity.google/docs/plugins/) ·
 [CLI settings](https://antigravity.google/docs/settings?tab=cli)
+
+---
+
+## Augment Code — Augment
+
+Home: `~/.augment/` · CLI command: `auggie`
+
+| Feature | Project (repo) | Global (user) |
+|---|---|---|
+| **Instructions / rules** ◆ | `.augment/rules/**/*.md` (loaded from the workspace root only), `.augment-guidelines`, `AGENTS.md`, `CLAUDE.md`. `AGENTS.md` and `CLAUDE.md` are also discovered hierarchically from the edited file's directory up to the workspace root. CLI precedence, highest first: `--rules` file, `CLAUDE.md`, `AGENTS.md`, `.augment-guidelines`, `.augment/rules/`, `~/.augment/rules/`. Rule frontmatter `type`: `always_apply` (default), `agent_requested` (needs `description`), `manual` (IDE only) | `~/.augment/rules/**/*.md`, always applied (frontmatter ignored); IDE: `~/.augment/user-guidelines.md` (VS Code only). Limits: user guidelines 24,576 characters, workspace guidelines plus rules 49,512 |
+| **Settings** ◆ | `.augment/settings.json` (committed, `--project`) and `.augment/settings.local.json` (personal, auto-gitignored, `--local`). JSONC allowed; restart after manual edits | `~/.augment/settings.json` (default write target). Managed, highest precedence and read-only: `/etc/augment/settings.json` (macOS/Linux), `C:\ProgramData\augment\settings.json` (Windows). Order: managed, local, project, user. Objects and lists combine; MCP and plugin entries replace by name; permission rules concatenate with first match winning |
+| **Skills** ◆ | `.augment/skills/`, `.claude/skills/`, `.agents/skills/` — `<name>/SKILL.md`; `name` must match the directory | `~/.augment/skills/`, `~/.claude/skills/`, `~/.agents/skills/`. Precedence, highest first: `~/.augment`, `.augment`, `~/.claude`, `.claude`, `~/.agents`, `.agents` |
+| **Subagents** ◆ | `.augment/agents/*.md` — frontmatter `name` (required), `description`, `color`, `model`, `tools` (allowlist), `disabled_tools` (denylist, wins over `tools`) | `~/.augment/agents/*.md` |
+| **Commands** ◆ | `.augment/commands/`, `.claude/commands/`, `.agents/commands/` — Markdown with `description`, `argument-hint`, `model` frontmatter; subdirectories become namespaces (`frontend/component.md` is `/frontend:component`) | `~/.augment/commands/`, `~/.claude/commands/`, `~/.agents/commands/`. Same-name conflicts between user and workspace are unsupported |
+| **Hooks** ◆ | `hooks` key in the settings files above. Events `PreToolUse`, `PostToolUse`, `Stop`, `SessionStart`, `SessionEnd`; handler type `command` only (`.sh`, `.ps1`, `.cmd` or `.bat`); fields `matcher`, `timeout` (ms, default 60000) | `hooks` key in `~/.augment/settings.json` |
+| **MCP** ◆ | `mcpServers` key in the project settings files; `auggie mcp add\|add-json\|list\|remove`; `--mcp-config` overrides. Stdio servers use `command`/`args`/`env`, HTTP/SSE servers use `type`/`url`/`headers` | `mcpServers` in `~/.augment/settings.json`. The IDE configures servers in its Settings Panel with the same schema; the on-disk path is not documented |
+| **Plugins** ◆ | `.augment-plugin/plugin.json` (`.claude-plugin/` also works); marketplace file `.augment-plugin/marketplace.json`. A plugin can bundle `commands/`, `agents/`, `rules/`, `skills/`, `hooks/hooks.json` and MCP servers. Settings keys `enabledPlugins`, `recommendedMarketplaces` | `enabledPlugins` and `autoUpdateMarketplaces` in `~/.augment/settings.json`; install directory not documented |
+
+**Sources:**
+[Rules (CLI)](https://docs.augmentcode.com/cli/rules.md) ·
+[Guidelines (IDE)](https://docs.augmentcode.com/setup-augment/guidelines.md) ·
+[CLI configuration](https://docs.augmentcode.com/cli/config) ·
+[Hooks](https://docs.augmentcode.com/cli/hooks) ·
+[Skills (CLI)](https://docs.augmentcode.com/cli/skills.md) ·
+[Skills (IDE)](https://docs.augmentcode.com/using-augment/skills) ·
+[Custom commands](https://docs.augmentcode.com/cli/custom-commands.md) ·
+[Subagents](https://docs.augmentcode.com/cli/subagents.md) ·
+[Plugins](https://docs.augmentcode.com/cli/plugins.md) ·
+[MCP](https://docs.augmentcode.com/setup-augment/mcp.md)
 
 ---
 
@@ -336,6 +391,34 @@ Home: cloud-managed; configuration is primarily organization- and repository-sco
 [Skills](https://docs.devin.ai/product-guides/skills) ·
 [Environment configuration](https://docs.devin.ai/onboard-devin/environment) ·
 [MCP Marketplace](https://docs.devin.ai/work-with-devin/mcp)
+
+---
+
+## Factory — Factory AI
+
+Home: `~/.factory/` · CLI command: `droid`
+
+| Feature | Project (repo) | Global (user) |
+|---|---|---|
+| **Instructions** ◆ | `AGENTS.md` at the repo root (recommended). Droid searches from the cwd up to the git root, checking each directory plus `.factory/`, `.agents/` and `.agent/`. Accepted names: `AGENTS.md`, `agents.md`, `Agents.md`, `CLAUDE.md`, `Claude.md`. Nested files load when Droid reads files in that subtree. Precedence: current request, nested files, root project files, personal files. Load caps: 80,000 characters at start, 40,000 for dynamic discovery | `~/.factory/`, `~/.agents/` and `~/.agent/` are searched; the filename inside is not documented |
+| **Settings** ◆ | `.factory/settings.json`, `.factory/settings.local.json`; folder-level `.factory/` directories also apply. Precedence, highest first: org, `--settings` overlay, folder, project, user, remote, built-in | `~/.factory/settings.json` and `~/.factory/settings.local.json` (Windows `%USERPROFILE%\.factory\`). Managed: `/Library/Application Support/Factory/settings.json` (macOS), `/etc/factory/settings.json` (Linux/WSL), `C:\Program Files\Factory\settings.json` (Windows); without that file Droid uses a remote managed-settings endpoint |
+| **Skills** ◆ | `.factory/skills/<name>/SKILL.md`, folder-level `<area>/.factory/skills/`, and compat `.agents/skills/` and `.agent/skills/`. Frontmatter `name` and `description` required | `~/.factory/skills/<name>/SKILL.md`; compat `~/.agents/skills/` and `~/.agent/skills/`. Precedence: folder or project, project plugin, personal, user plugin, built-in |
+| **Custom droids** ◆ | `.factory/droids/*.md` (top level only) — frontmatter `name`, `description`, `model`, `reasoningEffort`, `tools`, `mcpServers`; project droids beat personal ones with the same name | `~/.factory/droids/*.md` |
+| **Commands** ◆ | `.factory/commands/` — `.md` files or files starting with a shebang; subdirectories searched recursively; workspace commands beat personal ones with the same slug. Skills are recommended for new workflows | `~/.factory/commands/` |
+| **Hooks** ◆ | `.factory/hooks.json` (legacy `.factory/hooks/hooks.json` still loads); falls back to the `hooks` key in `settings.json`. `allowManagedHooksOnly` ignores user and project hooks | `~/.factory/hooks.json`. Org hooks come from managed settings and cannot be removed by lower levels |
+| **MCP** ◆ | `.factory/mcp.json`, also in ancestor directories; top-level `mcpServers` key | `~/.factory/mcp.json`. Org-managed servers and `mcpPolicy` live in managed settings and always take precedence |
+| **Plugins** ◆ | `.factory-plugin/plugin.json` with `commands/`, `skills/`, `droids/`, `output-styles/`, `hooks/hooks.json` and `mcp.json` at the plugin root. Marketplace file `.factory-plugin/marketplace.json`, falling back to `.claude-plugin/marketplace.json`; Claude Code plugin layouts are translated on install. `droid plugin install <plugin@marketplace> --scope user\|project` | Same layout; settings keys `extraKnownMarketplaces`, `enabledPlugins`, and managed `strictKnownMarketplaces` |
+
+**Sources:**
+[AGENTS.md](https://docs.factory.com/cli/configuration/agents-md) ·
+[Settings](https://docs.factory.com/cli/configuration/settings) ·
+[Skills](https://docs.factory.com/cli/configuration/skills) ·
+[Custom droids](https://docs.factory.com/cli/configuration/custom-droids) ·
+[Custom slash commands](https://docs.factory.com/cli/configuration/custom-slash-commands) ·
+[MCP](https://docs.factory.com/cli/configuration/mcp) ·
+[Hooks](https://docs.factory.com/cli/configuration/hooks-guide) ·
+[Plugins](https://docs.factory.com/cli/configuration/plugins) ·
+[Hierarchical settings and org control](https://docs.factory.com/enterprise/hierarchical-settings-and-org-control)
 
 ---
 
@@ -409,6 +492,62 @@ Home: `~/.hermes/` (profiles may use an alternate home)
 [Skills](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills/) ·
 [Memory](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory/) ·
 [MCP](https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp/)
+
+---
+
+## Junie — JetBrains
+
+Home: `~/.junie/` · IDE plugin and Junie CLI share these paths unless noted
+
+| Feature | Project (repo) | Global (user) |
+|---|---|---|
+| **Instructions** ◆ | In order: `.junie/AGENTS.md`; root `AGENTS.md` combined with `.junie/playbook.md` and `.junie/rules/*.md`; legacy `.junie/guidelines.md` or `.junie/guidelines/` (deprecated). `JUNIE_GUIDELINES_FILENAME`, `--guidelines-filename` or the `guidelines-location` config key overrides the path | `~/.junie/AGENTS.md` (Windows `%USERPROFILE%\.junie\AGENTS.md`). Project beats global on conflict; identical content is deduplicated |
+| **Settings** ◆ | `.junie/config.json`. Precedence: CLI flags, trusted project config, user config. An untrusted project loads no project config, MCP, skills, commands, agents, hooks or guidelines. IDE settings live under Settings \| Tools \| Junie, with no documented file | `~/.junie/config.json`; extra files via `--config-location` or `JUNIE_CONFIG_LOCATION`. Keys include `model`, `effort`, `provider`, `brave`, `byok`, `hooks`, `auto-update`, `guidelines-location` and `*-locations` keys for mcp, skill, command, agent and model. Trust markers: `~/.junie/trust` |
+| **Skills** ◆ | `.junie/skills/<name>/SKILL.md` and `.agents/skills/` (trusted projects only); frontmatter `name` required, `description` optional; optional `scripts/`, `templates/`, `checklists/`. Project wins over user on a name clash | `~/.junie/skills/<name>/` and `~/.agents/skills/`. The CLI offers to import `.cursor/`, `.claude/` and `.codex/` skills |
+| **Subagents** ◆ | CLI: `.junie/agents/*.md` and `.agents/*.md` — frontmatter `name` and `description` (required), `tools`, `disallowedTools`, `mcpServers`, `model`, `permissionMode`, `effort`, `maxTurns`, `skills`. IDE support not documented | `~/.junie/agents/` and `~/.agents/` |
+| **Commands** ◆ | CLI: `.junie/commands/<name>.md` — `description` frontmatter, `$arg` placeholders, called as `/explain file=x`. IDE not documented | `~/.junie/commands/<name>.md` |
+| **Hooks** ◆ | `hooks` key in `config.json` runs shell commands on lifecycle events such as `SessionStart` (with `matcher` and a `command` type). Hooks in the project's default config file are ignored for safety | Put hooks in `~/.junie/config.json` or pass a file with `--config-location`. Extensions can bundle hooks |
+| **MCP** ◆ | `.junie/mcp/mcp.json` — top-level `mcpServers`; local servers use `command`, `args`, `env`; remote servers use `url`, `headers`. Extra paths via `--mcp-location` | `~/.junie/mcp/mcp.json`; the IDE writes servers added in Settings \| Tools \| Junie \| MCP Settings here |
+| **Extensions** ◆ | `.junie/extensions.json`; bundles of skills, MCP, subagents, commands, guidelines and hooks, managed with `/extensions` (aliases `/plugin`, `/plugins`). Marketplace manifests: `.junie-extension/marketplace.json` or `.claude-plugin/marketplace.json` | `~/.junie/extensions/extensions.json`, `~/.junie/extensions/marketplaces.json`, `~/.junie/extensions/marketplaces/` |
+| **Permissions** ◆ | `.aiignore` in the project root restricts file access. IDE: Settings \| Tools \| Junie \| Action Allowlist (exact commands or regex rules). Brave mode: `--brave` (CLI, interactive only) or the `brave` config key | Subagent `permissionMode`: `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, `plan` |
+
+**Sources:**
+[Guidelines and memory](https://junie.jetbrains.com/docs/guidelines-and-memory.html) ·
+[CLI configuration](https://junie.jetbrains.com/docs/junie-cli-configuration.html) ·
+[CLI parameters](https://junie.jetbrains.com/docs/parameters.html) ·
+[CLI subagents](https://junie.jetbrains.com/docs/junie-cli-subagents.html) ·
+[CLI MCP configuration](https://junie.jetbrains.com/docs/junie-cli-mcp-configuration.html) ·
+[CLI extensions](https://junie.jetbrains.com/docs/junie-cli-extensions.html) ·
+[Agent skills](https://junie.jetbrains.com/docs/agent-skills.html) ·
+[Custom slash commands](https://junie.jetbrains.com/docs/custom-slash-commands.html) ·
+[Action allowlist](https://junie.jetbrains.com/docs/action-allowlist.html) ·
+[IDE plugin](https://junie.jetbrains.com/docs/junie-ide-plugin.html)
+
+---
+
+## Kilo Code — Kilo
+
+Home: `~/.config/kilo/` · the VS Code extension and the CLI share these paths
+
+| Feature | Project (repo) | Global (user) |
+|---|---|---|
+| **Instructions / rules** ◆ | Files listed in the `instructions` array (paths or globs) in `kilo.jsonc`, typically `.kilo/rules/*.md`; legacy `.kilocode/rules/` is still included. `AGENTS.md` at the project root (fallback `AGENT.md`, uppercase required); subdirectory `AGENTS.md` files load when the agent reads a file there. Priority, high to low: agent prompt, project `instructions`, project `AGENTS.md`, global `instructions`, skills | `instructions` in `~/.config/kilo/kilo.jsonc`. A global `AGENTS.md` is not documented as a source, though the Claude migration writes to one |
+| **Settings** ◆ | `kilo.jsonc` in the root or `.kilo/kilo.jsonc` (`.kilo/` wins); `kilo.json` also accepted. Overrides global. Legacy `opencode.json(c)` and `config.json` are still read and merged | `~/.config/kilo/kilo.jsonc` or `kilo.json` (Windows `C:\Users\<user>\.config\kilo\`). Managed or org config paths are not in the official docs |
+| **Skills** ◆ | `.kilo/skills/<name>/SKILL.md`; `.agents/skills/` loads by default; `.claude/skills/` loads only with Claude Code Compatibility enabled. Frontmatter `name` and `description` required; project wins on a name clash | `~/.kilo/skills/<name>/SKILL.md`, `~/.agents/skills/`, `~/.claude/skills/` (compat only). Extra locations via `skills.paths` and `skills.urls`; `KILO_DISABLE_EXTERNAL_SKILLS=true` disables external directories |
+| **Agents / modes** ◆ | `.kilo/agents/<name>.md` or `.kilo/agent/<name>.md` (legacy `.kilocode/agents/` also read), or an `agent` key in `kilo.jsonc`. Frontmatter `description`, `mode` (`primary`, `subagent`, `all`), `color`, `model`, `steps`, `permission`, `hidden`; the body is the system prompt. `custom_modes.yaml` and `.kilocodemodes` are migrated on startup and no longer read | `~/.config/kilo/agent/<name>.md` |
+| **Commands / workflows** ◆ | `.kilo/commands/*.md` — the filename becomes `/name`; frontmatter `description`, `agent`, `model`, `variant`, `subtask`. Legacy `.kilocode/workflows/` is migrated | `~/.config/kilo/commands/*.md` |
+| **MCP** ◆ | `mcp` key in `kilo.jsonc` (no separate `mcp.json`); per server `type` (`local` or `remote`), `command` (array), `environment`, `url`, `headers`, `oauth`, `enabled`, `timeout`; tool approval via `permission` keyed `{server}_{tool}` | `mcp` in `~/.config/kilo/kilo.jsonc`. The extension also has Settings, MCP, Add Server |
+| **Hooks** ○ | Not documented | Not documented |
+| **Claude migration** ○ | Experimental one-time toggle (Settings, Experimental) that imports `~/.claude/CLAUDE.md` into Kilo's global `AGENTS.md`, `~/.claude/skills/`, and MCP entries from `~/.claude.json` (disabled); afterwards Kilo stops falling back to global Claude files | *(same)* |
+
+**Sources:**
+[Custom rules](https://kilo.ai/docs/customize/custom-rules) ·
+[AGENTS.md](https://kilo.ai/docs/customize/agents-md) ·
+[Skills](https://kilo.ai/docs/customize/skills) ·
+[Custom modes](https://kilo.ai/docs/customize/custom-modes) ·
+[Workflows](https://kilo.ai/docs/customize/workflows) ·
+[MCP](https://kilo.ai/docs/automate/mcp/using-in-kilo-code) ·
+[Settings](https://kilo.ai/docs/getting-started/settings)
 
 ---
 
@@ -506,7 +645,7 @@ Home: `~/.codeium/windsurf/` (legacy Codeium/Windsurf paths; still read by the l
 
 ### Cross-agent standards
 
-- **`.agents/skills/`** — The cross-agent convention from the [agentskills.io client implementation guide](https://agentskills.io/client-implementation/adding-skills-support), described there as "a widely-adopted convention for cross-client skill sharing" that makes skills "automatically visible" across compliant clients. The guide instructs all compliant clients to scan both their own native directory and `.agents/skills/`. Scanned by Codex, Copilot, OpenCode, Gemini CLI, Antigravity CLI, Cursor, Vibe, and Pi among others. (A single canonical skill tree shared via symlinks is a natural consequence of this convention, though not stated verbatim by the spec.)
+- **`.agents/skills/`** — The cross-agent convention from the [agentskills.io client implementation guide](https://agentskills.io/client-implementation/adding-skills-support), described there as "a widely-adopted convention for cross-client skill sharing" that makes skills "automatically visible" across compliant clients. The guide instructs all compliant clients to scan both their own native directory and `.agents/skills/`. Scanned by Codex, Copilot, OpenCode, Gemini CLI, Antigravity CLI, Cursor, Vibe, Pi, Amp, Factory, Junie, Kilo Code, and Augment Code among others. (A single canonical skill tree shared via symlinks is a natural consequence of this convention, though not stated verbatim by the spec.)
 
 - **`AGENTS.md`** — Open standard ([agents.md](https://agents.md)), stewarded by the **Agentic AI Foundation (AAIF)** under the Linux Foundation. Supported by Codex, Jules, Factory, Aider, goose, OpenCode, Zed, Warp, VS Code, Devin, Junie, Amp, Cursor, RooCode, Gemini CLI, Antigravity, Kilo Code, GitHub Copilot, Windsurf, Augment Code, and others. (Pi and Mistral Vibe also support AGENTS.md.)
 
