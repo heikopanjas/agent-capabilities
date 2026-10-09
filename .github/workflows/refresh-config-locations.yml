@@ -4,8 +4,11 @@ name: Refresh coding-agent config locations
 # coding-agent-config-locations.md and commits any verified updates
 # back into that same file on main. The git history is the changelog.
 #
-# Requires repo secret ANTHROPIC_API_KEY (Settings -> Secrets and variables
-# -> Actions -> New repository secret).
+# Requires repo secret CLAUDE_CODE_OAUTH_TOKEN (Settings -> Secrets and
+# variables -> Actions -> New repository secret). Generate it locally with
+# `claude setup-token` (needs a Claude Pro/Max subscription; usage counts
+# against the subscription, not API credits). The token is valid for one
+# year — regenerate and update the secret before it expires.
 
 on:
   schedule:
@@ -38,7 +41,7 @@ jobs:
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: >-
             --model claude-sonnet-5
             --allowedTools WebSearch,WebFetch,Read,Write,Edit,Glob,Grep
@@ -101,7 +104,7 @@ jobs:
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: >-
             --model claude-sonnet-5
             --allowedTools WebSearch,WebFetch,Read,Write,Edit,Glob,Grep
@@ -143,7 +146,7 @@ jobs:
           fi
           ERR=$(jq -s 'flatten | map(select(.type=="result")) | last | .is_error' "$CLAUDE_OUTPUT" 2>/dev/null)
           if [ "$ERR" != "false" ]; then
-            echo "::error::Claude run reported is_error=$ERR — check the API key, credits, or model access. Failing so this is not masked as a successful run."
+            echo "::error::Claude run reported is_error=$ERR — check the OAuth token (expired or revoked?), subscription usage limits, or model access. Failing so this is not masked as a successful run."
             jq -s 'flatten | map(select(.type=="result")) | last' "$CLAUDE_OUTPUT" 2>/dev/null || true
             exit 1
           fi
