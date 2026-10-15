@@ -45,6 +45,7 @@ jobs:
           claude_args: >-
             --model claude-sonnet-5
             --allowedTools WebSearch,WebFetch,Read,Write,Edit,Glob,Grep
+            --disallowedTools Agent,Bash,ScheduleWakeup,CronCreate
           prompt: |
             You are refreshing a reference document about coding-agent
             configuration locations.
@@ -89,6 +90,11 @@ jobs:
             5. Do NOT run git, and do NOT create commits, branches, or pull
                requests. Only edit the file in place — a later workflow step
                handles committing.
+            6. Do all research yourself in this session. Do NOT spawn
+               subagents or background tasks, and do NOT schedule wakeups.
+               The session ends as soon as you stop, so finish every edit
+               (including the "Last verified" line) before your final
+               message.
 
       # The action exits 0 even when Claude itself errors out (e.g. a bad API
       # key fails on turn 1 for $0), so the step outcome alone cannot be
@@ -132,6 +138,7 @@ jobs:
           claude_args: >-
             --model claude-sonnet-5
             --allowedTools WebSearch,WebFetch,Read,Write,Edit,Glob,Grep
+            --disallowedTools Agent,Bash,ScheduleWakeup,CronCreate
           prompt: |
             You are refreshing a reference document about coding-agent
             configuration locations.
@@ -176,6 +183,11 @@ jobs:
             5. Do NOT run git, and do NOT create commits, branches, or pull
                requests. Only edit the file in place — a later workflow step
                handles committing.
+            6. Do all research yourself in this session. Do NOT spawn
+               subagents or background tasks, and do NOT schedule wakeups.
+               The session ends as soon as you stop, so finish every edit
+               (including the "Last verified" line) before your final
+               message.
 
       # The action hides Claude's transcript from the job log. Keep it as a
       # short-lived artifact so a bad run can be diagnosed afterwards
@@ -225,7 +237,9 @@ jobs:
                     ((.permission_denials // [])[] | "  denied: \(.tool_name // "?")")' "$CLAUDE_OUTPUT" 2>/dev/null || true
 
       # A run can end "successfully" without touching the document (seen on
-      # 2026-09-24 and 2026-10-09). Every real refresh sets the trailing
+      # 2026-09-24 and 2026-10-09; on 2026-10-15 Claude handed the research
+      # to background subagents and ended its turn before they reported,
+      # hence --disallowedTools Agent above). Every real refresh sets the trailing
       # "Last verified" line to today, so require that before committing.
       - name: Verify document was refreshed
         env:
