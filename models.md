@@ -227,8 +227,13 @@ ID format: `<provider_id>/<model_id>`; the rows below are the curated OpenCode Z
 | **GPT-5.3-Codex** ◆ | `opencode/gpt-5.3-codex` | — |
 | **GPT-5.3-Codex-Spark** ◆ | `opencode/gpt-5.3-codex-spark` | — |
 | **GPT-5.2** ◆ | `opencode/gpt-5.2` | — |
+| **GPT-5.2-Codex** ◆ | `opencode/gpt-5.2-codex` | — |
 | **GPT-5.1** ◆ | `opencode/gpt-5.1` | — |
+| **GPT-5.1-Codex** ◆ | `opencode/gpt-5.1-codex` | — |
+| **GPT-5.1-Codex-Max** ◆ | `opencode/gpt-5.1-codex-max` | — |
+| **GPT-5.1-Codex-Mini** ◆ | `opencode/gpt-5.1-codex-mini` | — |
 | **GPT-5** ◆ | `opencode/gpt-5` | — |
+| **GPT-5-Codex** ◆ | `opencode/gpt-5-codex` | — |
 | **GPT-5 nano** ◆ | `opencode/gpt-5-nano` | — |
 | **Claude Fable 5.1** ◆ | `opencode/claude-fable-5-1` | — |
 | **Claude Fable 5** ◆ | `opencode/claude-fable-5` | — |
@@ -269,15 +274,19 @@ ID format: `<provider_id>/<model_id>`; the rows below are the curated OpenCode Z
 | **MiniMax-M3** ◆ | `opencode/minimax-m3` | `opencode-go/minimax-m3` |
 | **MiniMax-M3.1-Flash** ◆ | `opencode-go/minimax-m3.1-flash` | — |
 | **MiniMax-M2.7** ◆ | `opencode/minimax-m2.7` | — |
+| **MiniMax-M2.5** ◆ | `opencode/minimax-m2.5` | — |
 | **GLM-5.3-Flash** ◆ | `opencode/glm-5.3-flash` | `opencode-go/glm-5.3-flash`, `opencode/glm-5.3-flash-free` |
 | **GLM-5.3** ◆ | `opencode/glm-5.3` | `opencode-go/glm-5.3` |
 | **GLM-5.2** ◆ | `opencode/glm-5.2` | `opencode-go/glm-5.2` |
 | **GLM-5.1** ◆ | `opencode/glm-5.1` | — |
+| **GLM-5** ◆ | `opencode/glm-5` | — |
 | **Kimi K3.1 Pro** ◆ | `opencode-go/kimi-k3.1-pro` | — |
 | **Kimi K3** ◆ | `opencode/kimi-k3` | `opencode-go/kimi-k3` |
 | **Kimi K2.7 Code** ◆ | `opencode/kimi-k2.7-code` | `opencode-go/kimi-k2.7-code` |
 | **Kimi K2.6** ◆ | `opencode/kimi-k2.6` | — |
+| **Kimi K2.5** ◆ | `opencode/kimi-k2.5` | — |
 | **Mistral Large 4** ◆ | `opencode/mistral-large-4` | — |
+| **Jev 1.13** ◆ | `opencode/jev-1.13` | `opencode/jev-1.13-free` |
 | **LongCat-2.0** ◆ | `opencode-go/longcat-2.0` | — |
 | **MiMo-V2.6-Pro** ◆ | `opencode-go/mimo-v2.6-pro` | — |
 | **MiMo-V2.6-Flash** ◆ | `opencode-go/mimo-v2.6-flash` | `opencode/mimo-v2.6-flash-free` |
@@ -358,6 +367,7 @@ ID format: LiteLLM `<provider>/<model>` (e.g. `gemini/gemini-2.5-pro`, `openrout
 | **Claude Sonnet 4.6** ◆ | `claude-sonnet-4-6` | `sonnet` |
 | **Claude Haiku 4.5** ◆ | `claude-haiku-4-5` | `haiku` |
 | **GPT-4o** ◆ | `gpt-4o` | `4o` |
+| **Gemini 3 Pro** ◆ | `gemini/gemini-3-pro-preview` | `gemini` |
 | **Gemini 2.5 Pro** ◆ | `gemini/gemini-2.5-pro` | `gemini-2.5-pro` |
 | **Gemini Flash Latest** ◆ | `gemini/gemini-flash-latest` | `flash` |
 | **Gemini 2.5 Flash-Lite** ◆ | `gemini/gemini-2.5-flash-lite` | `flash-lite` |
@@ -622,18 +632,13 @@ ID format: bare model ID; BYOK models are `custom:<display-name-with-dashes>-<in
 | **GLM-5.3** ◆ | `glm-5.3` | — |
 | **GLM-5.3-Flash** ◆ | `glm-5.3-flash` | — |
 | **GLM-5.2** ◆ | `glm-5.2` | `glm-5.2-fast` |
-| **GLM-5.1** ◆ | `glm-5.1` | — |
 | **Kimi K3** ◆ | `kimi-k3` | — |
-| **Kimi K2.5** ◆ | `kimi-k2.5` | — |
 | **Qwen3.8-Max** ◆ | `qwen3.8-max` | — |
 | **Nemotron 3 Ultra** ◆ | `nemotron-3-ultra` | — |
 | **Nemotron 3.5 Super** ◆ | `nemotron-3.5-super` | — |
 | **DeepSeek-V4.1-Flash** ◆ | `deepseek-v4.1-flash` | `deepseek-v4.1-flash-1017` |
-| **DeepSeek-V4-Flash** ◆ | `deepseek-v4-flash-0731` | — |
-| **DeepSeek-V4-Pro** ◆ | `deepseek-v4-pro` | — |
 | **MiniMax-M3.1-Flash** ◆ | `minimax-m3.1-flash` | — |
 | **MiniMax-M3** ◆ | `minimax-m3` | — |
-| **MiniMax-M2.7** ◆ | `minimax-m2.7` | — |
 | **Muse Spark 1.2** ◆ | `muse-spark-1.2` | — |
 | **Beam 1.0** ◆ | `beam-1.0` | — |
 
@@ -712,14 +717,11 @@ ID format: provider ID (`GOOSE_PROVIDER`, e.g. `anthropic`, `openai`, `google`, 
 
 Default: none until `hermes setup` or `hermes model` writes `model.provider` and `model.default`; `hermes setup --portal` sets the provider to `nous`
 Select: `hermes model`, `hermes chat --provider <id> --model <id>` (`-m`), `/model <id>` or `/model <provider>:<model>`, `model.default` in `~/.hermes/config.yaml`, `HERMES_INFERENCE_MODEL`, aliases under `model_aliases:`
-Providers: Nous Portal (recommended), OpenAI Codex (ChatGPT sign-in), GitHub Copilot, Anthropic, OpenRouter, Google Gemini, Google Vertex AI, OpenAI API, Azure AI Foundry, AWS Bedrock, xAI, DeepSeek, Kimi / Moonshot, z.ai / GLM, MiniMax, Qwen Cloud, Hugging Face, NVIDIA, Ollama Cloud, LM Studio, Kilo Code, OpenCode Zen and Go, custom OpenAI-compatible endpoints, and more
+Providers: Nous Portal (recommended), OpenAI Codex (ChatGPT sign-in), GitHub Copilot, Anthropic, OpenRouter, Google Gemini, Google Vertex AI, OpenAI API, Azure AI Foundry, AWS Bedrock, xAI, DeepSeek, Kimi / Moonshot, z.ai / GLM, MiniMax, Qwen Cloud, Hugging Face, NVIDIA, Ollama Cloud, LM Studio, Kilo Code, OpenCode Zen and Go, Upstage, Meituan, Poolside, StepFun, Reflection, Ornith, custom OpenAI-compatible endpoints, and more
 ID format: `<vendor>/<model>` on Nous Portal and OpenRouter; the provider's own ID on direct providers
 
 | Model | ID | Aliases |
 |---|---|---|
-| **Claude Sonnet 4.6** ◆ | `anthropic/claude-sonnet-4.6` | — |
-| **GPT-5.5 Pro** ◆ | `openai/gpt-5.5-pro` | — |
-| **DeepSeek-V4-Pro** ◆ | `deepseek/deepseek-v4-pro` | — |
 | **GPT-6.1 Sol** ◆ | `gpt-6.1-sol` | `gpt-6.1-sol-900k` |
 | **GPT-6 Astra** ○ | `openai/gpt-6-astra` | `openai/gpt-6-astra-fast`, `openai/gpt-6-astra-flex` |
 | **GPT-6 Astra Pro** ○ | `openai/gpt-6-astra-pro` | `openai/gpt-6-astra-pro-fast`, `openai/gpt-6-astra-pro-flex` |
@@ -729,6 +731,13 @@ ID format: `<vendor>/<model>` on Nous Portal and OpenRouter; the provider's own 
 | **GLM-5.3-Flash** ○ | `z-ai/glm-5.3-flash:US` | — |
 | **Kimi K3.1 Pro** ○ | `moonshotai/kimi-k3.1-pro` | — |
 | **MiniMax-M3.1-Flash** ○ | `minimax/minimax-m3.1-flash` | — |
+| **Solar Mini 4** ○ | `upstage/solar-mini4:free` | — |
+| **LongCat-2.5 Preview** ○ | `meituan/longcat-2.5-preview:free` | — |
+| **Laguna S 2.1** ○ | `poolside/laguna-s-2.1:free` | — |
+| **Laguna XS 2.1** ○ | `poolside/laguna-xs-2.1:free` | — |
+| **Step 3.7 Flash** ○ | `stepfun/step-3.7-flash:free` | — |
+| **Beam 1.0** ○ | `reflection/beam-1.0-501b-a23b:free` | — |
+| **Ornith 1.5** ○ | `ornith/ornith-1.5-122b:free` | — |
 
 **Sources:**
 [Configuring models](https://hermes-agent.nousresearch.com/docs/user-guide/configuring-models) ·
