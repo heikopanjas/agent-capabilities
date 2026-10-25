@@ -131,6 +131,46 @@
     apply();
   }
 
+  /* ---- models filtering ---- */
+  const modelsTable = $("#models-table");
+  if (modelsTable) {
+    $("#models-toolbar").hidden = false;
+    const rows = $$("tbody tr", modelsTable);
+    const q = $("#models-q");
+    const count = $("#models-count");
+    const empty = $("#models-empty");
+    const initial = new URLSearchParams(location.search).get("q");
+    if (initial) q.value = initial;
+
+    const apply = () => {
+      const value = q.value.trim();
+      const terms = value.toLowerCase().split(/\s+/).filter(Boolean);
+      let shown = 0;
+      let lastModel = null;
+      for (const r of rows) {
+        const ok = terms.every((t) => r.dataset.text.includes(t));
+        r.hidden = !ok;
+        if (ok) {
+          shown++;
+          r.classList.toggle("lead", r.dataset.model !== lastModel);
+          lastModel = r.dataset.model;
+        }
+      }
+      count.textContent = `${shown} / ${rows.length} rows`;
+      empty.hidden = shown > 0;
+      const p = new URLSearchParams(location.search);
+      value ? p.set("q", value) : p.delete("q");
+      const s = p.toString();
+      history.replaceState(null, "", `${location.pathname}${s ? `?${s}` : ""}${location.hash}`);
+    };
+    let t;
+    q.addEventListener("input", () => {
+      clearTimeout(t);
+      t = setTimeout(apply, 120);
+    });
+    apply();
+  }
+
   /* ---- compare picker ---- */
   const cmp = $("#cmp");
   if (cmp) {

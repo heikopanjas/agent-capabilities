@@ -1,0 +1,274 @@
+name: Refresh coding-agent models
+
+# Runs weekly: re-researches which models each agent in models.md can use,
+# and the exact model IDs, then commits any verified updates back into that
+# same file on main. The git history is the changelog. Mirrors
+# refresh-config-locations.yml, on a different day so the two never overlap.
+#
+# Requires repo secret CLAUDE_CODE_OAUTH_TOKEN (Settings -> Secrets and
+# variables -> Actions -> New repository secret). Generate it locally with
+# `claude setup-token` (needs a Claude Pro/Max subscription; usage counts
+# against the subscription, not API credits). The token is valid for one
+# year — regenerate and update the secret before it expires.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # weekly, Monday at 06:00 UTC
+  workflow_dispatch: # allow manual runs from the Actions tab
+
+permissions:
+  contents: write # commit the refreshed models.md to main
+  id-token: write # required by claude-code-action to mint an OIDC token
+
+concurrency:
+  group: refresh-models
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute date
+        id: vars
+        run: echo "date=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
+
+      # Attempt 1 — soft-fails so a transient API 529 ("Overloaded") does
+      # not lose the day's run; the retry below picks it up.
+      - name: Research and refresh models
+        id: attempt1
+        continue-on-error: true
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: >-
+            --model claude-sonnet-5
+            --allowedTools WebSearch,WebFetch,Read,Write,Edit,Glob,Grep
+            --disallowedTools Agent,Bash,ScheduleWakeup,CronCreate
+          prompt: |
+            You are refreshing a reference document about which AI models
+            coding agents let users select, and the exact model IDs.
+
+            1. Read `models.md` in the repository root. It uses confidence
+               markers (star = spec/stable, diamond = documented current,
+               circle = observed). For context on each agent (vendor, docs
+               domain), you may read `coding-agent-config-locations.md`, but
+               do NOT edit it.
+            2. For every agent section in `models.md`, use WebSearch and
+               WebFetch to verify, against the official documentation linked
+               in each "Sources" block (and the agent's current model or CLI
+               docs), which models a user can select today, the exact ID
+               string for each (flag, config or frontmatter value), its
+               aliases, the default model, and how a model is selected.
+            3. Update `models.md` IN PLACE. Preserve the document's
+               structure: the `## Agent — Vendor` headings (they must match
+               the agent names in coding-agent-config-locations.md), the
+               `Default:` / `Select:` / `Providers:` / `ID format:` lines,
+               the 3-column `Model | ID | Aliases` tables, the confidence
+               markers and the "Sources" lists. Do NOT create any new files.
+               Rules for the table:
+               - One row per model. The first cell is the model's official
+                 name from its maker, spelled identically across all agents
+                 (it is the key that joins agents on the site).
+               - Add models that became selectable; delete rows for models
+                 that are no longer selectable. Do not annotate removals.
+               - Put reasoning-effort or context variants that have their
+                 own ID string in the Aliases cell, not in new rows. Use
+                 `—` when there are no aliases.
+               - For agents that accept any model from any configured
+                 provider, list only the models the agent ships as built-in,
+                 default or recommended; keep the provider list and ID
+                 format on the meta lines. Do not copy provider catalogues.
+               Record only the CURRENT state, as terse present-tense facts
+               in your own words. Do NOT include: changelog or release-note
+               text, release dates, pricing, context-window sizes,
+               benchmarks, "no longer" / "previously" / "formerly" history,
+               bug or issue references, or product news and marketing. Git
+               history is the changelog.
+            4. Set the trailing "Last verified" line to today's date
+               (${{ steps.vars.outputs.date }}).
+            5. Do NOT run git, and do NOT create commits, branches, or pull
+               requests. Only edit the file in place — a later workflow step
+               handles committing.
+            6. Do all research yourself in this session. Do NOT spawn
+               subagents or background tasks, and do NOT schedule wakeups.
+               The session ends as soon as you stop, so finish every edit
+               (including the "Last verified" line) before your final
+               message.
+
+      # The action exits 0 even when Claude itself errors out (e.g. a bad API
+      # key fails on turn 1 for $0), so the step outcome alone cannot be
+      # trusted. Inspect the result event in the execution log instead.
+      - name: Check attempt 1 result
+        id: check1
+        env:
+          CLAUDE_OUTPUT: ${{ steps.attempt1.outputs.execution_file }}
+        run: |
+          if [ -z "$CLAUDE_OUTPUT" ] || [ ! -f "$CLAUDE_OUTPUT" ]; then
+            echo "No execution output from attempt 1 — treating as failure."
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Both attempts write the same execution file, so keep attempt 1's
+          # copy before a retry overwrites it (uploaded as an artifact below).
+          mkdir -p "$RUNNER_TEMP/claude-transcripts"
+          cp "$CLAUDE_OUTPUT" "$RUNNER_TEMP/claude-transcripts/attempt1.json"
+          ERR=$(jq -s 'flatten | map(select(.type=="result")) | last | .is_error' "$CLAUDE_OUTPUT" 2>/dev/null)
+          echo "attempt 1 is_error=$ERR"
+          if [ "$ERR" = "false" ]; then
+            echo "failed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Wait out a brief capacity blip before retrying.
+      - name: Cool-down before retry
+        if: steps.check1.outputs.failed == 'true'
+        run: sleep 120
+
+      # Attempt 2 — only runs if attempt 1 errored. Also soft-fails; the
+      # verification step below is what fails the job for real.
+      - name: Research and refresh models (retry)
+        id: attempt2
+        if: steps.check1.outputs.failed == 'true'
+        continue-on-error: true
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: >-
+            --model claude-sonnet-5
+            --allowedTools WebSearch,WebFetch,Read,Write,Edit,Glob,Grep
+            --disallowedTools Agent,Bash,ScheduleWakeup,CronCreate
+          prompt: |
+            You are refreshing a reference document about which AI models
+            coding agents let users select, and the exact model IDs.
+
+            1. Read `models.md` in the repository root. It uses confidence
+               markers (star = spec/stable, diamond = documented current,
+               circle = observed). For context on each agent (vendor, docs
+               domain), you may read `coding-agent-config-locations.md`, but
+               do NOT edit it.
+            2. For every agent section in `models.md`, use WebSearch and
+               WebFetch to verify, against the official documentation linked
+               in each "Sources" block (and the agent's current model or CLI
+               docs), which models a user can select today, the exact ID
+               string for each (flag, config or frontmatter value), its
+               aliases, the default model, and how a model is selected.
+            3. Update `models.md` IN PLACE. Preserve the document's
+               structure: the `## Agent — Vendor` headings (they must match
+               the agent names in coding-agent-config-locations.md), the
+               `Default:` / `Select:` / `Providers:` / `ID format:` lines,
+               the 3-column `Model | ID | Aliases` tables, the confidence
+               markers and the "Sources" lists. Do NOT create any new files.
+               Rules for the table:
+               - One row per model. The first cell is the model's official
+                 name from its maker, spelled identically across all agents
+                 (it is the key that joins agents on the site).
+               - Add models that became selectable; delete rows for models
+                 that are no longer selectable. Do not annotate removals.
+               - Put reasoning-effort or context variants that have their
+                 own ID string in the Aliases cell, not in new rows. Use
+                 `—` when there are no aliases.
+               - For agents that accept any model from any configured
+                 provider, list only the models the agent ships as built-in,
+                 default or recommended; keep the provider list and ID
+                 format on the meta lines. Do not copy provider catalogues.
+               Record only the CURRENT state, as terse present-tense facts
+               in your own words. Do NOT include: changelog or release-note
+               text, release dates, pricing, context-window sizes,
+               benchmarks, "no longer" / "previously" / "formerly" history,
+               bug or issue references, or product news and marketing. Git
+               history is the changelog.
+            4. Set the trailing "Last verified" line to today's date
+               (${{ steps.vars.outputs.date }}).
+            5. Do NOT run git, and do NOT create commits, branches, or pull
+               requests. Only edit the file in place — a later workflow step
+               handles committing.
+            6. Do all research yourself in this session. Do NOT spawn
+               subagents or background tasks, and do NOT schedule wakeups.
+               The session ends as soon as you stop, so finish every edit
+               (including the "Last verified" line) before your final
+               message.
+
+      # The action hides Claude's transcript from the job log. Keep it as a
+      # short-lived artifact so a bad run can be diagnosed afterwards
+      # (Actions tab -> run -> Artifacts). Note: artifacts of a public repo
+      # can be downloaded by any signed-in GitHub user.
+      - name: Collect Claude transcripts
+        if: always()
+        env:
+          ATTEMPT2_OUTPUT: ${{ steps.attempt2.outputs.execution_file }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/claude-transcripts"
+          if [ -n "$ATTEMPT2_OUTPUT" ] && [ -f "$ATTEMPT2_OUTPUT" ]; then
+            cp "$ATTEMPT2_OUTPUT" "$RUNNER_TEMP/claude-transcripts/attempt2.json"
+          fi
+          ls -la "$RUNNER_TEMP/claude-transcripts"
+
+      - name: Upload Claude transcripts
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: claude-transcripts-models-${{ steps.vars.outputs.date }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/claude-transcripts/
+          retention-days: 14
+          if-no-files-found: warn
+
+      # Ground truth: fail the job if the effective Claude run still errored,
+      # so a dead API key surfaces as a red ✕ instead of a silent green tick.
+      # Uses attempt 2's log if the retry ran, otherwise attempt 1's.
+      - name: Verify Claude succeeded
+        env:
+          CLAUDE_OUTPUT: ${{ steps.attempt2.outputs.execution_file || steps.attempt1.outputs.execution_file }}
+        run: |
+          if [ -z "$CLAUDE_OUTPUT" ] || [ ! -f "$CLAUDE_OUTPUT" ]; then
+            echo "::error::Claude produced no execution output — the run did not complete."
+            exit 1
+          fi
+          ERR=$(jq -s 'flatten | map(select(.type=="result")) | last | .is_error' "$CLAUDE_OUTPUT" 2>/dev/null)
+          if [ "$ERR" != "false" ]; then
+            echo "::error::Claude run reported is_error=$ERR — check the OAuth token (expired or revoked?), subscription usage limits, or model access. Failing so this is not masked as a successful run."
+            jq -s 'flatten | map(select(.type=="result")) | last' "$CLAUDE_OUTPUT" 2>/dev/null || true
+            exit 1
+          fi
+          echo "Claude run completed successfully (is_error=false)."
+          # Surface which tools were refused, without needing the artifact.
+          jq -rs 'flatten | map(select(.type=="result")) | last
+                  | "turns=\(.num_turns) permission_denials=\((.permission_denials // []) | length)",
+                    ((.permission_denials // [])[] | "  denied: \(.tool_name // "?")")' "$CLAUDE_OUTPUT" 2>/dev/null || true
+
+      # A run can end "successfully" without touching the document (see
+      # refresh-config-locations.yml). Every real refresh sets the trailing
+      # "Last verified" line to today, so require that before committing.
+      - name: Verify document was refreshed
+        env:
+          TODAY: ${{ steps.vars.outputs.date }}
+        run: |
+          FILE="models.md"
+          if ! grep -qx "\*Last verified: ${TODAY}\*" "$FILE"; then
+            echo "::error::Claude finished without updating $FILE — expected '*Last verified: ${TODAY}*', found '$(grep -m1 'Last verified' "$FILE" || echo none)'. Download the claude-transcripts artifact to see what it did."
+            git --no-pager diff --stat -- "$FILE" || true
+            exit 1
+          fi
+          echo "Document refreshed:"
+          git --no-pager diff --stat -- "$FILE"
+
+      - name: Commit refreshed document
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          FILE="models.md"
+          git add "$FILE"
+          if git diff --cached --quiet; then
+            echo "No changes to $FILE — nothing to commit."
+          else
+            git commit -m "Weekly refresh: re-verify coding-agent models"
+            # claude-code-action rewrites the origin remote with its own
+            # short-lived token, so a bare `git push` fails auth. Push via an
+            # explicit GITHUB_TOKEN URL instead (contents: write covers this).
+            git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
+          fi

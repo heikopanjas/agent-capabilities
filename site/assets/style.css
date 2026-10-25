@@ -364,3 +364,31 @@ tr:not(.lead):hover .m-agent a{opacity:.35}
   .scope-drift,.btn-lamp,.rack-card:hover .led.on{animation:none}
   .btn,.rack-card{transition:none}
 }
+
+/* ---------- models ---------- */
+.agent-models{margin-top:64px}
+.sub-title{font-family:var(--serif);font-weight:400;font-size:clamp(30px,3.6vw,46px);margin-top:4px}
+.model-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin:0 0 16px}
+.model-meta>div{padding:12px 14px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;font-size:14.5px;color:var(--soft);min-width:0}
+.model-meta dt{font:600 10.5px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+.model-meta dd{margin:0;overflow-wrap:anywhere}
+.model-table,.models-table,.select-table{min-width:640px}
+.model-table thead th:nth-child(1){width:34%}
+.model-table thead th:nth-child(n+2){width:auto}
+.models-table thead th:nth-child(1){width:220px}
+.models-table thead th:nth-child(2){width:150px}
+.select-table thead th:nth-child(1){width:150px}
+.m-model .feat{margin-bottom:6px}
+.models-table tr:not(.lead) .m-model .feat{opacity:0}
+.models-table tr:not(.lead):hover .m-model .feat{opacity:.35}
+.models-table .m-agent a{font-size:16px}
+.models-table tr:not(.lead) .m-agent a{opacity:1}
+.models-page .toolbar{margin-top:0}
+.doc-tag{display:inline-block;font:600 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;border-radius:5px;padding:4px 6px;margin-right:8px;vertical-align:.15em;border:1px solid var(--line2);color:var(--dim)}
+.doc-models{color:var(--violet);border-color:color-mix(in srgb,var(--violet) 45%,transparent)}
+@media (max-width:760px){
+  .model-table,.models-table,.select-table{min-width:0}
+  .models-table tr:not(.lead) .m-model .feat{opacity:1}
+  .m-model{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .m-model .feat{display:inline;margin:0;font-size:17px}
+}

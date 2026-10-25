@@ -84,7 +84,7 @@ export function stripHtml(html) {
     .trim();
 }
 
-function splitRow(line) {
+export function splitRow(line) {
   const body = line.trim().replace(/^\|/, "").replace(/\|$/, "");
   return body.split(/(?<!\\)\|/).map((c) => c.trim().replace(/\\\|/g, "|"));
 }
@@ -99,7 +99,7 @@ function parseFeatureCell(cell) {
   return { feature: m[1].trim(), marker: m[2] || null, extra: m[3].trim() };
 }
 
-function parseCallout(text) {
+export function parseCallout(text) {
   const m = text.match(/^\*\*(.+?):\*\*\s*(.*)$/s);
   const label = m ? m[1].trim() : "Note";
   const body = m ? m[2] : text;
@@ -107,7 +107,7 @@ function parseCallout(text) {
   return { label, tone, html: inline(body), text: stripHtml(inline(body)) };
 }
 
-function parseLinks(md) {
+export function parseLinks(md) {
   const links = [];
   for (const m of md.matchAll(/\[([^\]]+)\]\(([^)\s]+)\)/g)) {
     links.push({ label: m[1], url: m[2] });

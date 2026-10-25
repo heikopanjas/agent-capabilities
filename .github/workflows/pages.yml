@@ -1,6 +1,6 @@
 name: Deploy site to GitHub Pages
 
-# Builds the static site from coding-agent-config-locations.md (site/build.mjs)
+# Builds the static site from coding-agent-config-locations.md and models.md (site/build.mjs)
 # and publishes it to https://heikopanjas.github.io/agent-capabilities/.
 
 on:
@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - coding-agent-config-locations.md
+      - models.md
       - site/**
       - package.json
       - package-lock.json
@@ -15,7 +16,7 @@ on:
   # The weekly refresh pushes with GITHUB_TOKEN, and such pushes never trigger
   # `push` workflows — so redeploy whenever a refresh run finishes successfully.
   workflow_run:
-    workflows: ["Refresh coding-agent config locations"]
+    workflows: ["Refresh coding-agent config locations", "Refresh coding-agent models"]
     types: [completed]
   workflow_dispatch:
 

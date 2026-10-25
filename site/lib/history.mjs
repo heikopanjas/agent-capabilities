@@ -48,34 +48,44 @@ export function wordDiffHtml(before, after, { context = 10 } = {}) {
     .join("");
 }
 
-function keyRows(rows) {
+function keyRows(rows, keyOf) {
   const seen = new Map();
   const out = new Map();
   for (const r of rows) {
-    const n = (seen.get(r.feature) || 0) + 1;
-    seen.set(r.feature, n);
-    out.set(n > 1 ? `${r.feature} #${n}` : r.feature, r);
+    const k = keyOf(r);
+    const n = (seen.get(k) || 0) + 1;
+    seen.set(k, n);
+    out.set(n > 1 ? `${k} #${n}` : k, r);
   }
   return out;
 }
 
-function diffAgent(prev, next) {
+// How each document's rows are keyed and which text columns are compared.
+const CONFIG_ROWS = { keyOf: (r) => r.feature, columns: [["globalText", "Global"], ["projectText", "Project"]] };
+const MODEL_ROWS = { keyOf: (r) => r.name, columns: [["idText", "ID"], ["aliasesText", "Aliases"]] };
+
+function diffLabelled(prevList = [], nextList = [], prefix, items) {
+  const p = new Map(prevList.map((c) => [c.label, c]));
+  const n = new Map(nextList.map((c) => [c.label, c]));
+  for (const [label, c] of n) {
+    if (!p.has(label)) items.push({ kind: "added", what: `${prefix}${label}`, text: c.text });
+    else if (p.get(label).text !== c.text)
+      items.push({ kind: "changed", what: `${prefix}${label}`, diffHtml: wordDiffHtml(p.get(label).text, c.text) });
+  }
+  for (const [label] of p) if (!n.has(label)) items.push({ kind: "removed", what: `${prefix}${label}` });
+}
+
+function diffAgent(prev, next, { keyOf, columns } = CONFIG_ROWS) {
   const items = [];
   if (prev.homeText !== next.homeText) {
     items.push({ kind: "changed", what: "Home", diffHtml: wordDiffHtml(prev.homeText, next.homeText) });
   }
 
-  const pc = new Map(prev.callouts.map((c) => [c.label, c]));
-  const nc = new Map(next.callouts.map((c) => [c.label, c]));
-  for (const [label, c] of nc) {
-    if (!pc.has(label)) items.push({ kind: "added", what: `Note: ${label}`, text: c.text });
-    else if (pc.get(label).text !== c.text)
-      items.push({ kind: "changed", what: `Note: ${label}`, diffHtml: wordDiffHtml(pc.get(label).text, c.text) });
-  }
-  for (const [label] of pc) if (!nc.has(label)) items.push({ kind: "removed", what: `Note: ${label}` });
+  diffLabelled(prev.meta, next.meta, "", items);
+  diffLabelled(prev.callouts, next.callouts, "Note: ", items);
 
-  const pr = keyRows(prev.rows);
-  const nr = keyRows(next.rows);
+  const pr = keyRows(prev.rows, keyOf);
+  const nr = keyRows(next.rows, keyOf);
   for (const [key, r] of nr) {
     const o = pr.get(key);
     if (!o) {
@@ -83,18 +93,15 @@ function diffAgent(prev, next) {
         kind: "added",
         what: key,
         marker: r.marker,
-        text: [r.globalText, r.projectText].filter((t) => t && t !== "—").join(" · "),
+        text: columns.map(([k]) => r[k]).filter((t) => t && t !== "—").join(" · "),
       });
       continue;
     }
     if (o.marker !== r.marker) {
       items.push({ kind: "confidence", what: key, before: o.marker, after: r.marker });
     }
-    if (o.globalText !== r.globalText) {
-      items.push({ kind: "changed", what: key, column: "Global", diffHtml: wordDiffHtml(o.globalText, r.globalText) });
-    }
-    if (o.projectText !== r.projectText) {
-      items.push({ kind: "changed", what: key, column: "Project", diffHtml: wordDiffHtml(o.projectText, r.projectText) });
+    for (const [k, column] of columns) {
+      if (o[k] !== r[k]) items.push({ kind: "changed", what: key, column, diffHtml: wordDiffHtml(o[k], r[k]) });
     }
   }
   for (const [key] of pr) if (!nr.has(key)) items.push({ kind: "removed", what: key });
@@ -130,22 +137,33 @@ function diffShared(prev, next) {
   return items;
 }
 
-export function diffModels(prev, next) {
+function diffAgents(prev, next, rowSpec, unit) {
   const groups = [];
   const pa = new Map(prev.agents.map((a) => [a.slug, a]));
   for (const a of next.agents) {
     const o = pa.get(a.slug);
     if (!o) {
-      groups.push({ slug: a.slug, name: a.name, added: true, items: [{ kind: "agent-added", rows: a.rows.length }] });
+      groups.push({ slug: a.slug, name: a.name, added: true, items: [{ kind: "agent-added", rows: a.rows.length, unit }] });
       continue;
     }
-    const items = diffAgent(o, a);
+    const items = diffAgent(o, a, rowSpec);
     if (items.length) groups.push({ slug: a.slug, name: a.name, items });
   }
   const na = new Set(next.agents.map((a) => a.slug));
   for (const a of prev.agents) {
     if (!na.has(a.slug)) groups.push({ slug: a.slug, name: a.name, removed: true, items: [{ kind: "agent-removed" }] });
   }
+  return groups;
+}
+
+/** Diff two parsed versions of models.md, grouped by agent. */
+export function diffModelDocs(prev, next) {
+  return diffAgents(prev, next, MODEL_ROWS, "models");
+}
+
+/** Diff two parsed versions of the config document, grouped by agent. */
+export function diffModels(prev, next) {
+  const groups = diffAgents(prev, next, CONFIG_ROWS, "features");
   const shared = diffShared(prev, next);
   if (shared.length) groups.push({ slug: null, name: "Cross-agent standards & notes", items: shared });
   return groups;
@@ -154,8 +172,10 @@ export function diffModels(prev, next) {
 /**
  * Returns changelog entries, newest first. Never throws: a missing or shallow
  * git history yields whatever could be read, with warnings on stderr.
+ * `parse` and `diff` default to the config document; `doc` tags each entry
+ * with the document it came from ("config" or "models").
  */
-export function buildHistory({ file, cwd }) {
+export function buildHistory({ file, cwd, parse: parseDoc = parse, diff = diffModels, doc = "config" }) {
   let log;
   try {
     log = git(["log", "--reverse", `--format=%H${SEP}%cI${SEP}%s`, "--", file], cwd);
@@ -177,7 +197,7 @@ export function buildHistory({ file, cwd }) {
   for (const c of commits) {
     let model;
     try {
-      model = parse(git(["show", `${c.sha}:${file}`], cwd));
+      model = parseDoc(git(["show", `${c.sha}:${file}`], cwd));
     } catch (e) {
       console.warn(`history: skipping ${c.sha.slice(0, 7)} (${e.message.split("\n")[0]})`);
       continue;
@@ -186,9 +206,13 @@ export function buildHistory({ file, cwd }) {
       console.warn(`history: skipping ${c.sha.slice(0, 7)} (no agent sections parsed)`);
       continue;
     }
+    const short = c.sha.slice(0, 7);
     const base = {
+      doc,
+      // Anchor and feed id; config entries keep their original form.
+      anchor: `${c.date.slice(0, 10)}-${short}${doc === "config" ? "" : `-${doc}`}`,
       sha: c.sha,
-      short: c.sha.slice(0, 7),
+      short,
       date: c.date,
       day: c.date.slice(0, 10),
       subject: c.subject,
@@ -197,7 +221,7 @@ export function buildHistory({ file, cwd }) {
     if (!prev) {
       entries.push({ ...base, initial: true, agentCount: model.agents.length, groups: [], changeCount: 0 });
     } else {
-      const groups = diffModels(prev, model);
+      const groups = diff(prev, model);
       const changeCount = groups.reduce((n, g) => n + g.items.length, 0);
       entries.push({ ...base, groups, changeCount, reverifiedOnly: changeCount === 0 });
     }

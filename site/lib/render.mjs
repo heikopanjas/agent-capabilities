@@ -8,6 +8,7 @@ import { escapeHtml as esc } from "./history.mjs";
 
 export const REPO_URL = "https://github.com/heikopanjas/agent-capabilities";
 const DOC_URL = `${REPO_URL}/blob/main/coding-agent-config-locations.md`;
+const MODELS_URL = `${REPO_URL}/blob/main/models.md`;
 
 // Content hash appended to asset URLs so edits bypass browser/CDN caches.
 const assetVersion = (name) =>
@@ -22,6 +23,7 @@ const CAT_LABEL = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.label]));
 const NAV = [
   ["matrix", "Matrix", "#matrix"],
   ["agents", "Agents", "#agents"],
+  ["models", "Models", "models/"],
   ["compare", "Compare", "compare/"],
   ["changes", "Changes", "changelog/"],
   ["standards", "Standards", "standards/"],
@@ -117,7 +119,7 @@ ${body}
 <footer class="footer">
   <div><b>Agent Capabilities</b><br><span class="mono-fine">verified ${esc(model.lastVerified)}</span></div>
   <div>
-    <p>Generated from <a href="${DOC_URL}"><code>coding-agent-config-locations.md</code></a>, which a scheduled job re-researches against each vendor's official docs every Thursday. The git history of that file is the changelog.</p>
+    <p>Generated from <a href="${DOC_URL}"><code>coding-agent-config-locations.md</code></a> and <a href="${MODELS_URL}"><code>models.md</code></a>. Scheduled jobs re-check them against each vendor's official docs every week: config paths on Thursday, models on Monday. The git history of those files is the changelog.</p>
     <p class="fine"><a href="${root}feed.xml">Atom feed</a> · <a href="${root}data.json">data.json</a> · <a href="${REPO_URL}">Source on GitHub</a> · MIT © 2026 Heiko Panjas</p>
   </div>
 </footer>
@@ -236,6 +238,12 @@ function standardTag(title) {
   return "Standard";
 }
 
+const DOC_LABEL = { config: "Config", models: "Models" };
+
+function docTag(e) {
+  return `<span class="doc-tag doc-${e.doc}">${DOC_LABEL[e.doc] || esc(e.doc)}</span>`;
+}
+
 function changeSummary(e) {
   const names = e.groups.map((g) => g.name);
   return `${e.changeCount} change${e.changeCount === 1 ? "" : "s"} across ${names.length} section${names.length === 1 ? "" : "s"}`;
@@ -261,9 +269,9 @@ export function renderIndex(model, history) {
 
   const latestHtml = latest
     .map(
-      (e) => `<li class="reveal"><time datetime="${e.date}">${esc(prettyDay(e.day))}</time><div><b>${changeSummary(e)}</b><span class="tag-list">${e.groups
+      (e) => `<li class="reveal"><time datetime="${e.date}">${esc(prettyDay(e.day))}</time><div><b>${docTag(e)}${changeSummary(e)}</b><span class="tag-list">${e.groups
         .map((g) => `<span class="mini-tag">${esc(g.name)}</span>`)
-        .join("")}</span><a class="more" href="changelog/#${e.day}-${e.short}">Read the diff →</a></div></li>`,
+        .join("")}</span><a class="more" href="changelog/#${e.anchor}">Read the diff →</a></div></li>`,
     )
     .join("");
 
@@ -334,7 +342,7 @@ export function renderIndex(model, history) {
   <div class="outro-inner">
     ${kicker("04", "Subscribe", "center")}
     <h2>Paths change. <em>Subscribe</em> to hear when.</h2>
-    <p>Every Thursday the reference is checked against each vendor's official docs. The feed has an entry only for weeks where something changed.</p>
+    <p>Every week both references are checked against each vendor's official docs: config paths on Thursday, models on Monday. The feed has an entry only for weeks where something changed.</p>
     <div class="hero-cta"><a class="btn btn-hot" href="feed.xml"><span class="btn-lamp"></span>Atom feed</a><a class="btn btn-ghost" href="${REPO_URL}">Source on GitHub ↗</a></div>
   </div>
 </section>`;
@@ -352,9 +360,42 @@ export function renderIndex(model, history) {
 
 /* ------------------------------------------------------------------ agents */
 
-export function renderAgent(model, index) {
+function modelMeta(m) {
+  if (!m.meta.length) return "";
+  return `<dl class="model-meta">${m.meta.map((x) => `<div><dt>${esc(x.label)}</dt><dd>${x.html}</dd></div>`).join("")}</dl>`;
+}
+
+function agentModels(m) {
+  const callouts = m.callouts.map((c) => `<aside class="why why-${c.tone}"><b>${esc(c.label)}</b> ${c.html}</aside>`).join("");
+  const rows = m.rows
+    .map(
+      (r) => `<tr><th scope="row" class="m-model"><span class="feat">${esc(r.name)}</span>${badge(r.marker)}</th>
+<td class="m-path" data-label="ID">${cell(r.idHtml)}</td>
+<td class="m-path" data-label="Aliases">${cell(r.aliasesHtml)}</td></tr>`,
+    )
+    .join("\n");
+  const sources = m.sources.map((s) => `<a class="chip src" href="${esc(s.url)}"><span class="chip-dot"></span>${esc(s.label)}</a>`).join("");
+  return `<div class="agent-models" id="models">
+  <div class="section-head sub">${kicker("MOD", "Models", "small")}<h2 class="sub-title">Picking a <em>model</em></h2></div>
+  ${callouts}
+  ${modelMeta(m)}
+  <div class="table-wrap"><table class="matrix model-table">
+<thead><tr><th scope="col">Model</th><th scope="col">ID</th><th scope="col">Aliases</th></tr></thead>
+<tbody>
+${rows}
+</tbody></table></div>
+  ${m.notesHtml.length ? `<div class="agent-notes">${m.notesHtml.map((h) => `<p>${h}</p>`).join("")}</div>` : ""}
+  <div class="sources">
+    ${kicker("SRC", "Models checked against", "small")}
+    <div class="chip-row">${sources}</div>
+  </div>
+</div>`;
+}
+
+export function renderAgent(model, index, models) {
   const root = "../../";
   const a = model.agents[index];
+  const m = models?.agents.find((x) => x.slug === a.slug);
   const prev = model.agents[(index - 1 + model.agents.length) % model.agents.length];
   const next = model.agents[(index + 1) % model.agents.length];
   const accent = accentFor(index);
@@ -387,7 +428,7 @@ export function renderAgent(model, index) {
     <div class="unit-badge">${esc(a.vendor)}</div>
     <h1>${esc(a.name)}</h1>
     ${a.homeHtml ? `<p class="unit-hw home"><span class="pair-label">Home</span> ${a.homeHtml}</p>` : ""}
-    <p class="agent-meta">${leds(a)}<span class="mono-fine">${a.rows.length} features · ${a.sources.length} sources · verified ${esc(model.lastVerified)}</span></p>
+    <p class="agent-meta">${leds(a)}<span class="mono-fine">${a.rows.length} features${m ? ` · <a href="#models">${m.rows.length} models</a>` : ""} · ${a.sources.length} sources · verified ${esc(model.lastVerified)}</span></p>
     <div class="hero-cta"><a class="btn btn-ghost" href="${root}compare/?a=${[a.slug, ...others].join(",")}">Compare with others</a><a class="btn btn-ghost" href="${root}#matrix">Back to the matrix</a></div>
   </div>
   ${callouts}
@@ -399,6 +440,7 @@ export function renderAgent(model, index) {
     ${a.sourcesNoteHtml ? `<p class="fine">${a.sourcesNoteHtml}</p>` : ""}
     <div class="chip-row">${sources}</div>
   </div>
+  ${m ? agentModels(m) : ""}
   <nav class="pager" aria-label="Agents">
     <a href="${root}agents/${prev.slug}/"><span class="pair-label">← Previous</span>${esc(prev.name)}</a>
     <a href="${root}agents/${next.slug}/" class="next"><span class="pair-label">Next →</span>${esc(next.name)}</a>
@@ -410,8 +452,98 @@ export function renderAgent(model, index) {
     root,
     active: "agents",
     title: `${a.name}: config locations · Agent Capabilities`,
-    description: `Where ${a.name} (${a.vendor}) keeps instructions, skills, subagents, MCP and settings. Re-checked weekly.`,
+    description: `Where ${a.name} (${a.vendor}) keeps instructions, skills, subagents, MCP and settings${m ? ", and which models it can use" : ""}. Re-checked weekly.`,
     body,
+  });
+}
+
+/* ------------------------------------------------------------------ models */
+
+export function renderModels(model, models) {
+  const root = "../";
+  const order = new Map(model.agents.map((a, i) => [a.slug, i]));
+  const agentName = new Map(model.agents.map((a) => [a.slug, a.name]));
+  const docAgents = [...models.agents].sort((x, y) => order.get(x.slug) - order.get(y.slug));
+
+  // One group per model name, listing every agent that offers it.
+  const byModel = new Map();
+  for (const a of docAgents) {
+    for (const r of a.rows) {
+      if (!byModel.has(r.slug)) byModel.set(r.slug, { name: r.name, offers: [] });
+      byModel.get(r.slug).offers.push({ agent: a, row: r });
+    }
+  }
+  const groups = [...byModel.values()].sort((x, y) => x.name.localeCompare(y.name, "en", { numeric: true, sensitivity: "base" }));
+  const offerCount = groups.reduce((n, g) => n + g.offers.length, 0);
+
+  const body = groups
+    .map((g) =>
+      g.offers
+        .map(({ agent, row }, i) => {
+          const ai = order.get(agent.slug);
+          const text = `${g.name} ${agent.name} ${agent.vendor} ${row.idText} ${row.aliasesText}`.toLowerCase();
+          return `<tr data-model="${row.slug}" data-text="${esc(text)}"${i === 0 ? ' class="lead"' : ""} style="--c:var(--${accentFor(ai)})">
+<th scope="row" class="m-model"><span class="feat">${esc(g.name)}</span></th>
+<td class="m-agent"><a href="${root}agents/${agent.slug}/#models">${esc(agentName.get(agent.slug) || agent.name)}</a></td>
+<td class="m-path" data-label="ID">${cell(row.idHtml)} ${badge(row.marker)}</td>
+<td class="m-path" data-label="Aliases">${cell(row.aliasesHtml)}</td>
+</tr>`;
+        })
+        .join("\n"),
+    )
+    .join("\n");
+
+  const metaLabels = [...new Set(docAgents.flatMap((a) => a.meta.map((x) => x.label)))];
+  const howRows = docAgents
+    .map((a) => {
+      const ai = order.get(a.slug);
+      const cells = metaLabels
+        .map((l) => `<td class="m-path" data-label="${esc(l)}">${cell(a.meta.find((x) => x.label === l)?.html || "")}</td>`)
+        .join("");
+      return `<tr class="lead" style="--c:var(--${accentFor(ai)})"><th scope="row" class="m-agent"><a href="${root}agents/${a.slug}/#models">${esc(a.name)}</a></th>${cells}</tr>`;
+    })
+    .join("\n");
+  const missing = model.agents.filter((a) => !models.agents.some((x) => x.slug === a.slug));
+
+  const content = `
+<section class="section">
+  <div class="section-head">${kicker("08", "Models")}
+    <h1 class="page-title">Which <em>models</em> each agent runs.</h1>
+    <p class="section-intro">The models you can pick in each agent today, and the exact ID to type for each one: in a <code>--model</code> flag, a config file or <code>model:</code> frontmatter. ${groups.length} models across ${docAgents.length} agents. Agents that accept any model from any provider list only the models they ship with, and their ID format is in the table at the bottom of this page.</p>
+    <p class="fine">Verified ${esc(models.lastVerified)} · <a href="${MODELS_URL}">models.md</a></p>
+  </div>
+  <div class="toolbar" id="models-toolbar" hidden>
+    <div class="tool-row">
+      <label class="search"><span class="sr-only">Search models</span><input type="search" id="models-q" placeholder="Search models, agents, IDs…" autocomplete="off" spellcheck="false"></label>
+      <span class="count mono-fine" id="models-count" aria-live="polite"></span>
+    </div>
+  </div>
+  <div class="table-wrap"><table class="matrix models-table" id="models-table">
+<thead><tr><th scope="col">Model</th><th scope="col">Agent</th><th scope="col">ID</th><th scope="col">Aliases</th></tr></thead>
+<tbody>
+${body}
+</tbody></table>
+<p class="empty" id="models-empty" hidden>No models match.</p></div>
+  <p class="mono-fine">${offerCount} agent–model pairs</p>
+
+  <div class="section-head sub">${kicker("SEL", "How each agent picks a model", "small")}</div>
+  <div class="table-wrap"><table class="matrix select-table" style="--cols:${metaLabels.length}">
+<thead><tr><th scope="col">Agent</th>${metaLabels.map((l) => `<th scope="col">${esc(l)}</th>`).join("")}</tr></thead>
+<tbody>
+${howRows}
+</tbody></table></div>
+  ${missing.length ? `<p class="fine">No model list yet for ${missing.map((a) => esc(a.name)).join(", ")}.</p>` : ""}
+  ${models.closingHtml.map((h) => `<p class="fine closing">${h}</p>`).join("")}
+</section>`;
+
+  return layout({
+    model,
+    root,
+    active: "models",
+    title: "Models · Agent Capabilities",
+    description: `Which models ${docAgents.length} coding agents can use, and the exact model ID each one expects. Re-checked weekly.`,
+    body: content,
+    bodyClass: "models-page",
   });
 }
 
@@ -503,7 +635,7 @@ function changeItem(item) {
         .map((s) => `<ins><a href="${esc(s.url)}">${esc(s.label)}</a></ins>`)
         .join(" ")} ${item.removed.map((s) => `<del>${esc(s.label)}</del>`).join(" ")}</div></li>`;
     case "agent-added":
-      return `<li><span class="kind kind-added">New agent</span><span class="what">${item.rows} features documented</span></li>`;
+      return `<li><span class="kind kind-added">New agent</span><span class="what">${item.rows} ${item.unit || "features"} documented</span></li>`;
     case "agent-removed":
       return `<li><span class="kind kind-removed">Agent removed</span></li>`;
     default:
@@ -516,22 +648,24 @@ export function renderChangelog(model, history) {
   const slugs = new Set(model.agents.map((a) => a.slug));
   const entries = history
     .map((e, i) => {
-      const id = `${e.day}-${e.short}`;
+      const id = e.anchor;
       const commit = `<a class="sha" href="${REPO_URL}/commit/${e.sha}">${e.short}</a>`;
       if (e.initial) {
-        return `<li id="${id}" class="entry"><time datetime="${e.date}">${esc(prettyDay(e.day))}</time><div><b>First version</b> <span class="mono-fine">${e.agentCount} agents documented · ${commit}</span></div></li>`;
+        const what = e.doc === "models" ? `model lists for ${e.agentCount} agents` : `${e.agentCount} agents documented`;
+        return `<li id="${id}" class="entry"><time datetime="${e.date}">${esc(prettyDay(e.day))}</time><div><b>${docTag(e)}First version</b> <span class="mono-fine">${what} · ${commit}</span></div></li>`;
       }
       if (e.reverifiedOnly) {
-        return `<li id="${id}" class="entry quiet"><time datetime="${e.date}">${esc(prettyDay(e.day))}</time><div><span class="mono-fine">Re-verified, no changes · ${commit}</span></div></li>`;
+        return `<li id="${id}" class="entry quiet"><time datetime="${e.date}">${esc(prettyDay(e.day))}</time><div><span class="mono-fine">${DOC_LABEL[e.doc] || ""} re-verified, no changes · ${commit}</span></div></li>`;
       }
+      const hash = e.doc === "models" ? "#models" : "";
       const groups = e.groups
         .map((g) => {
-          const name = g.slug && slugs.has(g.slug) ? `<a href="${root}agents/${g.slug}/">${esc(g.name)}</a>` : esc(g.name);
+          const name = g.slug && slugs.has(g.slug) ? `<a href="${root}agents/${g.slug}/${hash}">${esc(g.name)}</a>` : esc(g.name);
           return `<div class="group"><h3>${name}</h3><ul>${g.items.map(changeItem).join("")}</ul></div>`;
         })
         .join("");
       return `<li id="${id}" class="entry"><time datetime="${e.date}">${esc(prettyDay(e.day))}</time><div>
-<details${i < 6 ? " open" : ""}><summary><b>${changeSummary(e)}</b> <span class="mono-fine">${commit}</span></summary>${groups}</details></div></li>`;
+<details${i < 6 ? " open" : ""}><summary><b>${docTag(e)}${changeSummary(e)}</b> <span class="mono-fine">${commit}</span></summary>${groups}</details></div></li>`;
     })
     .join("");
 
@@ -539,7 +673,7 @@ export function renderChangelog(model, history) {
 <section class="section">
   <div class="section-head">${kicker("06", "Changelog")}
     <h1 class="page-title">What <em>changed</em>, week by week.</h1>
-    <p class="section-intro">Each entry is a commit to the reference document, compared cell by cell with the commit before it. <ins class="legend-ins">Green</ins> text was added and <del class="legend-del">rose</del> text was removed. Long unchanged stretches are folded into "...".</p>
+    <p class="section-intro">Each entry is a commit to one of the two reference documents, config paths or models, compared cell by cell with the commit before it. <ins class="legend-ins">Green</ins> text was added and <del class="legend-del">rose</del> text was removed. Long unchanged stretches are folded into "...".</p>
     <p class="fine"><a href="${root}feed.xml">Subscribe via Atom</a></p>
   </div>
   <ol class="day-list changelog">${entries || '<li class="entry quiet"><div>No history available in this build.</div></li>'}</ol>
@@ -550,7 +684,7 @@ export function renderChangelog(model, history) {
     root,
     active: "changes",
     title: "Changelog · Agent Capabilities",
-    description: "Weekly changes to where coding agents keep their configuration.",
+    description: "Weekly changes to where coding agents keep their configuration and which models they offer.",
     body,
   });
 }
@@ -598,7 +732,8 @@ export function renderFeed(model, history, siteUrl) {
   const updated = items[0]?.date || `${model.lastVerified}T00:00:00Z`;
   const entries = items
     .map((e) => {
-      const link = `${siteUrl}changelog/#${e.day}-${e.short}`;
+      const link = `${siteUrl}changelog/#${e.anchor}`;
+      const prefix = e.doc === "models" ? "Models · " : "";
       const content = e.groups
         .map(
           (g) =>
@@ -612,8 +747,8 @@ export function renderFeed(model, history, siteUrl) {
         )
         .join("");
       return `  <entry>
-    <id>tag:heikopanjas.github.io,2026:agent-capabilities/${e.sha}</id>
-    <title>${esc(`${prettyDay(e.day)}: ${changeSummary(e)}`)}</title>
+    <id>tag:heikopanjas.github.io,2026:agent-capabilities/${e.sha}${e.doc === "config" ? "" : `-${e.doc}`}</id>
+    <title>${esc(`${prefix}${prettyDay(e.day)}: ${changeSummary(e)}`)}</title>
     <updated>${e.date}</updated>
     <link rel="alternate" type="text/html" href="${esc(link)}"/>
     <summary>${esc(e.groups.map((g) => g.name).join(", "))}</summary>
@@ -625,7 +760,7 @@ export function renderFeed(model, history, siteUrl) {
 <feed xmlns="http://www.w3.org/2005/Atom">
   <id>${esc(siteUrl)}</id>
   <title>Agent Capabilities: config location changes</title>
-  <subtitle>Weekly changes to where coding agents keep their configuration</subtitle>
+  <subtitle>Weekly changes to where coding agents keep their configuration and which models they offer</subtitle>
   <updated>${updated}</updated>
   <link rel="self" type="application/atom+xml" href="${esc(siteUrl)}feed.xml"/>
   <link rel="alternate" type="text/html" href="${esc(siteUrl)}"/>
