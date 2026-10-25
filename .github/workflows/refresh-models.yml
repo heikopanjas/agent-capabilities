@@ -74,6 +74,11 @@ jobs:
                  (it is the key that joins agents on the site).
                - Add models that became selectable; delete rows for models
                  that are no longer selectable. Do not annotate removals.
+               - A model whose listed deprecation, retirement or shutdown
+                 date has passed counts as not selectable, even if a docs
+                 page, model list or catalog still shows it. Delete its row
+                 and do not add it back. Classifier, embedding and other
+                 non-chat models are not listed.
                - Put reasoning-effort or context variants that have their
                  own ID string in the Aliases cell, not in new rows. Use
                  `—` when there are no aliases.
@@ -168,6 +173,11 @@ jobs:
                  (it is the key that joins agents on the site).
                - Add models that became selectable; delete rows for models
                  that are no longer selectable. Do not annotate removals.
+               - A model whose listed deprecation, retirement or shutdown
+                 date has passed counts as not selectable, even if a docs
+                 page, model list or catalog still shows it. Delete its row
+                 and do not add it back. Classifier, embedding and other
+                 non-chat models are not listed.
                - Put reasoning-effort or context variants that have their
                  own ID string in the Aliases cell, not in new rows. Use
                  `—` when there are no aliases.
