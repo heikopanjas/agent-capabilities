@@ -278,6 +278,7 @@ ID format: `<provider_id>/<model_id>`; the rows below are the curated OpenCode Z
 | **Kimi K2.7 Code** ◆ | `opencode/kimi-k2.7-code` | `opencode-go/kimi-k2.7-code` |
 | **Kimi K2.6** ◆ | `opencode/kimi-k2.6` | — |
 | **Mistral Large 4** ◆ | `opencode/mistral-large-4` | — |
+| **Jev 1.13** ◆ | `opencode/jev-1.13` | `opencode/jev-1.13-free` |
 | **LongCat-2.0** ◆ | `opencode-go/longcat-2.0` | — |
 | **MiMo-V2.6-Pro** ◆ | `opencode-go/mimo-v2.6-pro` | — |
 | **MiMo-V2.6-Flash** ◆ | `opencode-go/mimo-v2.6-flash` | `opencode/mimo-v2.6-flash-free` |
@@ -328,6 +329,7 @@ ID format: `<provider>/<model-id>` with an optional `:<thinking>` suffix (e.g. `
 | **MiniMax-M2.7** ○ | `minimax/MiniMax-M2.7` | `minimax-cn/MiniMax-M2.7` |
 | **Kimi K3** ○ | `opencode-go/kimi-k3` | `fireworks/accounts/fireworks/models/kimi-k3`, `together/moonshotai/Kimi-K3` |
 | **Kimi K2.6** ○ | `moonshotai/kimi-k2.6` | `moonshotai-cn/kimi-k2.6`, `opencode/kimi-k2.6`, `openrouter/moonshotai/kimi-k2.6`, `huggingface/moonshotai/Kimi-K2.6`, `cloudflare-workers-ai/@cf/moonshotai/kimi-k2.6`, `cloudflare-ai-gateway/workers-ai/@cf/moonshotai/kimi-k2.6` |
+| **Kimi For Coding** ○ | `kimi-coding/kimi-for-coding` | — |
 | **Nemotron 3.5 Super VL** ○ | `nvidia/nvidia/nemotron-3.5-super-vl-120b-a12b` | — |
 | **Ring-2.6-1T** ○ | `ant-ling/Ring-2.6-1T` | — |
 | **Muse Spark 1.3** ○ | `meta/muse-spark-1.3` | — |
@@ -484,12 +486,12 @@ ID format: `<vendor>/<model>` on the Cline provider, `cline-pass/<model>` on Cli
 
 | Model | ID | Aliases |
 |---|---|---|
-| **Claude Sonnet 5.5** ○ | `anthropic/claude-sonnet-5.5` | — |
-| **Claude Opus 5.5** ○ | `anthropic/claude-opus-5.5` | — |
+| **Claude Sonnet 5.5** ○ | `anthropic/claude-sonnet-5-5` | — |
+| **Claude Opus 5.5** ○ | `anthropic/claude-opus-5-5` | — |
 | **Gemini 4 Argon** ○ | `google/gemini-4-argon` | — |
 | **GPT-6 Astra** ○ | `openai/gpt-6-astra` | — |
 | **GPT-6.1 Sol** ○ | `openai/gpt-6.1-sol` | — |
-| **Claude Sonnet 4.6** ◆ | `anthropic/claude-sonnet-4.6` | — |
+| **Claude Sonnet 4.6** ◆ | `anthropic/claude-sonnet-4-6` | — |
 | **Gemini 2.5 Pro** ◆ | `google/gemini-2.5-pro` | — |
 | **GPT-4o** ◆ | `openai/gpt-4o` | — |
 | **MiniMax-M2.5** ◆ | `minimax/minimax-m2.5` | — |
@@ -554,7 +556,7 @@ ID format: a `models:` entry pairs `provider:` with `model:`; the ID column show
 
 ## Devin — Cognition
 
-Default: `normal` (the organization's default agent mode applies when one is set)
+Default: `normal`, unless a user pins another mode as their default in the agent picker, or an organization admin sets an organization default
 Select: agent selector in the session message box (Lite, Normal, Ultra, Fusion, SWE-2), `devin_mode` in the v3 sessions API, Slack keywords (`!lite`, `!ultra`, `!fusion`, `!swe2`), `/model` before the first message in `devin --cloud`
 Providers: Cognition-managed; Lite, Normal, Ultra and Fusion are agent modes that pick the underlying models themselves
 
@@ -788,8 +790,12 @@ ID format: `<provider>/<model>`; Kilo Gateway models are `kilo/<vendor>/<model>`
 | **MiniMax-M2.7** ◆ | `kilo/minimax/minimax-m2.7` | — |
 | **GLM-5.3-Flash** ◆ | `kilo/z-ai/glm-5.3-flash` | — |
 | **Claude Opus 5.5** ○ | `kilo/anthropic/claude-opus-5.5` | — |
+| **Claude Sonnet 5.5** ○ | `kilo/anthropic/claude-sonnet-5.5` | — |
+| **Claude Haiku 5.5** ○ | `kilo/anthropic/claude-haiku-5.5` | — |
 | **GPT-6.1 Sol** ○ | `kilo/openai/gpt-6.1-sol` | — |
 | **DeepSeek-V4.1-Flash** ○ | `kilo/deepseek/deepseek-v4.1-flash` | — |
+| **Grok 4.7** ○ | `kilo/x-ai/grok-4.7` | — |
+| **Gemini 4 Argon** ○ | `kilo/google/gemini-4-argon` | — |
 | **Kimi K3** ○ | `kilo/moonshotai/kimi-k3` | — |
 | **Nemotron 3.5 Super VL** ○ | `kilo/nvidia/nemotron-3.5-super-vl:free` | — |
 | **Beam 1.0** ○ | `kilo/reflection/beam-free` | — |
@@ -868,6 +874,7 @@ ID format: LiteLLM `<provider>/<model>`, e.g. `openhands/<model>`, `anthropic/<m
 | **Claude Sonnet 5** ○ | `openhands/claude-sonnet-5` | `anthropic/claude-sonnet-5`, `openrouter/anthropic/claude-sonnet-5` |
 | **Claude Fable 5.1** ○ | `openhands/claude-fable-5-1` | `anthropic/claude-fable-5-1` |
 | **Claude Fable 5** ○ | `openhands/claude-fable-5` | `anthropic/claude-fable-5` |
+| **Claude Haiku 5.5** ○ | `anthropic/claude-haiku-5.5` | `openrouter/anthropic/claude-haiku-5.5` |
 | **GPT-6.1 Sol** ○ | `openhands/gpt-6.1-sol` | `openai/gpt-6.1-sol`, `openrouter/openai/gpt-6.1-sol` |
 | **GPT-6 Sol** ○ | `openhands/gpt-6-sol` | `openai/gpt-6-sol` |
 | **GPT-6 Luna** ○ | `openhands/gpt-6-luna` | `openai/gpt-6-luna` |
@@ -877,22 +884,26 @@ ID format: LiteLLM `<provider>/<model>`, e.g. `openhands/<model>`, `anthropic/<m
 | **GPT-5.2-Codex** ○ | `openhands/gpt-5.2-codex` | `openai/gpt-5.2-codex`, `openrouter/openai/gpt-5.2-codex` |
 | **MiniMax-M3.1-Flash** ○ | `openhands/minimax-m3.1-flash` | — |
 | **MiniMax-M2.7** ○ | `openhands/minimax-m2.7` | — |
+| **Gemini 4 Argon** ○ | `gemini/gemini-4-argon` | `openrouter/google/gemini-4-argon` |
 | **Gemini 3.1 Pro** ○ | `openhands/gemini-3.1-pro` | `openhands/gemini-3.1-pro-preview`, `openrouter/google/gemini-3.1-pro-preview` |
 | **Gemini 3.8 Flash** ○ | `openhands/gemini-3.8-flash` | `openrouter/google/gemini-3.8-flash` |
 | **Gemini 3.7 Flash** ○ | `openhands/gemini-3.7-flash` | `openrouter/google/gemini-3.7-flash` |
 | **Gemini 3.5 Flash-Lite** ○ | `openhands/gemini-3.5-flash-lite` | `openrouter/google/gemini-3.5-flash-lite` |
+| **Gemini 3.1 Flash-Lite** ○ | `gemini/gemini-3.1-flash-lite` | — |
 | **DeepSeek-V4-Pro** ○ | `openhands/deepseek-v4-pro` | `openrouter/deepseek/deepseek-v4-pro` |
 | **DeepSeek-V4-Flash** ○ | `openhands/deepseek-v4-flash` | `openhands/deepseek-v4-flash-vision-exp`, `openrouter/deepseek/deepseek-v4-flash` |
 | **DeepSeek-V4.1-Flash** ○ | `openhands/deepseek-v4.1-flash` | — |
 | **DeepSeek-V3.2** ○ | `openhands/deepseek-v3.2-reasoner` | — |
 | **Kimi K3** ○ | `openhands/kimi-k3` | `openrouter/moonshotai/kimi-k3` |
 | **Kimi K2.7 Code** ○ | `openhands/kimi-k2.7-code` | `openrouter/moonshotai/kimi-k2.7-code` |
+| **Kimi For Coding** ○ | `moonshot/kimi-for-coding` | — |
 | **Devstral 2** ○ | `openhands/devstral-2512` | `openhands/devstral-medium-2512`, `openrouter/mistralai/devstral-2512` |
 | **GLM-5.3** ○ | `openhands/glm-5.3` | `openrouter/z-ai/glm-5.3` |
 | **GLM-5.3-Flash** ○ | `openhands/glm-5.3-flash` | `openrouter/z-ai/glm-5.3-flash` |
 | **GLM-5.2** ○ | `openhands/glm-5.2` | `openrouter/z-ai/glm-5.2` |
 | **Nemotron 3.5 Lightning** ○ | `openhands/nemotron-3.5-lightning-30b-a3b` | — |
 | **Nemotron 3 Nano** ○ | `openhands/nemotron-3-nano` | — |
+| **Nemotron 3 Nano Omni** ○ | `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning` | — |
 | **Nemotron 3 Super** ○ | `openhands/nemotron-3-super-120b-a12b` | — |
 | **Nemotron 3 Ultra** ○ | `openhands/nemotron-3-ultra-550b-a55b` | — |
 | **Qwen3.8-Max** ○ | `openhands/qwen3.8-max` | — |
@@ -920,7 +931,7 @@ ID format: LiteLLM `<provider>/<model>`, e.g. `openhands/<model>`, `anthropic/<m
 ## Devin Desktop — Cognition
 
 Default: `swe-1-6-fast` (an enterprise team default overrides it; the free tier only gets SWE-1.6)
-Select: model picker under the agent input box; the Devin CLI harness it shares takes `devin --model <id>`, `/model <id>` and `agent.model` in `~/.config/devin/config.json`. `adaptive` picks a model per request, `fusion` opens the lead + sidekick picker, and short names `opus`, `sonnet`, `swe`, `codex` and `gemini` resolve to the newest model in that family
+Select: model picker under the agent input box; the Devin CLI harness it shares takes `devin --model <id>`, `/model <id>` and `agent.model` in `~/.config/devin/config.json`. `adaptive` picks a model per request, `fusion` opens the lead + sidekick picker, and short names `opus`, `sonnet`, `swe`, `codex`, `gpt` and `gemini` resolve to the newest model in that family
 Providers: Cognition-hosted; models from Anthropic, OpenAI, Google, xAI, DeepSeek, Z.ai, Moonshot, NVIDIA, Thinking Machines and Cognition (enterprise admins can restrict them with an allowlist)
 ID format: model UID as listed on the Models page, with effort and speed suffixes (`-low` … `-max`, `-fast` or `-priority`)
 
@@ -998,4 +1009,4 @@ ID format: model UID as listed on the Models page, with effort and speed suffixe
 
 ---
 
-*Last verified: 20261025*
+*Last verified: 20261026*
