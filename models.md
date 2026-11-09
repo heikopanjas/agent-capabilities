@@ -282,13 +282,17 @@ ID format: `<provider_id>/<model_id>`; the rows below are the curated OpenCode Z
 | **MiMo-V2.6-Flash** ◆ | `opencode-go/mimo-v2.6-flash` | `opencode/mimo-v2.6-flash-free` |
 | **MiMo-V2.5-Pro** ◆ | `opencode-go/mimo-v2.5-pro` | — |
 | **MiMo-V2.5** ◆ | `opencode-go/mimo-v2.5` | — |
+| **Hy4** ◆ | `opencode-go/hy4` | — |
 | **Hy4 preview** ◆ | `opencode-go/hy4-preview` | — |
 | **Hy3** ◆ | `opencode-go/hy3` | — |
 | **Step 5 Preview** ◆ | `opencode-go/step-5-preview` | — |
 | **Big Pickle** ◆ | `opencode/big-pickle` | — |
 | **Beam 1.0** ◆ | `opencode/beam-free` | `opencode-go/beam-free` |
+| **Iceman** ◆ | `opencode/iceman-free` | — |
 | **Iceman Contributor** ◆ | `opencode-go/iceman-contributor-free` | — |
 | **Flint 40B** ◆ | `opencode/flint-40b-free` | — |
+| **Inkling 2 Small** ◆ | `opencode/inkling-2-small-free` | — |
+| **Crouton Alpha** ◆ | `opencode/crouton-alpha-free` | `opencode-go/crouton-alpha-free` |
 | **Nemotron 3 Ultra** ◆ | `opencode/nemotron-3-ultra-free` | — |
 | **Nemotron 3.5 Lightning** ◆ | `opencode/nemotron-3.5-lightning-free` | — |
 | **Nemotron 3.5 Super VL** ◆ | `opencode/nemotron-3.5-super-vl-free` | — |
@@ -305,34 +309,30 @@ ID format: `<provider_id>/<model_id>`; the rows below are the curated OpenCode Z
 
 ## Pi — earendil-works (open source)
 
-Default: `defaultProvider` + `defaultModel` in settings if set; otherwise the per-provider default of the first authenticated provider (e.g. `claude-opus-4-8` for `anthropic`), else the first available model
+Default: `defaultProvider` + `defaultModel` in settings if set; otherwise the per-provider default of the first authenticated provider (e.g. `claude-opus-5-5` for `anthropic`), else the first available model
 Select: `--model <pattern>` (with optional `--provider`), `--models <patterns>` for the cycling scope, `/model` (`Ctrl+S` saves as default), `Ctrl+P` to cycle, `/scoped-models`, `defaultProvider` / `defaultModel` / `enabledModels` in `~/.pi/agent/settings.json`; `--thinking <level>` or `/thinking` sets the thinking level
 Providers: Anthropic, OpenAI (API key or ChatGPT sign-in as `openai-codex`), Azure OpenAI, Amazon Bedrock, Google Gemini, Google Vertex AI, GitHub Copilot, OpenRouter, Vercel AI Gateway, Cloudflare AI Gateway and Workers AI, OpenCode Zen and Go, Radius, xAI, Mistral, Groq, Cerebras, DeepSeek, NVIDIA NIM, Hugging Face, Fireworks, Together AI, Baseten, Meta, MiniMax, Moonshot AI, Kimi For Coding, Z.AI, Qwen Token Plan, Xiaomi MiMo, Ant Ling; custom endpoints (Ollama, LM Studio, vLLM, llama.cpp) via `models.json`
 ID format: `<provider>/<model-id>` with an optional `:<thinking>` suffix (e.g. `sonnet:high`); `--model` also fuzzy-matches IDs and names. Rows below are Pi's built-in per-provider defaults
 
 | Model | ID | Aliases |
 |---|---|---|
-| **Claude Opus 4.8** ○ | `anthropic/claude-opus-4-8` | — |
-| **Claude Opus 4.6** ○ | `amazon-bedrock/us.anthropic.claude-opus-4-6-v1` | — |
-| **GPT-6.1 Sol** ○ | `openai/gpt-6.1-sol` | `openai-codex/gpt-6.1-sol`, `github-copilot/gpt-6.1-sol` |
-| **GPT-5.4** ◆ | `azure/gpt-5.4` | — |
-| **Gemini 3.1 Pro** ○ | `google/gemini-3.1-pro-preview` | `google-vertex/gemini-3.1-pro-preview` |
+| **Claude Opus 5.5** ○ | `anthropic/claude-opus-5-5` | `amazon-bedrock/us.anthropic.claude-opus-5-5` |
+| **GPT-6.1 Sol** ○ | `openai/gpt-6.1-sol` | `openai-codex/gpt-6.1-sol`, `github-copilot/gpt-6.1-sol`, `azure/gpt-6.1-sol` |
+| **Gemini 4 Argon** ○ | `google/gemini-4-argon` | `google-vertex/gemini-4-argon` |
 | **Grok 4.7** ○ | `xai/grok-4.7` | — |
 | **gpt-oss-120b** ○ | `groq/openai/gpt-oss-120b` | `cerebras/gpt-oss-120b` |
 | **DeepSeek-V4-Pro** ◆ | `deepseek/deepseek-v4-pro` | — |
 | **Devstral Medium** ○ | `mistral/devstral-medium-latest` | — |
-| **GLM-5.3** ○ | `zai/glm-5.3` | `zai-coding-cn/glm-5.3` |
-| **GLM-5.2** ○ | `baseten/zai-org/GLM-5.2` | — |
-| **GLM-5.1** ○ | `vercel-ai-gateway/zai/glm-5.1` | — |
-| **MiniMax-M2.7** ○ | `minimax/MiniMax-M2.7` | `minimax-cn/MiniMax-M2.7` |
-| **Kimi K3** ○ | `opencode-go/kimi-k3` | `fireworks/accounts/fireworks/models/kimi-k3`, `together/moonshotai/Kimi-K3` |
-| **Kimi K2.6** ○ | `moonshotai/kimi-k2.6` | `moonshotai-cn/kimi-k2.6`, `opencode/kimi-k2.6`, `openrouter/moonshotai/kimi-k2.6`, `huggingface/moonshotai/Kimi-K2.6`, `cloudflare-workers-ai/@cf/moonshotai/kimi-k2.6`, `cloudflare-ai-gateway/workers-ai/@cf/moonshotai/kimi-k2.6` |
+| **GLM-5.3** ○ | `zai/glm-5.3` | `zai-coding-cn/glm-5.3`, `vercel-ai-gateway/zai/glm-5.3`, `baseten/zai-org/GLM-5.3` |
+| **MiniMax-M3** ○ | `minimax/MiniMax-M3` | `minimax-cn/MiniMax-M3` |
+| **Kimi K3.1 Pro** ○ | `opencode-go/kimi-k3.1-pro` | — |
+| **Kimi K3** ○ | `fireworks/accounts/fireworks/models/kimi-k3` | `together/moonshotai/Kimi-K3` |
+| **Kimi K2.7 Code** ○ | `moonshotai/kimi-k2.7-code` | `moonshotai-cn/kimi-k2.7-code`, `opencode/kimi-k2.7-code`, `openrouter/moonshotai/kimi-k2.7-code`, `huggingface/moonshotai/Kimi-K2.7-Code`, `cloudflare-workers-ai/@cf/moonshotai/kimi-k2.7-code`, `cloudflare-ai-gateway/workers-ai/@cf/moonshotai/kimi-k2.7-code` |
 | **Kimi For Coding** ○ | `kimi-coding/kimi-for-coding` | — |
 | **Nemotron 3.5 Super VL** ○ | `nvidia/nvidia/nemotron-3.5-super-vl-120b-a12b` | — |
 | **Ring-2.6-1T** ○ | `ant-ling/Ring-2.6-1T` | — |
 | **Muse Spark 1.3** ○ | `meta/muse-spark-1.3` | — |
-| **Qwen3.8-Max** ○ | `qwen-token-plan-individual/qwen3.8-max` | — |
-| **Qwen3.7-Max** ○ | `qwen-token-plan/qwen3.7-max` | `qwen-token-plan-cn/qwen3.7-max` |
+| **Qwen3.8-Max** ○ | `qwen-token-plan-individual/qwen3.8-max` | `qwen-token-plan/qwen3.8-max`, `qwen-token-plan-cn/qwen3.8-max`, `qwen-token-plan-individual-cn/qwen3.8-max` |
 | **MiMo-V2.6-Pro** ○ | `xiaomi/mimo-v2.6-pro` | `xiaomi-token-plan-cn/mimo-v2.6-pro`, `xiaomi-token-plan-ams/mimo-v2.6-pro`, `xiaomi-token-plan-sgp/mimo-v2.6-pro` |
 
 **Sources:**
@@ -414,6 +414,9 @@ ID format: `<model>-<effort>` slugs from `agy models`; display labels such as `G
 | **Gemini 3.1 Pro** ◆ | `gemini-3.1-pro-high` | `gemini-3.1-pro-low`, `gemini-3.1-pro-preview` |
 | **Claude Opus 5.5** ◆ | `claude-opus-5-5-medium` | `claude-opus-5-5-low`, `claude-opus-5-5-high`, `claude-opus-5-5-max` |
 | **Claude Sonnet 5.5** ◆ | `claude-sonnet-5-5-medium` | `claude-sonnet-5-5-low`, `claude-sonnet-5-5-high`, `claude-sonnet-5-5-max` |
+| **Claude Opus 4.6** ○ | `claude-opus-4-6-medium` | `claude-opus-4-6-low`, `claude-opus-4-6-high`, `claude-opus-4-6-max` |
+| **Claude Sonnet 4.6** ○ | `claude-sonnet-4-6-medium` | `claude-sonnet-4-6-low`, `claude-sonnet-4-6-high`, `claude-sonnet-4-6-max` |
+| **gpt-oss-120b** ○ | `gpt-oss-120b-medium` | — |
 
 **Sources:**
 [Choose a model](https://antigravity.google/docs/models/) ·
@@ -504,8 +507,8 @@ ID format: `<vendor>/<model>` on the Cline provider, `cline-pass/<model>` on Cli
 | **Qwen3.8-Max** ◆ | `cline-pass/qwen3.8-max` | — |
 | **Qwen3.7-Max** ◆ | `cline-pass/qwen3.7-max` | — |
 | **Qwen3.7-Plus** ◆ | `cline-pass/qwen3.7-plus` | — |
-| **MiMo-V2.6-Flash** ○ | `cline-pass/mimo-v2.6-flash` | `cline-free/mimo-v2.6-flash` |
-| **MiMo-V2.6-Pro** ○ | `cline-pass/mimo-v2.6-pro` | — |
+| **MiMo-V2.6-Flash** ◆ | `cline-pass/mimo-v2.6-flash` | `cline-free/mimo-v2.6-flash` |
+| **MiMo-V2.6-Pro** ◆ | `cline-pass/mimo-v2.6-pro` | — |
 | **Nemotron 3.5 Super VL** ○ | `cline-free/nemotron-3.5-super-vl` | — |
 | **Solar Mini 4** ○ | `cline-free/solar-mini4` | — |
 | **Beam 1.0** ◆ | `reflection/beam-free` | — |
@@ -629,8 +632,13 @@ ID format: bare model ID; BYOK models are `custom:<display-name-with-dashes>-<in
 | **Nemotron 3 Ultra** ◆ | `nemotron-3-ultra` | — |
 | **Nemotron 3.5 Super** ◆ | `nemotron-3.5-super` | — |
 | **DeepSeek-V4.1-Flash** ◆ | `deepseek-v4.1-flash` | `deepseek-v4.1-flash-1017` |
+| **DeepSeek-V4-Pro** ◆ | `deepseek-v4-pro` | — |
+| **DeepSeek-V4-Flash** ◆ | `deepseek-v4-flash-0731` | — |
 | **MiniMax-M3.1-Flash** ◆ | `minimax-m3.1-flash` | — |
 | **MiniMax-M3** ◆ | `minimax-m3` | — |
+| **MiniMax-M2.7** ◆ | `minimax-m2.7` | — |
+| **Kimi K2.5** ◆ | `kimi-k2.5` | — |
+| **GLM-5.1** ◆ | `glm-5.1` | — |
 | **Muse Spark 1.3** ◆ | `muse-spark-1.3` | — |
 | **Muse Spark 1.2** ◆ | `muse-spark-1.2` | — |
 | **Beam 1.0** ◆ | `beam-1.0` | — |
@@ -709,13 +717,18 @@ ID format: provider ID (`GOOSE_PROVIDER`, e.g. `anthropic`, `openai`, `google`, 
 
 ## Hermes Agent — Nous Research
 
-Default: none until `hermes setup` or `hermes model` writes `model.provider` and `model.default`; `hermes setup --portal` sets the provider to `nous`
+Default: none until `hermes setup` or `hermes model` writes `model.provider` and `model.default`; `hermes setup --portal` sets the provider to `nous`, where the recommended default is `anthropic/claude-sonnet-4.6`
 Select: `hermes model`, `hermes chat --provider <id> --model <id>` (`-m`), `/model <id>` or `/model <provider>:<model>`, `model.default` in `~/.hermes/config.yaml`, `HERMES_INFERENCE_MODEL`, aliases under `model_aliases:`
 Providers: Nous Portal (recommended), OpenAI Codex (ChatGPT sign-in), GitHub Copilot, Anthropic, OpenRouter, Google Gemini, Google Vertex AI, OpenAI API, Azure AI Foundry, AWS Bedrock, xAI, DeepSeek, Kimi / Moonshot, z.ai / GLM, MiniMax, Qwen Cloud, Hugging Face, NVIDIA, Ollama Cloud, LM Studio, Kilo Code, OpenCode Zen and Go, Upstage, Meituan, Poolside, StepFun, Reflection, Ornith, custom OpenAI-compatible endpoints, and more
 ID format: `<vendor>/<model>` on Nous Portal and OpenRouter; the provider's own ID on direct providers
 
 | Model | ID | Aliases |
 |---|---|---|
+| **Claude Sonnet 4.6** ◆ | `anthropic/claude-sonnet-4.6` | — |
+| **Claude Opus 4.6** ◆ | `anthropic/claude-opus-4.6` | — |
+| **GPT-5.5 Pro** ◆ | `openai/gpt-5.5-pro` | — |
+| **Gemini 3 Pro** ◆ | `google/gemini-3-pro-preview` | — |
+| **DeepSeek-V4-Pro** ◆ | `deepseek/deepseek-v4-pro` | — |
 | **GPT-6.1 Sol** ◆ | `gpt-6.1-sol` | `gpt-6.1-sol-900k` |
 | **GPT-6 Astra** ○ | `openai/gpt-6-astra` | `openai/gpt-6-astra-fast`, `openai/gpt-6-astra-flex` |
 | **GPT-6 Astra Pro** ○ | `openai/gpt-6-astra-pro` | `openai/gpt-6-astra-pro-fast`, `openai/gpt-6-astra-pro-flex` |
@@ -772,41 +785,43 @@ ID format: JetBrains aliases; each alias points to a model version JetBrains pic
 
 ## Kilo Code — Kilo
 
-Default: `kilo/kilo-auto/free` (Auto Free, when no model is set in config, session or organization)
+Default: `kilo-auto/free` (Auto Free, when no model is set in config, session or organization)
 Select: model selector or `/models` (VS Code, JetBrains), `Ctrl+X m` or `/models` (TUI), `kilo run --model <provider>/<model>` (`-m`), `model` in `kilo.jsonc`, `agent.<name>.model`, `/variant` for reasoning effort
 Providers: Kilo Gateway (built in, provider ID `kilo`), Anthropic, OpenAI (API key or ChatGPT subscription), Google Gemini, Google Vertex AI, AWS Bedrock, Mistral, DeepSeek, xAI, Alibaba Cloud, Cloudflare, Groq, Cerebras, Fireworks AI, GMI Cloud, Nebius, Poolside, OpenRouter, Requesty, Vercel AI Gateway, Ollama, LM Studio, OpenAI-compatible endpoints, and more
-ID format: `<provider>/<model>`; Kilo Gateway models are `kilo/<vendor>/<model>`, with routers at `kilo/kilo-auto/frontier`, `kilo/kilo-auto/efficient`, `kilo/kilo-auto/free` and `kilo/kilo-auto/small`
+ID format: `<vendor>/<model>` (e.g. `anthropic/claude-opus-4.7`); Kilo Gateway routers use `kilo-auto/frontier`, `kilo-auto/efficient`, `kilo-auto/free` and `kilo-auto/small`
 
 | Model | ID | Aliases |
 |---|---|---|
-| **Claude Opus 4.7** ◆ | `kilo/anthropic/claude-opus-4.7` | — |
-| **Claude Sonnet 4.6** ◆ | `kilo/anthropic/claude-sonnet-4.6` | — |
-| **Claude Haiku 4.5** ◆ | `kilo/anthropic/claude-haiku-4.5` | — |
-| **GPT-5.4** ◆ | `kilo/openai/gpt-5.4` | — |
-| **GPT-5.4 mini** ◆ | `kilo/openai/gpt-5.4-mini` | — |
-| **Gemini 3.1 Pro** ◆ | `kilo/google/gemini-3.1-pro-preview` | — |
-| **Gemini 2.5 Flash** ◆ | `kilo/google/gemini-2.5-flash` | — |
-| **DeepSeek-V3.2** ◆ | `kilo/deepseek/deepseek-v3.2` | — |
-| **Kimi K2.5** ◆ | `kilo/moonshotai/kimi-k2.5` | — |
-| **MiniMax-M2.7** ◆ | `kilo/minimax/minimax-m2.7` | — |
-| **GLM-5.3-Flash** ◆ | `kilo/z-ai/glm-5.3-flash` | — |
-| **Claude Opus 5.5** ○ | `kilo/anthropic/claude-opus-5.5` | — |
-| **Claude Sonnet 5.5** ○ | `kilo/anthropic/claude-sonnet-5.5` | — |
-| **Claude Haiku 5.5** ○ | `kilo/anthropic/claude-haiku-5.5` | — |
-| **GPT-6.1 Sol** ○ | `kilo/openai/gpt-6.1-sol` | — |
-| **GPT-6.1 Terra** ○ | `kilo/openai/gpt-6.1-terra` | — |
-| **GPT-6 Astra** ○ | `kilo/openai/gpt-6-astra` | — |
-| **GPT-6 Sol** ○ | `kilo/openai/gpt-6-sol` | — |
-| **GPT-6 Luna** ○ | `kilo/openai/gpt-6-luna` | — |
-| **DeepSeek-V4.1-Flash** ○ | `kilo/deepseek/deepseek-v4.1-flash` | — |
-| **Grok 4.7** ○ | `kilo/x-ai/grok-4.7` | — |
-| **Gemini 4 Argon** ○ | `kilo/google/gemini-4-argon` | — |
-| **Kimi K3.1 Pro** ○ | `kilo/moonshotai/kimi-k3.1-pro` | — |
-| **Kimi K3** ○ | `kilo/moonshotai/kimi-k3` | — |
-| **MiniMax-M3.1-Flash** ○ | `kilo/minimax/minimax-m3.1-flash` | — |
-| **MiMo-V2.6-Pro** ○ | `kilo/xiaomi/mimo-v2.6-pro` | — |
-| **Nemotron 3.5 Super VL** ○ | `kilo/nvidia/nemotron-3.5-super-vl:free` | — |
-| **Beam 1.0** ○ | `kilo/reflection/beam-free` | — |
+| **Claude Opus 4.7** ◆ | `anthropic/claude-opus-4.7` | — |
+| **Claude Sonnet 4.6** ◆ | `anthropic/claude-sonnet-4.6` | — |
+| **Claude Haiku 4.5** ◆ | `anthropic/claude-haiku-4.5` | — |
+| **GPT-5.4** ◆ | `openai/gpt-5.4` | — |
+| **GPT-5.4 mini** ◆ | `openai/gpt-5.4-mini` | — |
+| **Gemini 3.1 Pro** ◆ | `google/gemini-3.1-pro-preview` | — |
+| **Gemini 2.5 Flash** ◆ | `google/gemini-2.5-flash` | — |
+| **Grok 4** ◆ | `x-ai/grok-4` | — |
+| **Grok Code Fast 1** ◆ | `x-ai/grok-code-fast-1` | — |
+| **DeepSeek-V3.2** ◆ | `deepseek/deepseek-v3.2` | — |
+| **Kimi K2.5** ◆ | `moonshotai/kimi-k2.5` | — |
+| **MiniMax-M2.7** ◆ | `minimax/minimax-m2.7` | — |
+| **GLM-5.3-Flash** ◆ | `z-ai/glm-5.3-flash` | — |
+| **Claude Opus 5.5** ○ | `anthropic/claude-opus-5.5` | — |
+| **Claude Sonnet 5.5** ○ | `anthropic/claude-sonnet-5.5` | — |
+| **Claude Haiku 5.5** ○ | `anthropic/claude-haiku-5.5` | — |
+| **GPT-6.1 Sol** ○ | `openai/gpt-6.1-sol` | — |
+| **GPT-6.1 Terra** ○ | `openai/gpt-6.1-terra` | — |
+| **GPT-6 Astra** ○ | `openai/gpt-6-astra` | — |
+| **GPT-6 Sol** ○ | `openai/gpt-6-sol` | — |
+| **GPT-6 Luna** ○ | `openai/gpt-6-luna` | — |
+| **DeepSeek-V4.1-Flash** ○ | `deepseek/deepseek-v4.1-flash` | `deepseek/deepseek-v4.1-flash-1017` |
+| **Grok 4.7** ○ | `x-ai/grok-4.7` | — |
+| **Gemini 4 Argon** ○ | `google/gemini-4-argon` | — |
+| **Kimi K3.1 Pro** ○ | `moonshotai/kimi-k3.1-pro` | — |
+| **Kimi K3** ○ | `moonshotai/kimi-k3` | — |
+| **MiniMax-M3.1-Flash** ○ | `minimax/minimax-m3.1-flash` | — |
+| **MiMo-V2.6-Pro** ○ | `xiaomi/mimo-v2.6-pro` | — |
+| **Nemotron 3.5 Super VL** ○ | `nvidia/nemotron-3.5-super-vl:free` | — |
+| **Beam 1.0** ○ | `reflection/beam-1.0-501b-a23b` | — |
 
 **Sources:**
 [Model selection](https://kilo.ai/docs/code-with-ai/agents/model-selection) ·
@@ -988,6 +1003,7 @@ ID format: model UID as listed on the Models page, with effort and speed suffixe
 | **Grok 3** ◆ | `MODEL_XAI_GROK_3` | — |
 | **Grok 3 Mini** ◆ | `MODEL_XAI_GROK_3_MINI_REASONING` | — |
 | **SWE-2** ◆ | `swe-2-medium` | `swe-2-high`, `swe-2-max` |
+| **SWE-2 Flash** ○ | `swe-2-flash-medium` | `swe-2-flash-high`, `swe-2-flash-max` |
 | **SWE-1.7** ◆ | `swe-1-7-medium` | `swe-1-7` |
 | **SWE-1.7 Lightning** ◆ | `swe-1-7-lightning-medium` | `swe-1-7-lightning` |
 | **SWE-1.6** ◆ | `swe-1-6` | — |
@@ -1014,4 +1030,4 @@ ID format: model UID as listed on the Models page, with effort and speed suffixe
 
 ---
 
-*Last verified: 20261102*
+*Last verified: 20261109*
