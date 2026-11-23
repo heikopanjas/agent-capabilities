@@ -42,13 +42,15 @@ ID format: Anthropic model ID (`claude-opus-5-5`); Bedrock takes an inference pr
 
 ## Codex CLI — OpenAI
 
-Default: none named; when `model` is unset Codex uses a recommended model for the account (the docs recommend `gpt-6.1-sol`)
+Default: none named; when `model` is unset Codex uses a recommended model for the account (the docs' sample config sets `gpt-6.2-sol`; `gpt-6.2-astra` is recommended for demanding work)
 Select: `--model <id>` / `-m <id>`, `codex exec -m <id>`, `/model`, `model` in `~/.codex/config.toml`; effort via `model_reasoning_effort` (`low`, `medium`, `high`, `xhigh`, `max`, `ultra`, depending on model) or `/model` → More reasoning
 Providers: `openai` (default), `ollama`, `lmstudio`, `amazon-bedrock`; custom providers under `[model_providers.<id>]` must serve the Responses API. GPT-5.5 works only with API-key sign-in
 ID format: bare model ID; the provider is set separately with `model_provider`
 
 | Model | ID | Aliases |
 |---|---|---|
+| **GPT-6.2 Astra** ◆ | `gpt-6.2-astra` | — |
+| **GPT-6.2 Sol** ◆ | `gpt-6.2-sol` | — |
 | **GPT-6 Astra** ◆ | `gpt-6-astra` | — |
 | **GPT-6.1 Sol** ◆ | `gpt-6.1-sol` | — |
 | **GPT-6.1 Terra** ◆ | `gpt-6.1-terra` | — |
@@ -66,41 +68,44 @@ ID format: bare model ID; the provider is set separately with `model_provider`
 
 Default: `claude-sonnet-5.5` in Copilot CLI; `auto` picks a model automatically (GPT-5.3-Codex is the fallback when nothing else is available)
 Select: `--model <id>`, `COPILOT_MODEL`, `/model`, `model` in `~/.copilot/settings.json`, `model:` in `.agent.md` frontmatter, the model picker in IDEs and on GitHub.com; effort via `--effort` / `--reasoning-effort` or `effortLevel`
-Providers: GitHub-hosted models from OpenAI, Anthropic, Google, Microsoft, Moonshot AI and xAI; BYOK providers via `COPILOT_PROVIDERS_CONFIG` (`~/.copilot/providers.json`). GPT-5.4 nano is only in the Codex extension for VS Code on Copilot Pro+, not in Copilot Chat; Claude Sonnet 4.6 is retired except for individual subscribers on annual plans; Kimi K3 and other open-weight models are disabled by default regardless of org policy, and the Claude Fable models need an admin to enable them even after plan approval
+Providers: GitHub-hosted models from OpenAI, Anthropic, Google, Microsoft, Moonshot AI and xAI; BYOK providers via `COPILOT_PROVIDERS_CONFIG` (`~/.copilot/providers.json`). GPT-5.4 nano is only in the Codex extension for VS Code on Copilot Pro+, not in Copilot Chat; Claude Opus 4.8 and Claude Opus 5 were deprecated November 16, 2026 (Claude Opus 4.8 remains available to individual subscribers on annual plans); Kimi K3 and other open-weight models are disabled by default regardless of org policy, and the Claude Fable models need an admin to enable them even after plan approval
 ID format: lowercase ID with dotted versions (`claude-opus-5.5`); IDE pickers show the display name. Run `/model` in the CLI for the full list of IDs
 
 | Model | ID | Aliases |
 |---|---|---|
+| **GPT-6.2 Astra** ◆ | `GPT-6.2 Astra` | — |
+| **GPT-6.2 Sol** ◆ | `GPT-6.2 Sol` | — |
 | **GPT-6 Astra** ◆ | `gpt-6-astra` | — |
 | **GPT-6.1 Sol** ◆ | `gpt-6.1-sol` | — |
-| **GPT-6 Sol** ○ | `GPT-6 Sol` | — |
+| **GPT-6 Sol** ◆ | `GPT-6 Sol` | — |
 | **GPT-6.1 Terra** ◆ | `gpt-6.1-terra` | — |
 | **GPT-6 Luna** ◆ | `gpt-6-luna` | — |
-| **GPT-5.6 Sol** ○ | `GPT-5.6 Sol` | — |
-| **GPT-5.6 Terra** ○ | `GPT-5.6 Terra` | — |
+| **GPT-5.6 Sol** ◆ | `GPT-5.6 Sol` | — |
 | **GPT-5.6 Luna** ◆ | `gpt-5.6-luna` | — |
-| **GPT-5.4 nano** ○ | `GPT-5.4 nano` | — |
+| **GPT-5.4 nano** ◆ | `GPT-5.4 nano` | — |
 | **GPT-5.3-Codex** ◆ | `gpt-5.3-codex` | — |
-| **Claude Fable 5.2** ○ | `Claude Fable 5.2` | — |
-| **Claude Fable 5.1** ○ | `Claude Fable 5.1` | — |
-| **Claude Fable 5** ○ | `Claude Fable 5` | — |
+| **Claude Fable 5.2** ◆ | `Claude Fable 5.2` | — |
+| **Claude Fable 5.1** ◆ | `Claude Fable 5.1` | — |
+| **Claude Fable 5** ◆ | `Claude Fable 5` | — |
 | **Claude Opus 5.5** ◆ | `claude-opus-5.5` | — |
-| **Claude Opus 5** ○ | `Claude Opus 5` | — |
-| **Claude Opus 4.8** ○ | `Claude Opus 4.8` | `Claude Opus 4.8 (fast mode) (preview)` |
+| **Claude Opus 4.8** ◆ | `Claude Opus 4.8` | `Claude Opus 4.8 (fast mode) (preview)` |
 | **Claude Sonnet 5.5** ◆ | `claude-sonnet-5.5` | — |
-| **Claude Sonnet 5** ○ | `Claude Sonnet 5` | — |
+| **Claude Sonnet 5** ◆ | `Claude Sonnet 5` | — |
 | **Claude Sonnet 4.6** ◆ | `claude-sonnet-4.6` | — |
 | **Claude Haiku 5.5** ◆ | `claude-haiku-5.5` | — |
 | **Claude Haiku 4.5** ◆ | `claude-haiku-4.5` | — |
-| **Gemini 4 Hydrogen** ○ | `Gemini 4 Hydrogen` | — |
-| **Gemini 4 Carbon** ○ | `Gemini 4 Carbon` | — |
-| **Gemini 4 Argon** ○ | `Gemini 4 Argon` | — |
+| **Gemini 4 Neon** ◆ | `Gemini 4 Neon` | — |
+| **Gemini 4 Hydrogen** ◆ | `Gemini 4 Hydrogen` | — |
+| **Gemini 4 Carbon** ◆ | `Gemini 4 Carbon` | — |
+| **Gemini 4 Argon** ◆ | `Gemini 4 Argon` | — |
 | **Gemini 3.8 Flash** ◆ | `gemini-3.8-flash` | — |
+| **MAI Code 2** ◆ | `MAI Code 2` | — |
+| **MAI Code 2 Flash** ◆ | `MAI Code 2 Flash` | — |
 | **MAI-Code-1.1-Flash** ◆ | `MAI-Code-1.1-Flash` | — |
-| **Kimi K3** ○ | `Kimi K3` | — |
-| **Grok 4.7** ○ | `Grok 4.7` | — |
-| **Grok 4.6** ○ | `Grok 4.6` | — |
-| **Grok 4.5** ○ | `Grok 4.5` | — |
+| **Kimi K3** ◆ | `Kimi K3` | — |
+| **Grok 4.7** ◆ | `Grok 4.7` | — |
+| **Grok 4.6** ◆ | `Grok 4.6` | — |
+| **Grok 4.5** ◆ | `Grok 4.5` | — |
 
 **Sources:**
 [Supported AI models](https://docs.github.com/en/copilot/reference/ai-models/supported-models) ·
@@ -156,6 +161,7 @@ ID format: Cursor's own ID per model (`claude-opus-5-5`, `gpt-5.6-sol`, `grok-4.
 | **GPT-5** ◆ | `gpt-5` | `gpt-5-high`, `gpt-5-fast`, `gpt-5-high-fast`, `gpt-5-low-fast` |
 | **GPT-5-Codex** ◆ | `gpt-5-codex` | — |
 | **GPT-5 mini** ◆ | `gpt-5-mini` | — |
+| **Gemini 4 Neon** ◆ | `gemini-4-neon` | — |
 | **Gemini 4 Hydrogen** ◆ | `gemini-4-hydrogen` | — |
 | **Gemini 4 Carbon** ◆ | `gemini-4-carbon` | — |
 | **Gemini 4 Argon** ◆ | `gemini-4-argon` | — |
@@ -218,6 +224,8 @@ ID format: `<provider_id>/<model_id>`; the rows below are the curated OpenCode Z
 
 | Model | ID | Aliases |
 |---|---|---|
+| **GPT-6.2 Astra** ◆ | `opencode/gpt-6.2-astra` | — |
+| **GPT-6.2 Sol** ◆ | `opencode/gpt-6.2-sol` | — |
 | **GPT-6 Astra** ◆ | `opencode/gpt-6-astra` | — |
 | **GPT-6 Sol** ◆ | `opencode/gpt-6-sol` | — |
 | **GPT-6.1 Sol** ◆ | `opencode/gpt-6.1-sol` | — |
@@ -252,6 +260,7 @@ ID format: `<provider_id>/<model_id>`; the rows below are the curated OpenCode Z
 | **Claude Sonnet 4.5** ◆ | `opencode/claude-sonnet-4-5` | — |
 | **Claude Haiku 5.5** ◆ | `opencode/claude-haiku-5-5` | `opencode-go/claude-haiku-5-5` |
 | **Claude Haiku 4.5** ◆ | `opencode/claude-haiku-4-5` | — |
+| **Gemini 4 Neon** ◆ | `opencode/gemini-4-neon` | — |
 | **Gemini 4 Hydrogen** ◆ | `opencode/gemini-4-hydrogen` | — |
 | **Gemini 4 Carbon** ◆ | `opencode/gemini-4-carbon` | — |
 | **Gemini 4 Argon** ◆ | `opencode/gemini-4-argon` | `opencode-go/gemini-4-argon` |
@@ -260,8 +269,6 @@ ID format: `<provider_id>/<model_id>`; the rows below are the curated OpenCode Z
 | **Gemini 3.6 Flash** ◆ | `opencode/gemini-3.6-flash` | — |
 | **Gemini 3.5 Flash** ◆ | `opencode/gemini-3.5-flash` | — |
 | **Gemini 3.5 Flash-Lite** ◆ | `opencode/gemini-3.5-flash-lite` | — |
-| **Gemini 3.1 Pro** ◆ | `opencode/gemini-3.1-pro` | — |
-| **Gemini 3 Flash** ◆ | `opencode/gemini-3-flash` | — |
 | **Grok 4.7** ◆ | `opencode/grok-4.7` | `opencode-go/grok-4.7` |
 | **Grok 4.6** ◆ | `opencode/grok-4.6` | — |
 | **Grok 4.5** ◆ | `opencode/grok-4.5` | — |
@@ -284,17 +291,17 @@ ID format: `<provider_id>/<model_id>`; the rows below are the curated OpenCode Z
 | **GLM-5.3-Flash** ◆ | `opencode/glm-5.3-flash` | `opencode-go/glm-5.3-flash`, `opencode/glm-5.3-flash-free` |
 | **GLM-5.3** ◆ | `opencode/glm-5.3` | `opencode-go/glm-5.3` |
 | **GLM-5.2** ◆ | `opencode/glm-5.2` | `opencode-go/glm-5.2` |
-| **GLM-5.1** ◆ | `opencode/glm-5.1` | — |
 | **Kimi K3.1 Pro** ◆ | `opencode-go/kimi-k3.1-pro` | — |
 | **Kimi K3** ◆ | `opencode/kimi-k3` | `opencode-go/kimi-k3` |
 | **Kimi K2.7 Code** ◆ | `opencode/kimi-k2.7-code` | `opencode-go/kimi-k2.7-code` |
 | **Kimi K2.6** ◆ | `opencode/kimi-k2.6` | — |
 | **Mistral Large 4** ◆ | `opencode/mistral-large-4` | — |
+| **Jev 1.14** ◆ | `opencode/jev-1.14` | — |
 | **Jev 1.13** ◆ | `opencode/jev-1.13` | `opencode/jev-1.13-free` |
 | **LongCat-2.5** ◆ | `opencode/longcat-2.5-free` | `opencode-go/longcat-2.5-free` |
-| **LongCat-2.0** ◆ | `opencode-go/longcat-2.0` | — |
 | **MiMo-V2.6-Pro** ◆ | `opencode-go/mimo-v2.6-pro` | — |
 | **MiMo-V2.6-Flash** ◆ | `opencode-go/mimo-v2.6-flash` | `opencode/mimo-v2.6-flash-free` |
+| **Hy4 Flash** ◆ | `opencode-go/hy4-flash-free` | `opencode/hy4-flash-free` |
 | **MiMo-V2.5-Pro** ◆ | `opencode-go/mimo-v2.5-pro` | — |
 | **MiMo-V2.5** ◆ | `opencode-go/mimo-v2.5` | — |
 | **Hy4** ◆ | `opencode-go/hy4` | — |
@@ -331,7 +338,8 @@ ID format: `<provider>/<model-id>` with an optional `:<thinking>` suffix (e.g. `
 | Model | ID | Aliases |
 |---|---|---|
 | **Claude Opus 5.5** ○ | `anthropic/claude-opus-5-5` | `amazon-bedrock/us.anthropic.claude-opus-5-5` |
-| **GPT-6.1 Sol** ○ | `openai/gpt-6.1-sol` | `openai-codex/gpt-6.1-sol`, `github-copilot/gpt-6.1-sol`, `azure/gpt-6.1-sol` |
+| **GPT-6.2 Sol** ○ | `openai/gpt-6.2-sol` | `openai-codex/gpt-6.2-sol`, `azure/gpt-6.2-sol` |
+| **GPT-6.1 Sol** ○ | `github-copilot/gpt-6.1-sol` | — |
 | **Gemini 4 Argon** ○ | `google/gemini-4-argon` | `google-vertex/gemini-4-argon` |
 | **Grok 4.7** ○ | `xai/grok-4.7` | — |
 | **gpt-oss-120b** ○ | `groq/openai/gpt-oss-120b` | `cerebras/gpt-oss-120b` |
@@ -387,23 +395,24 @@ ID format: LiteLLM `<provider>/<model>` (e.g. `gemini/gemini-2.5-pro`, `openrout
 
 ## Amp — ampcode.com
 
-Default: `medium` mode (Claude Opus 5.5); `low` runs GLM-5.3-Flash, `high` GPT-6 Astra, `ultra` Claude Fable 5.2, Puck Claude Opus 5.5 with a linked Claude subscription (otherwise user-chosen). The ChatGPT Only preset pins GPT-5.6 Terra, GPT-6.1 Sol and GPT-6 Astra to `low`, `medium` and `high`
-Select: the Dial picks a mode (`low`, `medium`, `high`, `ultra`) before the first message (Ctrl+S in the CLI); Settings → Mode Dial → Tune Modes pins a main-agent model per mode; the mode picker's Raw Models tab runs one model directly; plugins set `model` in `amp.createAgent(...)`; Claude Code mode takes any Claude Code model ID via `--mode external-agent:claude-code --features model:<id>`
-Providers: Amp-served by default; Model Routing adds API keys (Anthropic, Google AI Studio, Meta AI, OpenAI, xAI), ChatGPT, 𝕏 Premium+/SuperGrok and GitHub Copilot subscriptions, Amazon Bedrock, Google Cloud Agent Platform, Microsoft Foundry, and gateways (OpenRouter, Vercel AI Gateway, Cloudflare AI Gateway, Ollama Cloud, OpenCode Go, custom URL)
-ID format: `<provider>/<model>` (`openai/gpt-5.6-sol`, `anthropic/claude-opus-4-6`); Tune Modes shows display names
+Default: Staff Pick, the model the Amp team recommends for most work (currently Claude Opus 5.5); new threads start on Staff Pick unless Settings → Model Selector's New Threads Start On is set to Last Choice or a fixed model. Puck runs Claude Opus 5.5 with a linked Claude subscription, otherwise GPT-6.1 Sol
+Select: the model button below the prompt box or Ctrl+S opens the model selector (Staff Pick, up to 8 Top Models, then Other Models including Your Agents); Settings → Model Selector sets per-role models (Puck, Judgments, View Media, Painter, Dictation, Call Puck) and the workspace's Top Models; `--model <provider/id>` and `--effort <level>` in the CLI (`amp -x "..." --model openai/gpt-6-astra --effort xhigh`); `--mode` also accepts a model ID; plugins set `model` in `amp.createAgent(...)`; Claude Code mode takes any Claude Code model ID via `--mode external-agent:claude-code --features model:<id>`
+Providers: Amp-served by default; Model Routing adds API keys (Anthropic, Google AI Studio, Meta AI, OpenAI, xAI, OpenRouter), ChatGPT, 𝕏 Premium+/SuperGrok and GitHub Copilot subscriptions, Amazon Bedrock, Google Cloud Agent Platform, Microsoft Foundry, and gateways (OpenRouter, Vercel AI Gateway, Cloudflare AI Gateway, ngrok AI Gateway, Ollama Cloud, OpenCode Go, custom URL)
+ID format: `<provider>/<model>` (`openai/gpt-6-astra`, `anthropic/claude-opus-5-5`); the model selector shows display names
 
 | Model | ID | Aliases |
 |---|---|---|
-| **GLM-5.3-Flash** ◆ | `GLM-5.3-Flash` | — |
 | **Claude Opus 5.5** ◆ | `Opus 5.5` | — |
 | **GPT-6 Astra** ◆ | `GPT-6 Astra` | — |
-| **Claude Fable 5.2** ◆ | `Fable 5.2` | — |
-| **GPT-5.6 Sol** ◆ | `openai/gpt-5.6-sol` | — |
 | **GPT-6.1 Sol** ◆ | `openai/gpt-6.1-sol` | — |
-| **GPT-5.6 Terra** ◆ | `GPT-5.6 Terra` | — |
+| **GLM-5.3-Flash** ◆ | `GLM-5.3-Flash` | — |
+| **Claude Fable 5.2** ◆ | `Fable 5.2` | — |
+| **Jev** ◆ | `Jev` | — |
+| **Gemini 3.7 Flash** ◆ | `Gemini 3.7 Flash` | — |
 
 **Sources:**
 [Modes & Models](https://ampcode.com/modes) ·
+[Model Selector](https://ampcode.com/docs/model-selector) ·
 [The Dial](https://ampcode.com/docs/the-dial) ·
 [Models and subagents](https://ampcode.com/docs/models-and-subagents) ·
 [Model Routing](https://ampcode.com/docs/customize/model-routing) ·
@@ -414,13 +423,14 @@ ID format: `<provider>/<model>` (`openai/gpt-5.6-sol`, `anthropic/claude-opus-4-
 
 ## Antigravity CLI — Google
 
-Default: not documented; plan-dependent (Free and Google AI Plus accounts get Gemini 3.8 Flash and Gemini 4 Hydrogen, defaulting to High effort, as their only Gemini models)
+Default: Gemini 4 Neon at Medium effort when no model is selected; otherwise plan-dependent (Free and Google AI Plus accounts get only Gemini 3.8 Flash, Claude Sonnet 4.6, Claude Opus 4.6 and gpt-oss-120b)
 Select: `--model <slug>`, `--effort <level>`, `/model`, `/effort`, `model` in `~/.gemini/antigravity-cli/settings.json` (saved by label)
 Providers: Google account (Antigravity plans), Gemini API key (`modelProvider: "gemini"`, extra models via `customModelsConfig`), Gemini Enterprise (ADC)
 ID format: `<model>-<effort>` slugs from `agy models`; display labels such as `Gemini 3.8 Flash (Medium)` also work. Gemini Enterprise documents base IDs plus `--effort`
 
 | Model | ID | Aliases |
 |---|---|---|
+| **Gemini 4 Neon** ◆ | `gemini-4-neon-medium` | `gemini-4-neon-low`, `gemini-4-neon-high`, `gemini-4-neon-xhigh`, `gemini-4-neon` |
 | **Gemini 4 Hydrogen** ◆ | `gemini-4-hydrogen-high` | `gemini-4-hydrogen-medium`, `gemini-4-hydrogen-low`, `gemini-4-hydrogen-xhigh`, `gemini-4-hydrogen` |
 | **Gemini 4 Carbon** ◆ | `gemini-4-carbon-high` | `gemini-4-carbon-medium`, `gemini-4-carbon-low`, `gemini-4-carbon` |
 | **Gemini 4 Argon** ◆ | `gemini-4-argon-high` | `gemini-4-argon-medium`, `gemini-4-argon-low`, `gemini-4-argon` |
@@ -430,11 +440,12 @@ ID format: `<model>-<effort>` slugs from `agy models`; display labels such as `G
 | **Gemini 3.1 Pro** ◆ | `gemini-3.1-pro-high` | `gemini-3.1-pro-low`, `gemini-3.1-pro-preview` |
 | **Claude Opus 5.5** ◆ | `claude-opus-5-5-medium` | `claude-opus-5-5-low`, `claude-opus-5-5-high`, `claude-opus-5-5-max` |
 | **Claude Sonnet 5.5** ◆ | `claude-sonnet-5-5-medium` | `claude-sonnet-5-5-low`, `claude-sonnet-5-5-high`, `claude-sonnet-5-5-max` |
-| **Claude Opus 4.6** ○ | `claude-opus-4-6-medium` | `claude-opus-4-6-low`, `claude-opus-4-6-high`, `claude-opus-4-6-max` |
-| **Claude Sonnet 4.6** ○ | `claude-sonnet-4-6-medium` | `claude-sonnet-4-6-low`, `claude-sonnet-4-6-high`, `claude-sonnet-4-6-max` |
-| **gpt-oss-120b** ○ | `gpt-oss-120b-medium` | — |
-| **Orchestrator (Carbon)** ○ | `Orchestrator (Carbon)` | — |
-| **Orchestrator (Argon)** ○ | `Orchestrator (Argon)` | — |
+| **Claude Opus 4.6** ◆ | `claude-opus-4-6-medium` | `claude-opus-4-6-low`, `claude-opus-4-6-high`, `claude-opus-4-6-max` |
+| **Claude Sonnet 4.6** ◆ | `claude-sonnet-4-6-medium` | `claude-sonnet-4-6-low`, `claude-sonnet-4-6-high`, `claude-sonnet-4-6-max` |
+| **gpt-oss-120b** ◆ | `gpt-oss-120b-medium` | — |
+| **Orchestrator (Neon)** ◆ | `Orchestrator (Neon)` | — |
+| **Orchestrator (Carbon)** ◆ | `Orchestrator (Carbon)` | — |
+| **Orchestrator (Argon)** ◆ | `Orchestrator (Argon)` | — |
 
 **Sources:**
 [Choose a model](https://antigravity.google/docs/models/) ·
@@ -467,6 +478,7 @@ ID format: short or long names from `auggie models list` (short names look like 
 | **Claude Sonnet 4.6** ○ | `Claude Sonnet 4.6` | — |
 | **Claude Haiku 5.5** ○ | `Claude Haiku 5.5` | — |
 | **DeepSeek-V4.1-Flash** ○ | `DeepSeek V4.1 Flash` | `DeepSeek V4.1 Flash 1017` |
+| **Gemini 4 Neon** ○ | `Gemini 4 Neon` | — |
 | **Gemini 4 Argon** ○ | `Gemini 4 Argon` | — |
 | **Gemini 3.8 Flash** ○ | `Gemini 3.8 Flash` | — |
 | **Gemini 3.7 Flash** ○ | `Gemini 3.7 Flash` | — |
@@ -497,13 +509,14 @@ ID format: short or long names from `auggie models list` (short names look like 
 
 ## Cline — Cline Bot Inc.
 
-Default: provider `cline` with `anthropic/claude-sonnet-5.5` (the first recommended model)
+Default: provider `cline` with `meta/muse-ember` (the first recommended model)
 Select: API Provider and Model dropdowns in the IDE settings, `/settings` and `/model` in the CLI, `cline -P <provider> -m <model-id>`, `cline auth -p <provider> -m <model-id>`, `--thinking <level>` for reasoning effort
 Providers: Cline (usage-billing, provider ID `cline`), ClinePass (`cline-pass`), Anthropic, Claude Code, OpenAI (API key or Codex sign-in), Google Gemini, Google Vertex AI, AWS Bedrock, OpenRouter, DeepSeek, MiniMax, Alibaba Qwen, Z AI, Poolside, OpenAI-compatible endpoints, Ollama, LM Studio, and 30+ others
 ID format: `<vendor>/<model>` on the Cline provider, `cline-pass/<model>` on ClinePass, `cline-free/<model>` for free promotions; BYOK providers take the provider's own model ID
 
 | Model | ID | Aliases |
 |---|---|---|
+| **Muse Ember 1.0** ○ | `meta/muse-ember` | — |
 | **Claude Sonnet 5.5** ○ | `anthropic/claude-sonnet-5.5` | — |
 | **Claude Opus 5.5** ○ | `anthropic/claude-opus-5.5` | — |
 | **Gemini 4 Argon** ○ | `google/gemini-4-argon` | — |
@@ -618,6 +631,8 @@ ID format: bare model ID; BYOK models are `custom:<display-name-with-dashes>-<in
 | **Claude Sonnet 4.5** ◆ | `claude-sonnet-4-5-20250929` | — |
 | **Claude Haiku 5.5** ◆ | `claude-haiku-5-5` | — |
 | **Claude Haiku 4.5** ◆ | `claude-haiku-4-5-20251001` | — |
+| **GPT-6.2 Astra** ◆ | `gpt-6.2-astra` | `gpt-6.2-astra-fast`, `gpt-6.2-astra-ultrafast` |
+| **GPT-6.2 Sol** ◆ | `gpt-6.2-sol` | `gpt-6.2-sol-fast`, `gpt-6.2-sol-ultrafast` |
 | **GPT-6.1 Sol** ◆ | `gpt-6.1-sol` | `gpt-6.1-sol-ultrafast` |
 | **GPT-6 Astra** ◆ | `gpt-6-astra` | — |
 | **GPT-6 Sol** ◆ | `gpt-6-sol` | `gpt-6-sol-fast` |
@@ -631,6 +646,10 @@ ID format: bare model ID; BYOK models are `custom:<display-name-with-dashes>-<in
 | **GPT-5.4 mini** ◆ | `gpt-5.4-mini` | `gpt-5.4-mini-fast` |
 | **GPT-5.3-Codex** ◆ | `gpt-5.3-codex` | `gpt-5.3-codex-fast` |
 | **GPT-5.2** ◆ | `gpt-5.2` | — |
+| **Gemini 4 Neon** ◆ | `gemini-4-neon` | — |
+| **Gemini 4 Hydrogen** ◆ | `gemini-4-hydrogen` | — |
+| **Gemini 4 Carbon** ◆ | `gemini-4-carbon` | — |
+| **Gemini 4 Argon** ◆ | `gemini-4-argon` | — |
 | **Gemini 3.1 Pro** ◆ | `gemini-3.1-pro-preview` | — |
 | **Gemini 3.8 Flash** ◆ | `gemini-3.8-flash` | — |
 | **Gemini 3.7 Flash** ◆ | `gemini-3.7-flash` | — |
@@ -646,6 +665,7 @@ ID format: bare model ID; BYOK models are `custom:<display-name-with-dashes>-<in
 | **GLM-5.3** ◆ | `glm-5.3` | — |
 | **GLM-5.3-Flash** ◆ | `glm-5.3-flash` | — |
 | **GLM-5.2** ◆ | `glm-5.2` | `glm-5.2-fast` |
+| **Kimi K3.1 Pro** ◆ | `kimi-k3.1-pro` | — |
 | **Kimi K3** ◆ | `kimi-k3` | — |
 | **Qwen3.8-Max** ◆ | `qwen3.8-max` | — |
 | **Nemotron 3 Ultra** ◆ | `nemotron-3-ultra` | — |
@@ -738,7 +758,7 @@ ID format: provider ID (`GOOSE_PROVIDER`, e.g. `anthropic`, `openai`, `google`, 
 
 Default: none until `hermes setup` or `hermes model` writes `model.provider` and `model.default`; `hermes setup --portal` sets the provider to `nous`, where the recommended default is `anthropic/claude-sonnet-4.6`
 Select: `hermes model`, `hermes chat --provider <id> --model <id>` (`-m`), `/model <id>` or `/model <provider>:<model>`, `model.default` in `~/.hermes/config.yaml`, `HERMES_INFERENCE_MODEL`, aliases under `model_aliases:`
-Providers: Nous Portal (recommended), OpenAI Codex (ChatGPT sign-in), GitHub Copilot, Anthropic, OpenRouter, Google Gemini, Google Vertex AI, OpenAI API, Azure AI Foundry, AWS Bedrock, xAI, DeepSeek, Kimi / Moonshot, z.ai / GLM, MiniMax, Qwen Cloud, Hugging Face, NVIDIA, Ollama Cloud, LM Studio, Kilo Code, OpenCode Zen and Go, Upstage, Meituan, Poolside, StepFun, Reflection, Ornith, custom OpenAI-compatible endpoints, and more
+Providers: Nous Portal (recommended), OpenAI Codex (ChatGPT sign-in), GitHub Copilot, Anthropic, OpenRouter, Google Gemini, Google Vertex AI, OpenAI API, Azure AI Foundry, AWS Bedrock, xAI, DeepSeek, Kimi / Moonshot, z.ai / GLM, MiniMax, Qwen Cloud, Hugging Face, NVIDIA, Ollama Cloud, LM Studio, Kilo Code, OpenCode Zen and Go, Upstage, Meituan, Tencent, StepFun, custom OpenAI-compatible endpoints, and more
 ID format: `<vendor>/<model>` on Nous Portal and OpenRouter; the provider's own ID on direct providers
 
 | Model | ID | Aliases |
@@ -760,11 +780,9 @@ ID format: `<vendor>/<model>` on Nous Portal and OpenRouter; the provider's own 
 | **Step 5 Preview** ○ | `stepfun/step-5-preview` | — |
 | **LongCat-2.5** ○ | `meituan/longcat-2.5:free` | — |
 | **Solar Mini 4** ○ | `upstage/solar-mini4:free` | — |
-| **Laguna S 2.1** ○ | `poolside/laguna-s-2.1:free` | — |
-| **Laguna XS 2.1** ○ | `poolside/laguna-xs-2.1:free` | — |
+| **Qwen4-Max** ○ | `qwen/qwen4-max:free` | — |
+| **Hy4 Flash** ○ | `tencent/hy4-flash:free` | — |
 | **Step 3.7 Flash** ○ | `stepfun/step-3.7-flash:free` | — |
-| **Beam 1.0** ○ | `reflection/beam-1.0-501b-a23b:free` | — |
-| **Ornith 1.5** ○ | `ornith/ornith-1.5-122b:free` | — |
 
 **Sources:**
 [Configuring models](https://hermes-agent.nousresearch.com/docs/user-guide/configuring-models) ·
@@ -826,27 +844,30 @@ ID format: `<vendor>/<model>` (e.g. `anthropic/claude-opus-4.7`); Kilo Gateway r
 | **Kimi K2.5** ◆ | `moonshotai/kimi-k2.5` | — |
 | **MiniMax-M2.7** ◆ | `minimax/minimax-m2.7` | — |
 | **GLM-5.3-Flash** ◆ | `z-ai/glm-5.3-flash` | `z-ai/glm-5.3-flashx`, `z-ai/glm-5.3-flashx-legal` |
-| **Claude Fable 5.2** ○ | `anthropic/claude-fable-5.2` | — |
-| **Claude Opus 5.5** ○ | `anthropic/claude-opus-5.5` | — |
-| **Claude Sonnet 5.5** ○ | `anthropic/claude-sonnet-5.5` | — |
-| **Claude Haiku 5.5** ○ | `anthropic/claude-haiku-5.5` | — |
-| **GPT-6.1 Sol** ○ | `openai/gpt-6.1-sol` | `openai/gpt-6.1-sol-pro` |
-| **GPT-6.1 Terra** ○ | `openai/gpt-6.1-terra` | `openai/gpt-6.1-terra-pro` |
-| **GPT-6 Astra** ○ | `openai/gpt-6-astra` | — |
+| **Claude Fable 5.2** ◆ | `anthropic/claude-fable-5.2` | — |
+| **Claude Opus 5.5** ◆ | `anthropic/claude-opus-5.5` | — |
+| **Claude Sonnet 5.5** ◆ | `anthropic/claude-sonnet-5.5` | — |
+| **Claude Haiku 5.5** ◆ | `anthropic/claude-haiku-5.5` | — |
+| **GPT-6.2 Sol** ◆ | `openai/gpt-6.2-sol` | `openai/gpt-6.2-sol-pro` |
+| **GPT-6.2 Astra** ◆ | `openai/gpt-6.2-astra` | `openai/gpt-6.2-astra-pro` |
+| **GPT-6.1 Sol** ◆ | `openai/gpt-6.1-sol` | `openai/gpt-6.1-sol-pro` |
+| **GPT-6.1 Terra** ◆ | `openai/gpt-6.1-terra` | `openai/gpt-6.1-terra-pro` |
+| **GPT-6 Astra** ◆ | `openai/gpt-6-astra` | — |
 | **GPT-6 Sol** ○ | `openai/gpt-6-sol` | `openai/gpt-6-sol-pro` |
-| **GPT-6 Luna** ○ | `openai/gpt-6-luna` | `openai/gpt-6-luna-pro` |
-| **DeepSeek-V4.1-Flash** ○ | `deepseek/deepseek-v4.1-flash` | `deepseek/deepseek-v4.1-flash-1017` |
-| **Grok 4.7** ○ | `x-ai/grok-4.7` | — |
-| **Gemini 4 Hydrogen** ○ | `google/gemini-4-hydrogen` | — |
-| **Gemini 4 Carbon** ○ | `google/gemini-4-carbon` | — |
-| **Gemini 4 Argon** ○ | `google/gemini-4-argon` | — |
-| **Kimi K3.1 Pro** ○ | `moonshotai/kimi-k3.1-pro` | — |
-| **Kimi K3** ○ | `moonshotai/kimi-k3` | — |
-| **MiniMax-M3.1-Flash** ○ | `minimax/minimax-m3.1-flash` | — |
-| **MiMo-V2.6-Pro** ○ | `xiaomi/mimo-v2.6-pro` | `xiaomi/mimo-v2.6-pro-ultraspeed` |
-| **GLM-5.3** ○ | `z-ai/glm-5.3` | `z-ai/glm-5.3-prime` |
-| **Nemotron 3.5 Super VL** ○ | `nvidia/nemotron-3.5-super-vl:free` | — |
-| **Beam 1.0** ○ | `reflection/beam-1.0-501b-a23b` | — |
+| **GPT-6 Luna** ◆ | `openai/gpt-6-luna` | `openai/gpt-6-luna-pro` |
+| **DeepSeek-V4.1-Flash** ◆ | `deepseek/deepseek-v4.1-flash` | `deepseek/deepseek-v4.1-flash-1017` |
+| **Grok 4.7** ◆ | `x-ai/grok-4.7` | — |
+| **Gemini 4 Neon** ◆ | `google/gemini-4-neon` | — |
+| **Gemini 4 Hydrogen** ◆ | `google/gemini-4-hydrogen` | — |
+| **Gemini 4 Carbon** ◆ | `google/gemini-4-carbon` | — |
+| **Gemini 4 Argon** ◆ | `google/gemini-4-argon` | — |
+| **Kimi K3.1 Pro** ◆ | `moonshotai/kimi-k3.1-pro` | — |
+| **Kimi K3** ◆ | `moonshotai/kimi-k3` | — |
+| **MiniMax-M3.1-Flash** ◆ | `minimax/minimax-m3.1-flash` | — |
+| **MiMo-V2.6-Pro** ◆ | `xiaomi/mimo-v2.6-pro` | `xiaomi/mimo-v2.6-pro-ultraspeed` |
+| **GLM-5.3** ◆ | `z-ai/glm-5.3` | `z-ai/glm-5.3-prime` |
+| **Nemotron 3.5 Super VL** ◆ | `nvidia/nemotron-3.5-super-vl:free` | — |
+| **Beam 1.0** ◆ | `reflection/beam-1.0-501b-a23b` | — |
 
 **Sources:**
 [Model selection](https://kilo.ai/docs/code-with-ai/agents/model-selection) ·
@@ -921,6 +942,8 @@ ID format: LiteLLM `<provider>/<model>`, e.g. `openhands/<model>`, `anthropic/<m
 | **Claude Fable 5** ○ | `openhands/claude-fable-5` | `anthropic/claude-fable-5` |
 | **Claude Haiku 5.5** ○ | `anthropic/claude-haiku-5-5` | `openrouter/anthropic/claude-haiku-5.5` |
 | **Claude Haiku 4.5** ○ | `anthropic/claude-haiku-4-5-20251001` | `openrouter/anthropic/claude-haiku-4.5` |
+| **GPT-6.2 Sol** ○ | `openhands/gpt-6.2-sol` | `openai/gpt-6.2-sol`, `openrouter/openai/gpt-6.2-sol` |
+| **GPT-6.2 Astra** ○ | `openhands/gpt-6.2-astra` | `openai/gpt-6.2-astra`, `openrouter/openai/gpt-6.2-astra` |
 | **GPT-6.1 Sol** ○ | `openhands/gpt-6.1-sol` | `openai/gpt-6.1-sol`, `openrouter/openai/gpt-6.1-sol` |
 | **GPT-6.1 Terra** ○ | `openhands/gpt-6.1-terra` | `openai/gpt-6.1-terra`, `openrouter/openai/gpt-6.1-terra` |
 | **GPT-6 Sol** ○ | `openhands/gpt-6-sol` | `openai/gpt-6-sol` |
@@ -931,6 +954,9 @@ ID format: LiteLLM `<provider>/<model>`, e.g. `openhands/<model>`, `anthropic/<m
 | **GPT-5.2-Codex** ○ | `openhands/gpt-5.2-codex` | `openai/gpt-5.2-codex`, `openrouter/openai/gpt-5.2-codex` |
 | **MiniMax-M3.1-Flash** ○ | `openhands/minimax-m3.1-flash` | — |
 | **MiniMax-M2.7** ○ | `openhands/minimax-m2.7` | — |
+| **Gemini 4 Neon** ○ | `gemini/gemini-4-neon` | `openrouter/google/gemini-4-neon` |
+| **Gemini 4 Hydrogen** ○ | `gemini/gemini-4-hydrogen` | `openrouter/google/gemini-4-hydrogen` |
+| **Gemini 4 Carbon** ○ | `gemini/gemini-4-carbon` | `openrouter/google/gemini-4-carbon` |
 | **Gemini 4 Argon** ○ | `gemini/gemini-4-argon` | `openrouter/google/gemini-4-argon` |
 | **Gemini 3.1 Pro** ○ | `openhands/gemini-3.1-pro` | `openhands/gemini-3.1-pro-preview`, `openrouter/google/gemini-3.1-pro-preview` |
 | **Gemini 3.8 Flash** ○ | `openhands/gemini-3.8-flash` | `openrouter/google/gemini-3.8-flash` |
@@ -954,6 +980,7 @@ ID format: LiteLLM `<provider>/<model>`, e.g. `openhands/<model>`, `anthropic/<m
 | **Nemotron 3 Nano Omni** ○ | `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning` | — |
 | **Nemotron 3 Super** ○ | `openhands/nemotron-3-super-120b-a12b` | — |
 | **Nemotron 3 Ultra** ○ | `openhands/nemotron-3-ultra-550b-a55b` | — |
+| **Qwen4-Max** ○ | `openhands/qwen4-max` | — |
 | **Qwen3.8-Max** ○ | `openhands/qwen3.8-max` | — |
 | **Qwen3.7-Max** ○ | `openhands/qwen3.7-max` | — |
 | **Qwen3.7-Plus** ○ | `openhands/qwen3.7-plus` | — |
@@ -1060,4 +1087,4 @@ ID format: model UID as listed on the Models page, with effort and speed suffixe
 
 ---
 
-*Last verified: 20261116*
+*Last verified: 20261123*
